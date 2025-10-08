@@ -234,7 +234,7 @@ export default function App() {
       {/* HERO SECTION - Improved mobile photo display */}
       <section className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-12 hero-section">
         {/* Subtle gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/60 md:from-white/95 md:via-white/80 md:to-transparent pointer-events-none z-[1]"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-white/50 md:from-white/95 md:via-white/80 md:to-transparent pointer-events-none z-[1]"></div>
 
         {/* Mobile: Real image to prevent cropping */}
         <img
