@@ -238,7 +238,7 @@ export default function App() {
 
         {/* Mobile: Real image to prevent cropping */}
         <img
-          src="/images/IMG_6243.jpeg"
+          src="/images/IMG_6537.jpeg"
           alt="Beauty professional"
           className="hero-photo md:hidden"
           loading="eager"
@@ -296,10 +296,10 @@ export default function App() {
 
         <style>{`
           .hero-section {
-            background-image: url('/images/IMG_6243.jpeg');
+            background-image: url('/images/IMG_6537.jpeg');
             background-repeat: no-repeat;
             background-size: cover;
-            background-position: right center;
+            background-position: center right;
             background-color: #f5f7fa;
           }
           
@@ -311,32 +311,32 @@ export default function App() {
             }
           }
           
-          /* Tablet */
+          /* Tablet: Image on the right, face fully visible */
           @media (min-width: 768px) and (max-width: 1023px) {
             .hero-section {
-              background-size: 65%;
-              background-position: 108% center;
+              background-size: 45%;
+              background-position: 100% center;
             }
           }
           
-          /* Desktop: Person on right with more breathing room */
+          /* Desktop: Optimized positioning to keep face visible */
           @media (min-width: 1024px) {
             .hero-section {
-              background-size: 70%;
-              background-position: 115% center;
+              background-size: 50%;
+              background-position: 100% center;
             }
           }
 
-          /* MOBILE PHOTO - Full display without cropping */
+          /* MOBILE PHOTO - Bottom placement, face and eyes visible */
           .hero-photo {
             position: absolute;
-            right: -3%;
+            right: 0;
             bottom: 0;
-            height: 75vh;
-            max-height: 75dvh;
+            height: 50vh;
+            max-height: 50dvh;
             width: auto;
             object-fit: contain;
-            object-position: bottom right;
+            object-position: bottom center;
             pointer-events: none;
             z-index: 0;
           }
