@@ -238,7 +238,7 @@ export default function App() {
 
         {/* Mobile: Real image to prevent cropping */}
         <img
-          src="/images/IMG_6536.png"
+          src="/images/IMG_6537.jpeg"
           alt="Beauty professional"
           className="hero-photo md:hidden"
           loading="eager"
