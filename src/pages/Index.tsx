@@ -231,51 +231,64 @@ export default function App() {
         </div>
       </header>
 
-    {/* HERO SECTION - Fullscreen photo with soft top background */}
-<div className="w-full h-[140px] sm:h-[180px] bg-gradient-to-b from-[#e8e6e3] to-transparent"></div>
-<section className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-[#e8e6e3]">
-  {/* Фото — на весь экран */}
+{/* HERO SECTION — fullscreen photo + text on top */}
+<section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-[#e8e6e3]">
+  {/* Фон: плавный переход сверху, чтобы не было обреза */}
+  <div className="absolute top-0 left-0 w-full h-[140px] sm:h-[180px] bg-gradient-to-b from-[#e8e6e3] to-transparent z-[1]" />
+
+  {/* Фото на весь экран */}
   <img
     src="/images/IMG_6537.jpeg"
     alt="Beauty professional"
-    className="w-full h-full object-cover object-center"
+    className="absolute inset-0 w-full h-full object-cover object-center"
     loading="eager"
     decoding="async"
   />
-</section>
-<section className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-12 hero-section">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="max-w-2xl fade-in-view">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] mb-5 sm:mb-6 text-gray-900 animate-fade-in-up">
-              Скрипты, которые превращают{" "}
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">сообщения в деньги</span>
-            </h1>
 
-            <div className="result-subtitle mb-5 sm:mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-              <p className="text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
-                Проверенная система общения с клиентами для бьюти-мастеров
-              </p>
-            </div>
+  {/* Лёгкий слой, чтобы текст читался */}
+  <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/50 to-transparent md:from-white/40 md:via-white/20 md:to-transparent pointer-events-none z-[2]" />
 
-          <p
-  className="text-base sm:text-lg lg:text-xl text-gray-800 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up"
-  style={{ animationDelay: "0.2s" }}
->
-  <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
-    РЕЗУЛЬТАТ:
-  </span>{" "}
-  закрытые возражения, увеличенный средний чек, экономия времени
-</p>
+  {/* Контент */}
+  <div className="relative z-[3] max-w-7xl mx-auto px-4 sm:px-6 w-full">
+    <div className="max-w-2xl fade-in-view">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] mb-5 sm:mb-6 text-gray-900 animate-fade-in-up">
+        Скрипты, которые превращают{" "}
+        <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          сообщения в деньги
+        </span>
+      </h1>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-5 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-              <a
-                href={STRIPE_URL}
-                target="_blank"
-                rel="noopener"
-                className="group inline-flex items-center gap-3 px-7 sm:px-8 lg:px-9 py-4 sm:py-4.5 lg:py-5 bg-gray-900 text-white rounded-2xl text-lg sm:text-xl font-bold hover:bg-gray-800 transition-all hover:-translate-y-1 hover:shadow-2xl min-h-[56px] relative overflow-hidden"
-                aria-label="Купить скрипты за 19 евро"
-              >
-                <span className="relative z-10">Купить</span>
+      <div
+        className="result-subtitle mb-5 sm:mb-6 animate-fade-in-up"
+        style={{ animationDelay: "0.1s" }}
+      >
+        <p className="text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
+          Проверенная система общения с клиентами для бьюти-мастеров
+        </p>
+      </div>
+
+      <p
+        className="text-base sm:text-lg lg:text-xl text-gray-800 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up"
+        style={{ animationDelay: "0.2s" }}
+      >
+        <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
+          РЕЗУЛЬТАТ:
+        </span>{" "}
+        закрытые возражения, увеличенный средний чек, экономия времени
+      </p>
+
+      <div
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-5 animate-fade-in-up"
+        style={{ animationDelay: "0.3s" }}
+      >
+        <a
+          href={STRIPE_URL}
+          target="_blank"
+          rel="noopener"
+          className="group inline-flex items-center gap-3 px-7 sm:px-8 lg:px-9 py-4 sm:py-4.5 lg:py-5 bg-gray-900 text-white rounded-2xl text-lg sm:text-xl font-bold hover:bg-gray-800 transition-all hover:-translate-y-1 hover:shadow-2xl min-h-[56px] relative overflow-hidden"
+          aria-label="Купить скрипты за 19 евро"
+        >
+          <span className="relative z-10">Купить</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </a>
