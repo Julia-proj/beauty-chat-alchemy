@@ -232,7 +232,7 @@ export default function App() {
       </header>
 
       {/* HERO SECTION - Improved mobile photo display */}
-      <section className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-12 hero-section">
+     <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-white/50 md:from-white/95 md:via-white/80 md:to-transparent pointer-events-none z-[1]"></div>
         {/* Subtle gradient overlay for text readability */}
 <div className="w-full h-[140px] sm:h-[180px] bg-gradient-to-b from-[#e8e6e3] to-transparent"></div>
 
