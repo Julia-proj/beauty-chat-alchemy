@@ -231,21 +231,19 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO SECTION - Improved mobile photo display */}
-     <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-white/50 md:from-white/95 md:via-white/80 md:to-transparent pointer-events-none z-[1]"></div>
-        {/* Subtle gradient overlay for text readability */}
+    {/* HERO SECTION - Fullscreen photo with soft top background */}
 <div className="w-full h-[140px] sm:h-[180px] bg-gradient-to-b from-[#e8e6e3] to-transparent"></div>
-
-
-        {/* Mobile: Real image to prevent cropping */}
-        <img
-          src="/images/IMG_6537.jpeg"
-          alt="Beauty professional"
-          className="hero-photo md:hidden"
-          loading="eager"
-          decoding="async"
-        />
-
+<section className="relative w-full h-screen flex items-end justify-center overflow-hidden bg-[#e8e6e3]">
+  {/* Фото — на весь экран */}
+  <img
+    src="/images/IMG_6537.jpeg"
+    alt="Beauty professional"
+    className="w-full h-full object-cover object-center"
+    loading="eager"
+    decoding="async"
+  />
+</section>
+<section className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-12 hero-section">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl fade-in-view">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] mb-5 sm:mb-6 text-gray-900 animate-fade-in-up">
