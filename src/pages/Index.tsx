@@ -258,12 +258,15 @@ export default function App() {
               </p>
             </div>
 
-            <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up result-badge" style={{ animationDelay: "0.2s" }}>
-              <span className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/50">
-                <span className="font-bold text-gray-900">Результат:</span>
-                <span>закрытые возражения, увеличенный средний чек, экономия времени</span>
-              </span>
-            </p>
+          <p
+  className="text-base sm:text-lg lg:text-xl text-gray-800 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up"
+  style={{ animationDelay: "0.2s" }}
+>
+  <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
+    РЕЗУЛЬТАТ:
+  </span>{" "}
+  закрытые возражения, увеличенный средний чек, экономия времени
+</p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-5 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
               <a
