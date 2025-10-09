@@ -216,7 +216,7 @@ export default function App() {
       </div>
 
       {/* Header - Полупрозрачный стильный */}
-      <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
+      <header className="fixed top-0 left-0 right-0 bg-white/50 sm:bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
           <a
@@ -232,7 +232,7 @@ export default function App() {
       </header>
 
 {/* HERO SECTION - адаптивное фото без обрезки лица */}
-<section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-24">
+<section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-24 bg-gradient-to-b from-[#faf5f0] to-white">
   {/* Фото: на мобиле снизу, на десктопе справа */}
   <img
     src="/images/IMG_6537.jpeg"
@@ -265,7 +265,7 @@ export default function App() {
       </div>
 
       <p
-        className="text-sm sm:text-base lg:text-lg text-gray-800 mb-6 sm:mb-8 leading-relaxed animate-fade-in-up"
+        className="text-sm sm:text-base lg:text-lg text-gray-800 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up"
         style={{ animationDelay: "0.2s" }}
       >
         <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
@@ -275,7 +275,7 @@ export default function App() {
       </p>
 
       <div
-        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 animate-fade-in-up"
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-5 sm:mb-6 animate-fade-in-up"
         style={{ animationDelay: "0.3s" }}
       >
         <a
@@ -313,54 +313,54 @@ export default function App() {
       z-index: 0;
     }
     
-    /* Мобила: фото снизу, не закрывает текст */
+    /* Мобила: фото снизу, увеличенное */
     @media (max-width: 767px) {
       .hero-image {
         bottom: 0;
         right: -5%;
-        height: 50vh;
+        height: 62vh;
         width: auto;
         object-fit: contain;
         object-position: bottom center;
       }
     }
     
-    /* Планшет: фото справа, меньше */
+    /* Планшет: фото справа */
     @media (min-width: 768px) and (max-width: 1023px) {
       .hero-image {
         top: 50%;
-        right: -10%;
+        right: -8%;
         transform: translateY(-50%);
-        height: 85vh;
+        height: 88vh;
         width: auto;
         object-fit: contain;
         object-position: center right;
       }
     }
     
-    /* Десктоп: фото справа, не слишком близко */
+    /* Десктоп: фото увеличено и ближе */
     @media (min-width: 1024px) {
       .hero-image {
         top: 50%;
-        right: 5%;
+        right: -5%;
         transform: translateY(-50%);
-        height: 90vh;
-        max-height: 90vh;
+        height: 95vh;
+        max-height: 95vh;
         width: auto;
         object-fit: contain;
         object-position: center right;
       }
     }
     
-    /* Overlay для читаемости */
+    /* Overlay для читаемости - меньше осветления */
     .hero-overlay {
       position: absolute;
       inset: 0;
       z-index: 1;
       background: linear-gradient(to right, 
-        rgba(255,255,255,0.95) 0%, 
-        rgba(255,255,255,0.85) 35%,
-        rgba(255,255,255,0.4) 60%,
+        rgba(250,245,240,0.98) 0%, 
+        rgba(250,245,240,0.85) 30%,
+        rgba(250,245,240,0.3) 55%,
         transparent 100%
       );
     }
@@ -368,9 +368,9 @@ export default function App() {
     @media (max-width: 767px) {
       .hero-overlay {
         background: linear-gradient(to bottom,
-          rgba(255,255,255,0.98) 0%,
-          rgba(255,255,255,0.95) 45%,
-          rgba(255,255,255,0.7) 70%,
+          rgba(250,245,240,0.98) 0%,
+          rgba(250,245,240,0.92) 40%,
+          rgba(250,245,240,0.5) 65%,
           transparent 100%
         );
       }
@@ -396,7 +396,7 @@ export default function App() {
       </section>
 
       {/* 01 - Comparison Section */}
-      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
+      <section id="comparison" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -461,11 +461,11 @@ export default function App() {
       </section>
 
       {/* 02 - Why Section */}
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
+      <section id="why" className="relative py-8 sm:py-12 lg:py-16 section-bg-2">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 fade-in-view">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 sm:mb-10 fade-in-view">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
@@ -473,17 +473,17 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {[
               { img: "/images/money.png", title: "Сливаются деньги на рекламу", text: "Платите за заявки, но конвертируете лишь 20–30%. Остальные — выброшенный бюджет." },
               { img: "/images/clock.png", title: "Тратится время впустую", text: "По 30–40 минут на переписку с каждым. Уходит 3–4 часа в день." },
               { img: "/images/door.png", title: "Заявки уходят к конкуренту", text: "Пока вы думаете, клиент записывается к тем, кто отвечает быстро и уверенно." },
             ].map((c, i) => (
-              <div key={i} className="card-premium rounded-3xl border border-gray-100 p-7 text-center bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group fade-in-view" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="mb-5 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 group-hover:scale-110 transition-transform duration-300">
-                  <img src={c.img} alt="" className="w-10 h-10 object-contain" loading="lazy" />
+              <div key={i} className="card-premium rounded-3xl border border-gray-100 p-5 sm:p-6 text-center bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group fade-in-view" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="mb-4 inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 group-hover:scale-110 transition-transform duration-300">
+                  <img src={c.img} alt="" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" loading="lazy" />
                 </div>
-                <h3 className="font-bold text-lg mb-3 text-gray-900">{c.title}</h3>
+                <h3 className="font-bold text-base sm:text-lg mb-2 sm:mb-3 text-gray-900">{c.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{c.text}</p>
               </div>
             ))}
@@ -492,7 +492,7 @@ export default function App() {
       </section>
 
       {/* 03 - For Whom Section */}
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
+      <section id="for" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
@@ -525,7 +525,7 @@ export default function App() {
       </section>
 
       {/* 04 - What's Included Section */}
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
+      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-16 section-bg-2">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -564,7 +564,7 @@ export default function App() {
       </section>
 
       {/* 05 - Bonuses Section */}
-      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
+      <section id="bonuses" className="relative py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         {/* Confetti decoration */}
@@ -652,7 +652,7 @@ export default function App() {
       </section>
 
       {/* 06 - Immediate Results Section */}
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
+      <section id="immediate" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -681,7 +681,7 @@ export default function App() {
       </section>
 
       {/* 07 - Reviews Section */}
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
+      <section id="reviews" className="relative py-8 sm:py-12 lg:py-16 section-bg-2">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
@@ -773,7 +773,7 @@ export default function App() {
       </section>
 
       {/* 08 - Offer Section */}
-      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-white to-gray-50">
+      <section id="offer" className="relative py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -861,7 +861,7 @@ export default function App() {
       </section>
 
       {/* 09 - FAQ Section */}
-      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
+      <section id="faq" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
