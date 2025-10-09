@@ -215,9 +215,9 @@ export default function App() {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-xl z-50 border-b border-gray-100/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex justify-between items-center">
+      {/* Header - Полупрозрачный стильный */}
+      <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
           <a
             href={STRIPE_URL}
@@ -231,27 +231,24 @@ export default function App() {
         </div>
       </header>
 
-{/* HERO SECTION — fullscreen photo + text on top */}
-<section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-[#e8e6e3]">
-  {/* Фон: плавный переход сверху, чтобы не было обреза */}
-  <div className="absolute top-0 left-0 w-full h-[140px] sm:h-[180px] bg-gradient-to-b from-[#e8e6e3] to-transparent z-[1]" />
-
-  {/* Фото на весь экран */}
+{/* HERO SECTION - адаптивное фото без обрезки лица */}
+<section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-24">
+  {/* Фото: на мобиле снизу, на десктопе справа */}
   <img
     src="/images/IMG_6537.jpeg"
     alt="Beauty professional"
-    className="absolute inset-0 w-full h-full object-cover object-center"
+    className="hero-image"
     loading="eager"
     decoding="async"
   />
 
-  {/* Лёгкий слой, чтобы текст читался */}
-  <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/50 to-transparent md:from-white/40 md:via-white/20 md:to-transparent pointer-events-none z-[2]" />
+  {/* Градиент для читаемости текста */}
+  <div className="hero-overlay pointer-events-none" />
 
   {/* Контент */}
-  <div className="relative z-[3] max-w-7xl mx-auto px-4 sm:px-6 w-full">
-    <div className="max-w-2xl fade-in-view">
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] mb-5 sm:mb-6 text-gray-900 animate-fade-in-up">
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
+    <div className="max-w-xl lg:max-w-2xl fade-in-view">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 sm:mb-5 text-gray-900 animate-fade-in-up">
         Скрипты, которые превращают{" "}
         <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           сообщения в деньги
@@ -259,16 +256,16 @@ export default function App() {
       </h1>
 
       <div
-        className="result-subtitle mb-5 sm:mb-6 animate-fade-in-up"
+        className="result-subtitle mb-4 sm:mb-5 animate-fade-in-up"
         style={{ animationDelay: "0.1s" }}
       >
-        <p className="text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
+        <p className="text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800">
           Проверенная система общения с клиентами для бьюти-мастеров
         </p>
       </div>
 
       <p
-        className="text-base sm:text-lg lg:text-xl text-gray-800 mb-8 sm:mb-10 leading-relaxed animate-fade-in-up"
+        className="text-sm sm:text-base lg:text-lg text-gray-800 mb-6 sm:mb-8 leading-relaxed animate-fade-in-up"
         style={{ animationDelay: "0.2s" }}
       >
         <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
@@ -278,105 +275,128 @@ export default function App() {
       </p>
 
       <div
-        className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-5 animate-fade-in-up"
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 animate-fade-in-up"
         style={{ animationDelay: "0.3s" }}
       >
         <a
           href={STRIPE_URL}
           target="_blank"
           rel="noopener"
-          className="group inline-flex items-center gap-3 px-7 sm:px-8 lg:px-9 py-4 sm:py-4.5 lg:py-5 bg-gray-900 text-white rounded-2xl text-lg sm:text-xl font-bold hover:bg-gray-800 transition-all hover:-translate-y-1 hover:shadow-2xl min-h-[56px] relative overflow-hidden"
+          className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-1 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
           aria-label="Купить скрипты за 19 евро"
         >
           <span className="relative z-10">Купить</span>
-                <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </a>
-              <div className="hidden sm:flex items-center gap-2.5 text-sm">
-                <span className="px-3 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
-                <span className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5 text-xs text-gray-600 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-              <span className="px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                <span>🔒</span> Безопасная оплата
-              </span>
-              <span className="px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                <span>✓</span> Stripe
-              </span>
-            </div>
-          </div>
+          <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </a>
+        <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
+          <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
+          <span className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
         </div>
+      </div>
 
-        <style>{`
-          .hero-section {
-            background-image: url('/images/IMG_6537.jpeg');
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: right center;
-            background-color: #f5f7fa;
-          }
-          
-          /* Mobile: No background, use real <img> instead */
-          @media (max-width: 767px) {
-            .hero-section {
-              background-image: none;
-              background-color: #f8f9fb;
-            }
-          }
-          
-          /* Tablet */
-          @media (min-width: 768px) and (max-width: 1023px) {
-            .hero-section {
-              background-size: 65%;
-              background-position: 108% center;
-            }
-          }
-          
-          /* Desktop: Person on right with more breathing room */
-          @media (min-width: 1024px) {
-            .hero-section {
-              background-size: 70%;
-              background-position: 115% center;
-            }
-          }
+      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+        <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5 whitespace-nowrap">
+          <span>🔒</span> Безопасная оплата
+        </span>
+        <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
+          <span>✓</span> Stripe
+        </span>
+      </div>
+    </div>
+  </div>
 
-          /* MOBILE PHOTO - Full display without cropping */
-          .hero-photo {
-            position: absolute;
-            right: -3%;
-            bottom: 0;
-            height: 75vh;
-            max-height: 75dvh;
-            width: auto;
-            object-fit: contain;
-            object-position: bottom right;
-            pointer-events: none;
-            z-index: 0;
-          }
+  <style>{`
+    /* Hero Image - Адаптивное расположение */
+    .hero-image {
+      position: absolute;
+      z-index: 0;
+    }
+    
+    /* Мобила: фото снизу, не закрывает текст */
+    @media (max-width: 767px) {
+      .hero-image {
+        bottom: 0;
+        right: -5%;
+        height: 50vh;
+        width: auto;
+        object-fit: contain;
+        object-position: bottom center;
+      }
+    }
+    
+    /* Планшет: фото справа, меньше */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .hero-image {
+        top: 50%;
+        right: -10%;
+        transform: translateY(-50%);
+        height: 85vh;
+        width: auto;
+        object-fit: contain;
+        object-position: center right;
+      }
+    }
+    
+    /* Десктоп: фото справа, не слишком близко */
+    @media (min-width: 1024px) {
+      .hero-image {
+        top: 50%;
+        right: 5%;
+        transform: translateY(-50%);
+        height: 90vh;
+        max-height: 90vh;
+        width: auto;
+        object-fit: contain;
+        object-position: center right;
+      }
+    }
+    
+    /* Overlay для читаемости */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(to right, 
+        rgba(255,255,255,0.95) 0%, 
+        rgba(255,255,255,0.85) 35%,
+        rgba(255,255,255,0.4) 60%,
+        transparent 100%
+      );
+    }
+    
+    @media (max-width: 767px) {
+      .hero-overlay {
+        background: linear-gradient(to bottom,
+          rgba(255,255,255,0.98) 0%,
+          rgba(255,255,255,0.95) 45%,
+          rgba(255,255,255,0.7) 70%,
+          transparent 100%
+        );
+      }
+    }
 
-          .result-subtitle {
-            position: relative;
-            padding-top: 14px;
-            margin-top: 10px;
-          }
-          
-          .result-subtitle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 72px;
-            height: 3px;
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.6) 0%, transparent 100%);
-            border-radius: 2px;
-          }
-        `}</style>
+    .result-subtitle {
+      position: relative;
+      padding-top: 12px;
+      margin-top: 8px;
+    }
+    
+    .result-subtitle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 64px;
+      height: 2.5px;
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.7) 0%, transparent 100%);
+      border-radius: 2px;
+    }
+  `}</style>
       </section>
 
       {/* 01 - Comparison Section */}
-      <section id="comparison" className="relative py-16 sm:py-20 lg:py-24 section-bg-1">
+      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -441,7 +461,7 @@ export default function App() {
       </section>
 
       {/* 02 - Why Section */}
-      <section id="why" className="relative py-16 sm:py-20 lg:py-24 section-bg-2">
+      <section id="why" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -472,7 +492,7 @@ export default function App() {
       </section>
 
       {/* 03 - For Whom Section */}
-      <section id="for" className="relative py-16 sm:py-20 lg:py-24 section-bg-1">
+      <section id="for" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
@@ -505,7 +525,7 @@ export default function App() {
       </section>
 
       {/* 04 - What's Included Section */}
-      <section id="whats-included" className="relative py-16 sm:py-20 lg:py-24 section-bg-2">
+      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -544,7 +564,7 @@ export default function App() {
       </section>
 
       {/* 05 - Bonuses Section */}
-      <section id="bonuses" className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
+      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         {/* Confetti decoration */}
@@ -632,7 +652,7 @@ export default function App() {
       </section>
 
       {/* 06 - Immediate Results Section */}
-      <section id="immediate" className="relative py-16 sm:py-20 lg:py-24 section-bg-1">
+      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -661,7 +681,7 @@ export default function App() {
       </section>
 
       {/* 07 - Reviews Section */}
-      <section id="reviews" className="relative py-16 sm:py-20 lg:py-24 section-bg-2">
+      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 section-bg-2">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
@@ -753,7 +773,7 @@ export default function App() {
       </section>
 
       {/* 08 - Offer Section */}
-      <section id="offer" className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-gray-50">
+      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 fade-in-view">
@@ -805,7 +825,7 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                <div className="text-sm text-gray-300 mb-8">
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 sm:mb-8 whitespace-nowrap overflow-x-auto text-center">
                   Без скрытых платежей • Пожизненный доступ • Обновления включены
                 </div>
 
@@ -829,10 +849,10 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
-                  <div className="px-3 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</div>
-                  <div className="px-3 py-1.5 bg-white/20 text-white rounded-lg font-medium">Google Pay</div>
-                  <div className="px-3 py-1.5 bg-white/20 text-white rounded-lg font-medium">Visa</div>
-                  <div className="px-3 py-1.5 bg-white/20 text-white rounded-lg font-medium">MasterCard</div>
+                  <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">MasterCard</div>
                 </div>
               </div>
             </div>
@@ -841,7 +861,7 @@ export default function App() {
       </section>
 
       {/* 09 - FAQ Section */}
-      <section id="faq" className="relative py-16 sm:py-20 lg:py-24 section-bg-1">
+      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12 fade-in-view">
@@ -878,9 +898,9 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 sm:py-16 bg-white border-t border-gray-200 text-center">
+      <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-2xl font-bold text-gray-900 mb-4">Beauty Scripts</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
         </div>
       </footer>
