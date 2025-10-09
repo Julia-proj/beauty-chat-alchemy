@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -62,11 +62,11 @@ function SectionMarker({ n }: { n: string }) {
           animation-delay: .15s;
         }
         @media (min-width:1024px){
-          .section-marker{ left:0; top:0.25rem; transform: translate(-64px, 0); }
+          .section-marker{ left: -8px; top: 0.25rem; }
         }
-        .marker-number{ font-weight:700; font-size:12px; letter-spacing:.12em; color: rgba(148,163,184,.72); font-variant-numeric: tabular-nums; }
-        @media (min-width:1024px){ .marker-number{ font-size:14px; } }
-        .marker-line{ width:28px; height:1.5px; background: linear-gradient(90deg, rgba(148,163,184,.4) 0%, transparent 100%); }
+        .marker-number{ font-weight:700; font-size:13px; letter-spacing:.12em; color: rgba(148,163,184,.78); font-variant-numeric: tabular-nums; }
+        @media (min-width:1024px){ .marker-number{ font-size:15px; } }
+        .marker-line{ width:28px; height:1.5px; background: linear-gradient(90deg, rgba(148,163,184,.45) 0%, transparent 100%); }
         @media (min-width:1024px){ .marker-line{ width:40px; } }
         @keyframes marker-in{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
       `}</style>
@@ -78,7 +78,7 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
-      <div className="max-w-2xl max-h-[90svh] relative animate-scale-in" onClick={(e) => e.stopPropagation()}>
+      <div className="max-w-2xl max-h-[90vh] relative animate-scale-in" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           className="absolute -top-12 right-0 text-white text-3xl hover:text-gray-300 transition-colors w-10 h-10 flex items-center justify-center"
@@ -100,10 +100,13 @@ export default function App() {
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const { h, m, s, finished } = useCountdown(12);
+
+  const headerRef = useRef<HTMLElement | null>(null);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
+  const { h, m, s, finished } = useCountdown(12);
 
+  // имитация «онлайн»
   useEffect(() => {
     const id = setInterval(() => {
       setViewersCount(prev => {
@@ -115,6 +118,7 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
+  // прогресс + показ мобильного CTA
   useEffect(() => {
     const handleScroll = () => {
       const scrollPx = document.documentElement.scrollTop;
@@ -128,12 +132,13 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const openLightbox = (imageSrc: string, reviewNumber: number) => {
-    setLightboxImage(imageSrc);
-    setLightboxReviewNumber(reviewNumber);
-    setLightboxOpen(true);
-  };
+  // высота хедера -> CSS-переменная (убирает белую «шапку» на мобиле)
+  useEffect(() => {
+    const h = headerRef.current?.offsetHeight ?? 72;
+    document.documentElement.style.setProperty('--header-h', `${h}px`);
+  });
 
+  // lazy fade-in
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("is-visible"); }),
@@ -142,6 +147,12 @@ export default function App() {
     document.querySelectorAll<HTMLElement>(".fade-in-view").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
+
+  const openLightbox = (imageSrc: string, reviewNumber: number) => {
+    setLightboxImage(imageSrc);
+    setLightboxReviewNumber(reviewNumber);
+    setLightboxOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
@@ -156,10 +167,11 @@ export default function App() {
         </div>
       </div>
 
-      {/* header с прогресс-линией */}
-      <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
-        <div className="h-1 bg-gray-100 absolute top-0 left-0 right-0 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-[width] duration-150 ease-out" style={{ width: `${scrollProgress}%` }} />
+      {/* header */}
+      <header ref={headerRef} className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
+        {/* progress line */}
+        <div className="h-1 bg-gray-100 absolute top-0 left-0 right-0">
+          <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
@@ -175,8 +187,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO: фото = фон, без белой пустоты, текст ниже лица */}
-      <section className="relative w-full min-h-[100svh] flex items-stretch overflow-hidden pt-16 sm:pt-24 lg:pt-20 bg-[#f7f4f1]">
+      {/* HERO — фото как полноценный фон на мобиле, тексты на фото, лицо не перекрываем */}
+      <section className="relative w-full min-h-[100svh] flex items-center justify-start overflow-hidden"
+               style={{ paddingTop: "calc(var(--header-h) + 6px)" }}>
         {/* Фото */}
         <img
           src="/images/IMG_6537.jpeg"
@@ -186,26 +199,28 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Оверлей */}
+        {/* Оверлей (слегка высветляет фото) */}
         <div className="hero-overlay pointer-events-none" />
 
-        {/* Контент */}
+        {/* Контент на фото */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="max-w-xl lg:max-w-2xl fade-in-view mobile-hero-stack">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-3 sm:mb-5 text-gray-900 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-3 sm:mb-5 text-gray-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]">
               Скрипты, которые превращают{" "}
               <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
 
-            <div className="result-subtitle mb-3 sm:mb-5">
+            {/* подзаголовок близко к h1, но не прилипает */}
+            <div className="result-subtitle mb-2 sm:mb-4">
               <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800">
                 Проверенная система общения с клиентами для бьюти-мастеров
               </p>
             </div>
 
-            <p className="text-pretty text-sm sm:text-base lg:text-lg text-gray-800 mb-5 sm:mb-8 leading-relaxed">
+            {/* РЕЗУЛЬТАТ — заметно ниже, чтобы не закрывать лицо на мобиле */}
+            <p className="text-pretty text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed mt-10 sm:mt-4 mb-5 sm:mb-8">
               <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
               закрытые возражения, увеличенный средний чек, экономия времени
             </p>
@@ -248,60 +263,25 @@ export default function App() {
           :global(.text-pretty){ text-wrap: pretty; }
 
           .hero-image{
-            position:absolute; z-index:0; max-width:none;
-          }
-          /* Мобила: фото на всю высоту, без белых полей */
-          @media (max-width: 767px){
-            .hero-image{
-              inset:0;
-              width: 100%; height: 100svh;
-              object-fit: cover; object-position: center 28%;
-              filter: saturate(1) brightness(0.98);
-            }
-            /* смещаем контент вниз, чтобы не перекрывать лицо */
-            .mobile-hero-stack{ margin-top: calc(52svh); }
-          }
-          /* Планшет */
-          @media (min-width:768px) and (max-width:1023px){
-            .hero-image{
-              top:50%; right:0; left:auto;
-              transform: translateY(-50%);
-              height: 85svh; width: auto;
-              object-fit: contain; object-position: center right;
-            }
-          }
-          /* Десктоп */
-          @media (min-width:1024px){
-            .hero-image{
-              top:50%; right:5%;
-              transform: translateY(-50%);
-              height: 90svh; max-height:90svh; width:auto;
-              object-fit: contain; object-position: 75% center;
-            }
+            position:absolute; z-index:0; inset:0;
+            width:100%; height:100%;
+            object-fit: cover;
+            object-position: center 28%; /* лицо выше середины, не перекрываем текстом */
           }
 
           .hero-overlay{
             position:absolute; inset:0; z-index:1;
-            background: linear-gradient(to right,
-              rgba(255,255,255,0.98) 0%,
-              rgba(247,244,241,0.88) 28%,
-              rgba(247,244,241,0.45) 55%,
-              transparent 100%
+            /* мягкое высветление для читаемости текста на фото */
+            background: linear-gradient(to bottom,
+              rgba(255,255,255,0.82) 0%,
+              rgba(247,244,241,0.68) 28%,
+              rgba(247,244,241,0.55) 56%,
+              rgba(247,244,241,0.75) 82%,
+              rgba(247,244,241,0.92) 100%
             );
           }
-          @media (max-width:767px){
-            .hero-overlay{
-              background: linear-gradient(to bottom,
-                rgba(247,244,241,0.78) 0%,
-                rgba(247,244,241,0.62) 30%,
-                rgba(247,244,241,0.52) 55%,
-                rgba(247,244,241,0.68) 80%,
-                rgba(247,244,241,0.88) 100%
-              );
-            }
-          }
 
-          .result-subtitle{ position:relative; padding-top:12px; margin-top:8px; }
+          .result-subtitle{ position:relative; padding-top:10px; }
           .result-subtitle::before{
             content:''; position:absolute; top:0; left:0;
             width:64px; height:2.5px;
@@ -312,11 +292,11 @@ export default function App() {
       </section>
 
       {/* 01 - Сравнение */}
-      <section id="comparison" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-1">
+      <section id="comparison" className="relative py-7 sm:py-10 lg:py-14 section-bg-1 has-marker">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+          <div className="text-center mb-7 sm:mb-9 fade-in-view">
+            <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
@@ -356,7 +336,7 @@ export default function App() {
                   После
                 </div>
               </div>
-              <ul className="space-y-3 text:[15px] sm:text-base text-gray-800">
+              <ul className="space-y-3 text-[15px] sm:text-base text-gray-800">
                 {[
                   "«Сколько стоит?» → Презентуете ценность, получаете запись.",
                   "«Подумаю» → Мягкое возражение возвращает к записи.",
@@ -377,21 +357,21 @@ export default function App() {
       </section>
 
       {/* 02 - Почему */}
-      <section id="why" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-2">
+      <section id="why" className="relative py-7 sm:py-10 lg:py-14 section-bg-2 has-marker">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+          <div className="text-center mb-7 fade-in-view">
+            <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Каждая потерянная заявка - это упущенная прибыль
+              Каждая потерянная заявка — это упущенная прибыль
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { img: "/images/money.png", title: "Сливаются деньги на рекламу", text: "Платите за заявки, но конвертируете лишь 20-30%. Остальные - выброшенный бюджет." },
+              { img: "/images/money.png", title: "Сливаются деньги на рекламу", text: "Платите за заявки, но конвертируете лишь 20-30%. Остальные — выброшенный бюджет." },
               { img: "/images/clock.png", title: "Тратится время впустую", text: "По 30-40 минут на переписку с каждым. Уходит 3-4 часа в день." },
               { img: "/images/door.png", title: "Заявки уходят к конкуренту", text: "Пока вы думаете, клиент записывается к тем, кто отвечает быстро и уверенно." },
             ].map((c, i) => (
@@ -408,10 +388,10 @@ export default function App() {
       </section>
 
       {/* 03 - Кому подходят */}
-      <section id="for" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-1">
+      <section id="for" className="relative py-7 sm:py-10 lg:py-14 section-bg-1 has-marker">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
+          <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
             Кому подходят <span className="text-emerald-600">скрипты</span>
           </h2>
 
@@ -441,11 +421,11 @@ export default function App() {
       </section>
 
       {/* 04 - Что входит */}
-      <section id="whats-included" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-2">
+      <section id="whats-included" className="relative py-7 sm:py-10 lg:py-14 section-bg-2 has-marker">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+          <div className="text-center mb-7 sm:mb-9 fade-in-view">
+            <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
@@ -471,7 +451,7 @@ export default function App() {
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {/* лёгкий подсвет ключевых слов без перегруза */}
+                  {/* лёгкое подсвечивание ключевых фраз */}
                   {item.desc}
                 </p>
               </div>
@@ -481,16 +461,15 @@ export default function App() {
       </section>
 
       {/* 05 - Бонусы */}
-      <section id="bonuses" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
+      <section id="bonuses" className="relative py-7 sm:py-10 lg:py-14 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden has-marker">
         <SectionMarker n="05" />
-
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+          <div className="text-center mb-7 sm:mb-9 fade-in-view">
+            <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Суммарная ценность - 79€. Сегодня идут бесплатно со скриптами
+              Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
 
@@ -517,14 +496,13 @@ export default function App() {
       </section>
 
       {/* 06 - Что изменится сразу */}
-      <section id="immediate" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-1">
+      <section id="immediate" className="relative py-7 sm:py-10 lg:py-14 section-bg-1 has-marker">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block">
+          <div className="text-center mb-7 sm:mb-9 fade-in-view">
+            <h2 className="section-heading with-underline text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
             </h2>
-            <div className="mx-auto mt-4 h-1 w-32 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-sm"></div>
           </div>
 
           <div className="space-y-3">
@@ -532,10 +510,10 @@ export default function App() {
               "Перестанешь терять заявки из-за слабых ответов.",
               "Начнёшь закрывать больше записей уже с первого дня.",
               "Повысишь средний чек через правильные предложения.",
-              "Станешь увереннее - на всё есть готовый ответ.",
+              "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
               <div key={i} className="flex items-start gap-3.5 bg-white/85 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-teal-100/60 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
-                <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                <div className="w-6 h-6 bg-teал-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                   <svg className="w-3.5 h-3.5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <span className="text-[15.5px] sm:text-base font-medium text-gray-800 leading-relaxed">{t}</span>
@@ -546,10 +524,10 @@ export default function App() {
       </section>
 
       {/* 07 - Отзывы + рилсы */}
-      <section id="reviews" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 section-bg-2">
+      <section id="reviews" className="relative py-7 sm:py-10 lg:py-14 section-bg-2 has-marker">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+          <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-9 fade-in-view">
             Отзывы клиентов
           </h2>
 
@@ -613,11 +591,11 @@ export default function App() {
       </section>
 
       {/* 08 - Оффер */}
-      <section id="offer" className="relative pt-10 sm:pt-12 lg:pt-14 pb-6 sm:pb-10 lg:pb-14 bg-gradient-to-b from-white to-gray-50">
+      <section id="offer" className="relative py-7 sm:py-10 lg:py-14 bg-gradient-to-b from-white to-gray-50 has-marker">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
+          <div className="text-center mb-7 sm:mb-9 fade-in-view">
+            <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
             <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
@@ -701,17 +679,17 @@ export default function App() {
       </section>
 
       {/* 09 - FAQ */}
-      <section id="faq" className="relative pt-10 sm:pt-12 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 section-bg-1">
+      <section id="faq" className="relative py-7 sm:py-10 lg:py-14 section-bg-1 has-marker">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="mt-2 sm:mt-3 text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+          <h2 className="section-heading text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-9 fade-in-view">
             Частые вопросы
           </h2>
 
           <div className="space-y-3.5">
             {[
               { q: "Сработает в моей нише?", a: "Да. База универсальная и блоки под ногти/брови/ресницы/волосы/косметологию/перманент." },
-              { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное - следовать алгоритму." },
+              { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное — следовать алгоритму." },
               { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
               { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
             ].map((f, i) => (
@@ -755,7 +733,7 @@ export default function App() {
             className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
             aria-label="Купить скрипты за 19 евро"
           >
-            <span>Скрипты - 19€</span>
+            <span>Скрипты — 19€</span>
             <span className="text-xl">→</span>
           </a>
         </div>
@@ -781,6 +759,27 @@ export default function App() {
 
         .fade-in-view{ opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
         .fade-in-view.is-visible{ opacity:1; transform: translateY(0); }
+
+        /* отступы для секций с маркером, чтобы 01/02 не прилипали к заголовкам */
+        .has-marker .section-heading{ margin-top: 12px; }
+        @media (min-width:640px){ .has-marker .section-heading{ margin-top: 14px; } }
+
+        /* подчёркивание как часть заголовка (а не отдельная полоска) */
+        .with-underline{
+          position: relative;
+        }
+        .with-underline::after{
+          content:"";
+          position:absolute;
+          left:50%;
+          transform:translateX(-50%);
+          bottom:-14px;
+          width:120px;
+          height:4px;
+          border-radius:9999px;
+          background: linear-gradient(90deg, #34d399 0%, #22d3ee 100%);
+          box-shadow: 0 1px 0 rgba(0,0,0,.04);
+        }
       `}</style>
     </div>
   );
