@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import InstaEmbed from "@/components/InstaEmbed";
 
+/** ====== НАСТРОЙКИ ====== */
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
+const IG_USERNAME = "aleksandrova_elena_";           // ← поменяй, если нужно
+const IG_DM_TEXT = "Скрипты%20для%20мастеров%20—%20хочу%20подробности"; // url-encoded
+const IG_DM_URL = `https://ig.me/m/${IG_USERNAME}?text=${IG_DM_TEXT}`;
 
 const INSTAGRAM_REELS: string[] = [
   "https://www.instagram.com/reel/DJmUkiNsZe1/",
@@ -11,6 +15,7 @@ const INSTAGRAM_REELS: string[] = [
   "https://www.instagram.com/reel/DFX57cQobmS/"
 ];
 
+/** ====== ЛОГИКА ====== */
 function useCountdown(hours = 12) {
   const [end] = useState(() => Date.now() + hours * 3600 * 1000);
   const [left, setLeft] = useState(end - Date.now());
@@ -43,10 +48,12 @@ function SectionMarker({ n }: { n: string }) {
   );
 }
 
-function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: boolean; onClose: () => void; imageSrc: string; reviewNumber: number }) {
+function ReviewLightbox({
+  isOpen, onClose, imageSrc, reviewNumber
+}: { isOpen: boolean; onClose: () => void; imageSrc: string; reviewNumber: number }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose} role="dialog" aria-modal="true" aria-label={`Отзыв ${reviewNumber}`}>
       <div className="max-w-2xl max-h-[90vh] relative animate-scale-in" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute -top-12 right-0 text-white text-3xl hover:text-gray-300 transition-colors w-10 h-10 flex items-center justify-center" aria-label="Закрыть">✕</button>
         <img src={imageSrc} alt={`Отзыв ${reviewNumber}`} className="w-full h-auto rounded-2xl shadow-2xl" />
@@ -58,15 +65,14 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
 function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
   useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (scrollPx / winHeightPx) * 100;
+    const update = () => {
+      const doc = document.documentElement;
+      const scrolled = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
       setScrollProgress(scrolled);
     };
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    updateScrollProgress();
-    return () => window.removeEventListener('scroll', updateScrollProgress);
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
   }, []);
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
@@ -80,21 +86,16 @@ function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: 
   let html = escapeHtml(text);
   if (primaryHighlight) {
     const ph = escapeHtml(primaryHighlight);
-    html = html.replace(
-      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${ph}</span>`
-    );
+    html = html.replace(new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), `<span class="text-blue-600 font-semibold">${ph}</span>`);
   }
   for (const phrase of extraPhrases) {
     const p = escapeHtml(phrase);
-    html = html.replace(
-      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${p}</span>`
-    );
+    html = html.replace(new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), `<span class="text-blue-600 font-semibold">${p}</span>`);
   }
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
+/** ====== СТРАНИЦА ====== */
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -102,9 +103,9 @@ export default function App() {
   const [lightboxImage, setLightboxImage] = useState("");
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const { h, m, s, finished } = useCountdown(12);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
-  const { h, m, s, finished } = useCountdown(12);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -122,14 +123,14 @@ export default function App() {
       const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
       setShowStickyCTA(scrolled > 30);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const openLightbox = (imageSrc: string, reviewNumber: number) => {
-    setLightboxImage(imageSrc);
-    setLightboxReviewNumber(reviewNumber);
+  const openLightbox = (src: string, n: number) => {
+    setLightboxImage(src);
+    setLightboxReviewNumber(n);
     setLightboxOpen(true);
   };
 
@@ -144,16 +145,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      <ReviewLightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        imageSrc={lightboxImage}
-        reviewNumber={lightboxReviewNumber}
-      />
-
+      <ReviewLightbox isOpen={lightboxOpen} onClose={() => setLightboxOpen(false)} imageSrc={lightboxImage} reviewNumber={lightboxReviewNumber} />
       <ScrollProgress />
 
-      {/* Desktop Viewers Badge */}
+      {/* Online badge (desktop) */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
         <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300">
           <div className="relative">
@@ -165,36 +160,38 @@ export default function App() {
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30">
+      <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
-          <a
-            href={STRIPE_URL}
-            target="_blank"
-            rel="noopener"
-            className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 transform min-h-[44px] flex items-center justify-center"
-            aria-label="Купить скрипты"
-          >
-            Купить
-          </a>
+
+          <div className="flex gap-2">
+            <a
+              href={IG_DM_URL}
+              target="_blank"
+              rel="noopener"
+              className="px-4 sm:px-5 py-2.5 bg-white text-gray-900 rounded-xl text-sm sm:text-base font-semibold border border-gray-300 hover:bg-gray-50 transition-all min-h-[44px] flex items-center"
+              aria-label="Написать в Instagram"
+            >
+              Написать
+            </a>
+            <a
+              href={STRIPE_URL}
+              target="_blank"
+              rel="noopener"
+              className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 transform min-h-[44px] flex items-center"
+              aria-label="Купить скрипты"
+            >
+              Купить
+            </a>
+          </div>
         </div>
       </header>
 
-      {/* HERO — фото + текст, без белых плашек, меньше осветление */}
+      {/* HERO */}
       <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-24 bg-[#efece8]">
-        {/* Фото */}
-        <img
-          src="/images/IMG_6537.jpeg"
-          alt="Beauty professional"
-          className="hero-image"
-          loading="eager"
-          decoding="async"
-        />
-
-        {/* Оверлей (осветление уменьшаем) */}
+        <img src="/images/IMG_6537.jpeg" alt="Beauty professional" className="hero-image" loading="eager" decoding="async" />
         <div className="hero-overlay pointer-events-none" />
 
-        {/* Контент */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 sm:mb-5 text-gray-900">
@@ -208,16 +205,13 @@ export default function App() {
               </p>
             </div>
 
-            {/* РЕЗУЛЬТАТ — сильно ниже (в район груди/кончиков волос) */}
             <p className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed mt-14 sm:mt-24 lg:mt-[22vh]">
-              <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">
-                РЕЗУЛЬТАТ:
-              </span>{" "}
+              <span className="font-semibold uppercase tracking-wide text-blue-600 drop-shadow-sm">РЕЗУЛЬТАТ:</span>{" "}
               закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
-            {/* Кнопка внизу слева + безопасная оплата */}
-            <div className="mt-6 sm:mt-8">
+            {/* CTA блок: Купить + Написать */}
+            <div className="mt-6 sm:mt-8 flex items-center gap-3 flex-wrap">
               <a
                 href={STRIPE_URL}
                 target="_blank"
@@ -228,7 +222,17 @@ export default function App() {
                 Купить <span className="inline-block">→</span>
               </a>
 
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+              <a
+                href={IG_DM_URL}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center gap-2.5 px-5 py-3.5 bg-white text-gray-900 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50 transition-all min-h-[52px]"
+                aria-label="Написать в Instagram по скриптам"
+              >
+                Написать в Instagram
+              </a>
+
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600">
                 <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
                   <span>🔒</span> Безопасная оплата
                 </span>
@@ -242,19 +246,15 @@ export default function App() {
 
         <style>{`
           .hero-image{position:absolute;z-index:0}
-          /* Мобила: фото снизу, крупнее; голова - под заголовком */
           @media (max-width: 767px){
             .hero-image{bottom:0;right:-6%;height:64vh;width:auto;object-fit:contain;object-position:bottom center}
           }
-          /* Планшет */
           @media (min-width:768px) and (max-width:1023px){
             .hero-image{top:50%;right:-6%;transform:translateY(-50%);height:88vh;width:auto;object-fit:contain;object-position:center right}
           }
-          /* Десктоп: ближе, но не уходит вправо */
           @media (min-width:1024px){
             .hero-image{top:50%;right:-2%;transform:translateY(-50%);height:94vh;max-height:94vh;width:auto;object-fit:contain;object-position:center right}
           }
-          /* Мягче оверлей (меньше выбеление) */
           .hero-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(to right,
             rgba(250,245,240,0.94) 0%,
             rgba(250,245,240,0.80) 28%,
@@ -427,7 +427,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — Bonuses (компактнее) */}
+      {/* 05 — Bonuses */}
       <section id="bonuses" className="relative py-8 sm:py-12 lg:py-14 bg-gradient-to-b from-purple-50/40 via-pink-50/20 to-white overflow-hidden">
         <SectionMarker n="05" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
@@ -460,7 +460,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 06 — Immediate (тонкое подчеркивание, сине-зеленый градиент) */}
+      {/* 06 — Immediate */}
       <section id="immediate" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -489,7 +489,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — Reviews */}
+      {/* 07 — Reviews + Reels */}
       <section id="reviews" className="relative py-8 sm:py-12 lg:py-16 section-bg-2">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -513,7 +513,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* Reels */}
           <div className="flex gap-3 sm:gap-4 justify-center items-center overflow-x-auto pb-2 reels-container">
             {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
               <div
@@ -537,7 +536,7 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 08 — Offer (вернул “Что входит”) */}
+      {/* 08 — Offer */}
       <section id="offer" className="relative py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -583,15 +582,25 @@ export default function App() {
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-2xl mb-5 min-h-[56px] relative overflow-hidden group"
+                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group"
                   aria-label="Купить полную систему со скидкой 85% — 19 евро"
                 >
                   <span className="relative z-10">Получить со скидкой 85%</span>
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* ВОТ ЭТОТ БЛОК — “ЧТО ВХОДИТ” (вернули) */}
-                <div className="text-left mb-6 sm:mb-7">
+                {/* Альтернативный CTA — написать в IG */}
+                <a
+                  href={IG_DM_URL}
+                  target="_blank"
+                  rel="noopener"
+                  className="block w-full text-center rounded-2xl bg-white text-gray-900 font-bold py-4 px-6 border border-gray-200 hover:bg-gray-50 transition-all min-h-[56px]"
+                  aria-label="Написать в Instagram по скриптам"
+                >
+                  Задать вопрос в Instagram
+                </a>
+
+                <div className="text-left mt-6 sm:mt-7">
                   <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
                   <ul className="space-y-2.5 text-sm text-gray-200">
                     {[
@@ -610,15 +619,6 @@ export default function App() {
                   </ul>
                 </div>
 
-                {/* Платежные методы — в одну строку на широких экранах */}
-                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
-                  <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
-                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
-                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
-                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">MasterCard</div>
-                </div>
-
-                {/* Подпись — не обрезается, читаемая */}
                 <div className="mt-4 text-[11px] sm:text-xs text-gray-300 leading-relaxed">
                   Без скрытых платежей • Пожизненный доступ • Обновления включены
                 </div>
@@ -632,9 +632,7 @@ export default function App() {
       <section id="faq" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8">
-            Частые вопросы
-          </h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8">Частые вопросы</h2>
 
           <div className="space-y-4">
             {[
@@ -647,7 +645,8 @@ export default function App() {
                 <button
                   onClick={() => toggleFaq(i)}
                   className="w-full px-7 lg:px-9 py-6 text-left hover:bg-gray-50/50 flex justify-between items-center transition-colors min-h-[56px] group"
-                  aria-label={`Вопрос: ${f.q}`}
+                  aria-expanded={openFaq === i}
+                  aria-controls={`faq-panel-${i}`}
                 >
                   <span className="font-bold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
                   <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-all flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>
@@ -655,7 +654,7 @@ export default function App() {
                   </span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-7 lg:px-9 py-6 border-t border-gray-100 bg-gray-50/30">
+                  <div id={`faq-panel-${i}`} className="px-7 lg:px-9 py-6 border-t border-gray-100 bg-gray-50/30">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -673,29 +672,38 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA — mobile */}
+      {/* Sticky CTA (mobile) */}
       {showStickyCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-4 z-50 lg:hidden shadow-2xl">
-          <a
-            href={STRIPE_URL}
-            target="_blank"
-            rel="noopener"
-            className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all min-h-[56px] shadow-lg"
-            aria-label="Купить скрипты за 19 евро"
-          >
-            Скрипты — 19€
-          </a>
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href={IG_DM_URL}
+              target="_blank"
+              rel="noopener"
+              className="w-full bg-white text-gray-900 py-4 px-5 rounded-2xl font-bold text-base text-center border border-gray-300 hover:bg-gray-50 transition-all min-h-[52px]"
+              aria-label="Написать в Instagram"
+            >
+              Написать
+            </a>
+            <a
+              href={STRIPE_URL}
+              target="_blank"
+              rel="noopener"
+              className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 px-5 rounded-2xl font-bold text-base text-center hover:from-gray-800 hover:to-gray-700 transition-all min-h-[52px]"
+              aria-label="Купить скрипты за 19 евро"
+            >
+              Скрипты — 19€
+            </a>
+          </div>
         </div>
       )}
 
       <style>{`
         .section-bg-1{background:linear-gradient(180deg,#fafbfc 0%,#f0f4f8 100%)}
         .section-bg-2{background:linear-gradient(180deg,#f8f9fb 0%,#e8ecf1 50%,#ffffff 100%)}
-
         .card-premium{position:relative;transition:all .5s cubic-bezier(.4,0,.2,1)}
         .card-premium::before{content:'';position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(135deg,transparent 0%,rgba(59,130,246,.08) 50%,transparent 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .5s}
         .card-premium:hover::before{opacity:1}
-
         .fade-in-view{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1)}
         .fade-in-view.is-visible{opacity:1;transform:translateY(0)}
       `}</style>
