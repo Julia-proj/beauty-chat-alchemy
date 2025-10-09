@@ -30,293 +30,373 @@ function SectionMarker({ n }: { n: string }) {
     <div className="section-marker" aria-hidden="true">
       <span className="marker-number">{n}</span>
       <span className="marker-line" />
-      <style>{`
-        .section-marker{position:absolute;left:.75rem;top:.5rem;display:flex;align-items:center;gap:8px;z-index:10;opacity:0;transform:translateY(8px);animation:marker-in .6s ease forwards;animation-delay:.1s;}
-        @media (min-width:1024px){.section-marker{left:0;top:.25rem;transform:translate(-54px,0);}}
-        .marker-number{font-weight:700;font-size:13px;letter-spacing:.12em;color:rgba(148,163,184,.75);font-variant-numeric:tabular-nums;}
-        @media (min-width:1024px){.marker-number{font-size:15px;}}
-        .marker-line{width:28px;height:1px;background:linear-gradient(90deg,rgba(148,163,184,.4) 0%,transparent 100%);}
-        @media (min-width:1024px){.marker-line{width:36px;}}
-        @keyframes marker-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+      <style jsx>{`
+        .section-marker {
+          position: absolute;
+          left: 1rem;
+          top: .75rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          z-index: 10;
+          opacity: 0;
+          transform: translateY(8px);
+          animation: marker-in .7s ease forwards;
+          animation-delay: .15s;
+        }
+        @media (min-width:1024px){
+          .section-marker{ left:0; top:.5rem; transform: translate(-60px, 0); }
+        }
+        .marker-number{ font-weight:700; font-size:13px; letter-spacing:.12em; color: rgba(148,163,184,.72); font-variant-numeric: tabular-nums; }
+        @media (min-width:1024px){ .marker-number{ font-size:15px; } }
+        .marker-line{ width:28px; height:1.5px; background: linear-gradient(90deg, rgba(148,163,184,.4) 0%, transparent 100%); }
+        @media (min-width:1024px){ .marker-line{ width:40px; } }
+        @keyframes marker-in{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
       `}</style>
     </div>
   );
 }
 
-function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }:{
-  isOpen:boolean; onClose:()=>void; imageSrc:string; reviewNumber:number
-}) {
+function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: boolean; onClose: () => void; imageSrc: string; reviewNumber: number }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
-      <div className="max-w-2xl max-h-[90vh] relative animate-scale-in" onClick={(e)=>e.stopPropagation()}>
-        <button onClick={onClose} className="absolute -top-12 right-0 text-white text-3xl hover:text-gray-300 w-10 h-10 flex items-center justify-center" aria-label="Закрыть">✕</button>
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+      <div className="max-w-2xl max-h-[90vh] relative animate-scale-in" onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white text-3xl hover:text-gray-300 transition-colors w-10 h-10 flex items-center justify-center"
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
         <img src={imageSrc} alt={`Отзыв ${reviewNumber}`} className="w-full h-auto rounded-2xl shadow-2xl" />
       </div>
     </div>
   );
 }
 
-function ScrollProgress(){
+function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  useEffect(()=>{
-    const update=()=>{
-      const scrollPx=document.documentElement.scrollTop;
-      const winHeight=document.documentElement.scrollHeight-document.documentElement.clientHeight;
-      setScrollProgress((scrollPx/winHeight)*100);
+  useEffect(() => {
+    const updateScrollProgress = () => {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (scrollPx / winHeightPx) * 100;
+      setScrollProgress(scrolled);
     };
-    window.addEventListener('scroll', update, {passive:true});
-    update();
-    return ()=>window.removeEventListener('scroll', update);
-  },[]);
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+    return () => window.removeEventListener('scroll', updateScrollProgress);
+  }, []);
   return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-[60]">
-      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{width:`${scrollProgress}%`}}/>
+    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
+      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
     </div>
   );
 }
 
-function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }:{
-  text:string; primaryHighlight?:string; extraPhrases?:string[];
-}){
-  const escapeHtml=(s:string)=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  let html=escapeHtml(text);
-  if(primaryHighlight){
-    const ph=escapeHtml(primaryHighlight);
-    html=html.replace(new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g"),
-      `<span class="text-blue-600 font-semibold">${ph}</span>`);
+function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
+  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let html = escapeHtml(text);
+  if (primaryHighlight) {
+    const ph = escapeHtml(primaryHighlight);
+    html = html.replace(
+      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${ph}</span>`
+    );
   }
-  for(const phrase of extraPhrases){
-    const p=escapeHtml(phrase);
-    html=html.replace(new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g"),
-      `<span class="text-blue-600 font-semibold">${p}</span>`);
+  for (const phrase of extraPhrases) {
+    const p = escapeHtml(phrase);
+    html = html.replace(
+      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${p}</span>`
+    );
   }
-  return <span dangerouslySetInnerHTML={{__html:html}}/>;
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-export default function App(){
-  const [openFaq,setOpenFaq]=useState<number|null>(null);
-  const [viewersCount,setViewersCount]=useState(12);
-  const [lightboxOpen,setLightboxOpen]=useState(false);
-  const [lightboxImage,setLightboxImage]=useState("");
-  const [lightboxReviewNumber,setLightboxReviewNumber]=useState(1);
-  const [showStickyCTA,setShowStickyCTA]=useState(false);
-  const {h,m,s,finished}=useCountdown(12);
+export default function App() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [viewersCount, setViewersCount] = useState(12);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState("");
+  const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
 
-  useEffect(()=>{
-    const id=setInterval(()=>{
-      setViewersCount(prev=>{
-        const change=Math.floor(Math.random()*5)-2;
-        const next=prev+change;
-        return Math.max(8, Math.min(18,next));
+  const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
+  const { h, m, s, finished } = useCountdown(12);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setViewersCount(prev => {
+        const change = Math.floor(Math.random() * 5) - 2;
+        const next = prev + change;
+        return Math.max(8, Math.min(18, next));
       });
-    }, 6000+Math.random()*5000);
-    return ()=>clearInterval(id);
-  },[]);
+    }, 6000 + Math.random() * 5000);
+    return () => clearInterval(id);
+  }, []);
 
-  useEffect(()=>{
-    const onScroll=()=>{
-      const scrolled=(window.scrollY/document.documentElement.scrollHeight)*100;
-      setShowStickyCTA(scrolled>30);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
+      setShowStickyCTA(scrolled > 30);
     };
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
-    return ()=>window.removeEventListener('scroll', onScroll);
-  },[]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const openLightbox=(src:string,n:number)=>{setLightboxImage(src);setLightboxReviewNumber(n);setLightboxOpen(true);};
+  const openLightbox = (imageSrc: string, reviewNumber: number) => {
+    setLightboxImage(imageSrc);
+    setLightboxReviewNumber(reviewNumber);
+    setLightboxOpen(true);
+  };
 
-  useEffect(()=>{
-    const io=new IntersectionObserver(
-      (entries)=>entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add("is-visible");}),
-      {threshold:.15, rootMargin:"0px 0px -50px 0px"}
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("is-visible"); }),
+      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
     );
-    document.querySelectorAll<HTMLElement>(".fade-in-view").forEach(el=>io.observe(el));
-    return ()=>io.disconnect();
-  },[]);
+    document.querySelectorAll<HTMLElement>(".fade-in-view").forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#ebe9e6] overflow-x-hidden">
-      <ReviewLightbox isOpen={lightboxOpen} onClose={()=>setLightboxOpen(false)} imageSrc={lightboxImage} reviewNumber={lightboxReviewNumber}/>
-      <ScrollProgress/>
+    <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
+      <ReviewLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        imageSrc={lightboxImage}
+        reviewNumber={lightboxReviewNumber}
+      />
 
-      {/* Viewers Badge - Desktop */}
+      <ScrollProgress />
+
+      {/* viewers badge desktop */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
-        <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform">
+        <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300">
           <div className="relative">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"/>
-            <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"/>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
           </div>
           <span className="font-medium tabular-nums">{viewersCount} онлайн</span>
         </div>
       </div>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-[55] border-b border-gray-200/40 shadow-sm">
+      {/* header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
-          <a href={STRIPE_URL} target="_blank" rel="noopener"
-             className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 min-h-[44px]"
-             aria-label="Купить скрипты">
+          <a
+            href={STRIPE_URL}
+            target="_blank"
+            rel="noopener"
+            className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 transform hover:shadow-xl min-h-[44px] flex items-center justify-center"
+            aria-label="Купить скрипты"
+          >
             Купить
           </a>
         </div>
       </header>
 
-      {/* ===================== HERO ===================== */}
-      <section className="relative w-full min-h-screen overflow-hidden pt-[88px] sm:pt-[96px] bg-[#ebe9e6]">
+      {/* HERO — фото не обрезано, смещено левее; мягкий переход слева, текст чуть ниже */}
+      <section className="relative w-full min-h-screen flex items-start lg:items-center justify-start overflow-hidden pt-28 sm:pt-32 lg:pt-40 bg-[#f7f4f1]">
         {/* Фото */}
-        <img src="/images/IMG_6537.jpeg" alt="Beauty professional" className="hero-photo" loading="eager" decoding="async" />
+        <img
+          src="/images/IMG_6537.jpeg"
+          alt="Beauty professional"
+          className="hero-image"
+          loading="eager"
+          decoding="async"
+        />
 
-        {/* Мягче осветление */}
-        <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(235,233,230,.85)_0%,rgba(235,233,230,.45)_32%,rgba(235,233,230,.20)_55%,transparent_100%)] md:bg-[linear-gradient(to_right,rgba(235,233,230,.78)_0%,rgba(235,233,230,.38)_35%,rgba(235,233,230,.12)_60%,transparent_100%)]"/>
-        </div>
+        {/* Мягкий оверлей: белый → бежевый → прозрачный; на мобиле сверху-вниз */}
+        <div className="hero-overlay pointer-events-none" />
 
-        {/* Контент слева */}
-        <div className="relative z-[2] max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-12 items-start">
-            <div className="max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view">
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-4 sm:mb-5 text-gray-900">
-                Скрипты, которые превращают{" "}
-                <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  сообщения в деньги
-                </span>
-              </h1>
+        {/* Контент (опущен пониже) */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 sm:mb-5 text-gray-900">
+              Скрипты, которые превращают{" "}
+              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                сообщения в деньги
+              </span>
+            </h1>
 
-              <div className="result-subtitle mb-4 sm:mb-5">
-                <p className="text-base sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
-                  Проверенная система общения с клиентами для бьюти-мастеров
-                </p>
-              </div>
-
-              {/* РЕЗУЛЬТАТ — на мобиле в потоке, на десктопе закрепляем к «области груди» */}
-              <p className="result-pill text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed">
-                <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
-                закрытые возражения, увеличенный средний чек, экономия времени
+            <div className="result-subtitle mb-4 sm:mb-5">
+              <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800">
+                Проверенная система общения с клиентами для бьюти-мастеров
               </p>
+            </div>
 
-              {/* CTA слева + только безопасная/stripe */}
-              <div className="mt-6 sm:mt-7 flex flex-col items-start gap-2">
-                <a href={STRIPE_URL} target="_blank" rel="noopener"
-                   className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
-                   aria-label="Купить скрипты за 19 евро">
-                  <span className="relative z-10">Купить</span>
-                  <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
-                </a>
+            <p className="text-pretty text-sm sm:text-base lg:text-lg text-gray-800 mb-7 sm:mb-8 leading-relaxed">
+              <span className="font-semibold uppercase tracking-wide text-blue-600">
+                РЕЗУЛЬТАТ:
+              </span>{" "}
+              закрытые возражения, увеличенный средний чек, экономия времени
+            </p>
 
-                {/* оставляем только эту строку под кнопкой */}
-                <div className="flex items-center gap-2 text-[11px] sm:text-xs text-gray-700">
-                  <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                    <span>🔒</span> Безопасная оплата
-                  </span>
-                  <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                    <span>✓</span> Stripe
-                  </span>
-                </div>
+            {/* CTA блок опускаем ниже лица */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-6 mt-1">
+              <a
+                href={STRIPE_URL}
+                target="_blank"
+                rel="noopener"
+                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
+                aria-label="Купить скрипты за 19 евро"
+              >
+                <span className="relative z-10">Купить</span>
+                <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </a>
+              <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
+                <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
+                <span className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
               </div>
             </div>
 
-            {/* Буфер справа, чтобы текст не лез на лицо */}
-            <div className="hidden lg:block lg:col-span-6" />
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🔒</span> Безопасная оплата
+              </span>
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
+                <span>✓</span> Stripe
+              </span>
+            </div>
           </div>
         </div>
 
-        <style>{`
-          html, body { background:#ebe9e6; overscroll-behavior-y: none; }
+        <style jsx>{`
+          /* Избавляемся от случайной "белой пустоты" при прокрутке вверх */
+          :global(html, body, #__next){ background:#f7f4f1; overscroll-behavior-y: contain; }
+          :global(body){ -webkit-overflow-scrolling: touch; }
 
-          .hero-photo{
-            position:absolute; inset:0; width:100%; height:100%;
-            object-fit:cover; object-position:72% center;
+          /* Корректные переносы: без дефисов и странных разрывов */
+          :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
+          :global(.text-balance){ text-wrap: balance; }
+          :global(.text-pretty){ text-wrap: pretty; }
+
+          /* Фото в hero — без жесткого обрезания, чуть левее */
+          .hero-image{
+            position:absolute; z-index:0;
+            max-width:none;
           }
-          @media (min-width:1024px){
-            .hero-photo{
-              object-fit:contain; width:auto; height:100%;
-              right:-2%; left:auto; object-position:center right;
+          /* Мобила: фото снизу, центр */
+          @media (max-width: 767px){
+            .hero-image{
+              bottom:0; left:50%;
+              transform: translateX(-50%);
+              height: 62vh; width: auto;
+              object-fit: contain; object-position: bottom center;
             }
+          }
+          /* Планшет: фото правее, но без ухода за край */
+          @media (min-width:768px) and (max-width:1023px){
+            .hero-image{
+              top:50%; right:-2%;
+              transform: translateY(-50%);
+              height: 88vh; width: auto;
+              object-fit: contain; object-position: center right;
+            }
+          }
+          /* Десктоп: смещаем левее (object-position 85%), уменьшаем "вылет" за край */
+          @media (min-width:1024px){
+            .hero-image{
+              top:50%; right:-1%;
+              transform: translateY(-50%);
+              height: 95vh; max-height:95vh; width:auto;
+              object-fit: contain; object-position: 85% center;
+            }
+          }
+
+          /* Оверлей: белый→бежевый→прозрачный, мягче */
+          .hero-overlay{
+            position:absolute; inset:0; z-index:1;
+            background: linear-gradient(to right,
+              rgba(255,255,255,0.98) 0%,
+              rgba(247,244,241,0.9) 26%,
+              rgba(247,244,241,0.5) 52%,
+              transparent 100%
+            );
           }
           @media (max-width:767px){
-            .hero-photo{ object-fit:cover; object-position:60% 80%; }
-          }
-
-          .result-subtitle{ position:relative; padding-top:10px; margin-top:6px; }
-          .result-subtitle::before{
-            content:''; position:absolute; top:0; left:0; width:58px; height:2px;
-            background:linear-gradient(90deg, rgba(59,130,246,.6) 0%, transparent 100%); border-radius:2px;
-          }
-
-          /* РЕЗУЛЬТАТ: закрепляем в «области груди» на десктопе */
-          .result-pill{ margin-bottom:0; }
-          @media (min-width:1024px){
-            .result-pill{
-              position:absolute;
-              left:clamp(16px, 6vw, 120px);
-              top:48vh;               /* уровень груди ~середина кадра */
-              max-width:42ch;
-              background:linear-gradient(to right, rgba(255,255,255,.65), rgba(255,255,255,.25));
-              backdrop-filter:saturate(105%) blur(2px);
-              -webkit-backdrop-filter:saturate(105%) blur(2px);
-              padding:.5rem .75rem;
-              border-radius:.75rem;
-              box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+            .hero-overlay{
+              background: linear-gradient(to bottom,
+                rgba(255,255,255,0.98) 0%,
+                rgba(247,244,241,0.92) 42%,
+                rgba(247,244,241,0.55) 68%,
+                transparent 100%
+              );
             }
+          }
+
+          .result-subtitle{ position:relative; padding-top:12px; margin-top:8px; }
+          .result-subtitle::before{
+            content:''; position:absolute; top:0; left:0;
+            width:64px; height:2.5px;
+            background: linear-gradient(90deg, rgba(59,130,246,.65) 0%, transparent 100%);
+            border-radius:2px;
           }
         `}</style>
       </section>
-      {/* =================== /HERO =================== */}
 
-      {/* 01 - Comparison */}
-      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#fafbfc_0%,#f0f4f8_100%)]">
+      {/* 01 - Сравнение (чуть компактнее) */}
+      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 section-bg-1">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-10 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              Как изменится ваша{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+              Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
-            <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">Сравните результаты до и после внедрения скриптов</p>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              Сравните результаты до и после внедрения скриптов
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-5 sm:gap-6 max-w-5xl mx-auto">
-            <div className="card-premium bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 fade-in-view">
-              <div className="text-center mb-4">
+            <div className="card-premium bg-white rounded-3xl p-5 sm:p-6 border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 fade-in-view">
+              <div className="text-center mb-5">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-full font-semibold text-sm">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   Сейчас
                 </div>
               </div>
-              <ul className="space-y-3 text-[15px] sm:text-base text-gray-800">
+              <ul className="space-y-3.5 text-[15px] sm:text-base text-gray-800">
                 {[
                   "«Сколько стоит?» → Отвечаете только ценой и тишина.",
                   "«Подумаю» → Не знаете, что ответить: клиент уходит.",
                   "«Переписка 30+ минут» → Клиент остывает, теряете заявку.",
                   "«10 заявок» → Долгие диалоги приводят только к 2–3 записям.",
-                ].map((t,i)=>(
-                  <li key={i} className="flex gap-2 hover:bg-red-50/50 p-2 rounded-xl transition-all">
-                    <svg className="w-5 h-5 mt-0.5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12"/></svg>
+                ].map((t, i) => (
+                  <li key={i} className="flex gap-2.5 hover:bg-red-50/50 p-2.5 rounded-xl transition-all duration-300">
+                    <svg className="w-5 h-5 mt-0.5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                     <span className="leading-relaxed">{t}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="card-premium bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 fade-in-view" style={{animationDelay:"0.06s"}}>
-              <div className="text-center mb-4">
+            <div className="card-premium bg-white rounded-3xl p-5 sm:p-6 border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 fade-in-view" style={{ animationDelay: "0.05s" }}>
+              <div className="text-center mb-5">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full font-semibold text-sm">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   После
                 </div>
               </div>
-              <ul className="space-y-3 text-[15px] sm:text-base text-gray-800">
+              <ul className="space-y-3.5 text-[15px] sm:text-base text-gray-800">
                 {[
                   "«Сколько стоит?» → Презентуете ценность, получаете запись.",
                   "«Подумаю» → Мягкое возражение возвращает к записи.",
                   "«Переписка 5 минут» → Готовые фразы ведут к быстрой записи.",
                   "«10 заявок» → Чёткие диалоги дают 6–7 записей.",
-                ].map((t,i)=>(
-                  <li key={i} className="flex gap-2 hover:bg-green-50/50 p-2 rounded-xl transition-all">
-                    <svg className="w-5 h-5 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7"/></svg>
+                ].map((t, i) => (
+                  <li key={i} className="flex gap-2.5 hover:bg-green-50/50 p-2.5 rounded-xl transition-all duration-300">
+                    <svg className="w-5 h-5 mt-0.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 13l4 4L19 7" />
+                    </svg>
                     <span className="leading-relaxed">{t}</span>
                   </li>
                 ))}
@@ -326,24 +406,30 @@ export default function App(){
         </div>
       </section>
 
-      {/* 02 - Why */}
-      <section id="why" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f8f9fb_0%,#e8ecf1_50%,#ffffff_100%)]">
+      {/* 02 - Почему (компактнее) */}
+      <section id="why" className="relative py-8 sm:py-12 lg:py-14 section-bg-2">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Почему это <span className="text-rose-600">важно</span></h2>
-            <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">Каждая потерянная заявка — это упущенная прибыль</p>
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+              Почему это <span className="text-rose-600">важно</span>
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              Каждая потерянная заявка — это упущенная прибыль
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { img:"/images/money.png", title:"Сливаются деньги на рекламу", text:"Платите за заявки, но конвертируете лишь 20–30%. Остальные — выброшенный бюджет." },
-              { img:"/images/clock.png", title:"Тратится время впустую", text:"По 30–40 минут на переписку с каждым. Уходит 3–4 часа в день." },
-              { img:"/images/door.png", title:"Заявки уходят к конкуренту", text:"Пока вы думаете, клиент записывается к тем, кто отвечает быстро и уверенно." },
-            ].map((c,i)=>(
-              <div key={i} className="card-premium rounded-2xl border border-gray-100 p-5 text-center bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <div className="mb-3 inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 group-hover:scale-105 transition-transform"><img src={c.img} alt="" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" loading="lazy"/></div>
-                <h3 className="font-bold text-base sm:text-lg mb-2 text-gray-900">{c.title}</h3>
+              { img: "/images/money.png", title: "Сливаются деньги на рекламу", text: "Платите за заявки, но конвертируете лишь 20–30%. Остальные — выброшенный бюджет." },
+              { img: "/images/clock.png", title: "Тратится время впустую", text: "По 30–40 минут на переписку с каждым. Уходит 3–4 часа в день." },
+              { img: "/images/door.png", title: "Заявки уходят к конкуренту", text: "Пока вы думаете, клиент записывается к тем, кто отвечает быстро и уверенно." },
+            ].map((c, i) => (
+              <div key={i} className="card-premium rounded-3xl border border-gray-100 p-5 sm:p-6 text-center bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 group fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div className="mb-3.5 inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 group-hover:scale-110 transition-transform duration-300">
+                  <img src={c.img} alt="" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" loading="lazy" />
+                </div>
+                <h3 className="text-pretty font-bold text-base sm:text-lg mb-2 text-gray-900">{c.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{c.text}</p>
               </div>
             ))}
@@ -351,25 +437,31 @@ export default function App(){
         </div>
       </section>
 
-      {/* 03 - For */}
-      <section id="for" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#fafbfc_0%,#f0f4f8_100%)]">
+      {/* 03 - Кому подходят */}
+      <section id="for" className="relative py-8 sm:py-12 lg:py-14 section-bg-1">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8 fade-in-view">
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-10 fade-in-view">
             Кому подходят <span className="text-emerald-600">скрипты</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
             {[
-              { img:"/images/salon.png", title:"Владельцам салонов и студий", text:"Стандарт ответов, скорость и контроль: все отвечают одинаково сильно." },
-              { img:"/images/med.png", title:"Медицинским центрам", text:"Админы закрывают заявки, врачи работают с реальными пациентами." },
-              { img:"/images/team.png", title:"Мастерам-универсалам", text:"Ответы на типовые ситуации ведут быстрее к записи, увереннее в чате." },
-              { img:"/images/one.png", title:"Узким специалистам", text:"Ногти, брови, ресницы, волосы, косметология, перманент. Блоки под услугу." },
-            ].map((c,i)=>(
-              <div key={i} className="card-premium bg-white rounded-2xl p-5 border border-emerald-100/60 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center flex-shrink-0"><img src={c.img} alt="" className="w-8 h-8 object-contain" loading="lazy"/></div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900">{c.title}</h3>
+              { img: "/images/salon.png", title: "Владельцам салонов и студий", text: "Стандарт ответов, скорость и контроль: все отвечают одинаково сильно." },
+              { img: "/images/med.png", title: "Медицинским центрам", text: "Админы закрывают заявки, врачи работают с реальными пациентами." },
+              { img: "/images/team.png", title: "Мастерам-универсалам", text: "Ответы на типовые ситуации ведут быстрее к записи, увереннее в чате." },
+              { img: "/images/one.png", title: "Узким специалистам", text: "Ногти, брови, ресницы, волосы, косметология, перманент. Блоки под услугу." },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className="card-premium bg-white rounded-3xl p-6 border border-emerald-100/60 hover:border-emerald-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 fade-in-view"
+                style={{ animationDelay: `${i * 0.06}s` }}
+              >
+                <div className="flex items-center gap-3.5 mb-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center flex-shrink-0">
+                    <img src={c.img} alt="" className="w-8 h-8 object-contain" loading="lazy" />
+                  </div>
+                  <h3 className="text-pretty text-[17px] sm:text-lg font-bold text-gray-900">{c.title}</h3>
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed">{c.text}</p>
               </div>
@@ -378,33 +470,38 @@ export default function App(){
         </div>
       </section>
 
-      {/* 04 - What's Included */}
-      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f8f9fb_0%,#e8ecf1_50%,#ffffff_100%)]">
+      {/* 04 - Что входит */}
+      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 section-bg-2">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+          <div className="text-center mb-9 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
-            <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { img:"/images/xmind.png",  title:"Готовые диалоги",   desc:"Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово.", highlight:"презентация ценности" },
-              { img:"/images/target.png", title:"Закрытие возражений", desc:"«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления.", highlight:"мягкие ответы без давления" },
-              { img:"/images/salons.png", title:"Под каждую услугу",  desc:"Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши.", highlight:"учтена специфика каждой ниши" },
-              { img:"/images/bucle.png",  title:"Возврат клиентов",   desc:"Сценарии повторных записей и реактивации «спящей» базы без рекламы.", highlight:"реактивации «спящей» базы без рекламы" },
-              { img:"/images/phone.png",  title:"Гайд по внедрению",  desc:"Старт за один день: пошаговый план и стандарты для команды.", highlight:"Старт за один день" },
-              { img:"/images/rocket.png", title:"Итог",               desc:"Больше записей, выше средний чек, меньше времени в переписке.", highlight:"выше средний чек", big:true },
-            ].map((item,k)=>(
-              <div key={k} className="card-premium rounded-2xl border border-gray-100 p-5 bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group fade-in-view" style={{animationDelay:`${k*0.05}s`}}>
+              { img: "/images/xmind.png", title: "Готовые диалоги", desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово.", highlight: "презентация ценности" },
+              { img: "/images/target.png", title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления.", highlight: "мягкие ответы без давления" },
+              { img: "/images/salons.png", title: "Под каждую услугу", desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши.", highlight: "учтена специфика каждой ниши" },
+              { img: "/images/bucle.png", title: "Возврат клиентов", desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы.", highlight: "реактивации «спящей» базы без рекламы" },
+              { img: "/images/phone.png", title: "Гайд по внедрению", desc: "Старт за один день: пошаговый план и стандарты для команды.", highlight: "Старт за один день" },
+              { img: "/images/rocket.png", title: "Итог", desc: "Больше записей, выше средний чек, меньше времени в переписке.", highlight: "выше средний чек", big: true },
+            ].map((item, k) => (
+              <div key={k} className="card-premium rounded-3xl border border-gray-100 p-5 sm:p-6 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
                 <div className="mb-3 inline-flex items-center justify-center">
-                  <img src={item.img} alt="" className={`${item.big?"w-14 h-14":"w-12 h-12"} object-contain group-hover:scale-105 transition-transform`} loading="lazy"/>
+                  <img
+                    src={item.img}
+                    alt=""
+                    className={`${item.big ? "w-14 h-14" : "w-12 h-12"} object-contain group-hover:scale-110 transition-transform duration-300`}
+                    loading="lazy"
+                  />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-2">{item.title}</h3>
+                <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  <HighlightedDesc text={item.desc} primaryHighlight={item.highlight} extraPhrases={["без давления","каждой ниши"]}/>
+                  <HighlightedDesc text={item.desc} primaryHighlight={item.highlight} extraPhrases={["без давления", "каждой ниши"]} />
                 </p>
               </div>
             ))}
@@ -412,35 +509,35 @@ export default function App(){
         </div>
       </section>
 
-      {/* 05 - Bonuses (компактнее) */}
-      <section id="bonuses" className="relative py-8 sm:py-11 lg:py-12 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
+      {/* 05 - Бонусы */}
+      <section id="bonuses" className="relative py-8 sm:py-12 lg:py-14 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-          <div className="text-center mb-7 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-9 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
             {[
-              { image:"/images/bonus1.png", title:"Гайд «Работа с клиентской базой»", desc:"Повторные записи без рекламы → возвращайте старых клиентов.", old:"27€" },
-              { image:"/images/bonus2.png", title:"Чек-лист «30+ источников клиентов»", desc:"Платные и бесплатные способы → где взять заявки уже сегодня.", old:"32€" },
-              { image:"/images/bonus3.png", title:"Гайд «Продажи на консультации»", desc:"5 этапов продаж → мягкий апсейл дополнительных услуг.", old:"20€" },
-            ].map((b,i)=>(
-              <div key={i} className="card-premium rounded-2xl p-4 text-center bg-white shadow-sm border border-purple-100/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <div className="mb-3">
-                  <img src={b.image} alt={`Бонус ${i+1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-lg shadow" loading="lazy"/>
+              { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
+              { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
+              { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
+            ].map((b, i) => (
+              <div key={i} className="card-premium rounded-3xl p-6 text-center bg-white shadow-md border border-purple-100/50 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div className="mb-4">
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-28 h-40 sm:w-32 sm:h-44 mx-auto object-cover rounded-xl shadow-md" loading="lazy" />
                 </div>
-                <h3 className="text-sm font-bold text-gray-900">{b.title}</h3>
-                <p className="text-xs text-gray-600 leading-relaxed mt-1.5">{b.desc}</p>
-                <div className="mt-2 flex items-center justify-center gap-2">
-                  <span className="text-sm font-bold text-gray-400 line-through">{b.old}</span>
-                  <span className="text-base font-bold text-green-600">0€</span>
+                <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{b.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed mb-3.5">{b.desc}</p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-[15px] font-bold text-gray-400 line-through">{b.old}</span>
+                  <span className="text-lg font-bold text-green-600">0€</span>
                 </div>
               </div>
             ))}
@@ -448,16 +545,15 @@ export default function App(){
         </div>
       </section>
 
-      {/* 06 - Immediate (сине-зелёная линия ближе) */}
-      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
+      {/* 06 - Что изменится сразу */}
+      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 section-bg-1">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-7 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 inline-block">
-              Что изменится <span className="text-teал-600">сразу</span>
+          <div className="text-center mb-9 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block">
+              Что изменится <span className="text-teal-600">сразу</span>
             </h2>
-            <div className="mx-auto mt-2 h-[2px] w-24 sm:w-28 rounded-full"
-                 style={{background: "linear-gradient(90deg, rgba(37,99,235,1) 0%, rgba(16,185,129,1) 100%)"}}/>
+            <div className="mx-auto mt-3 h-1 w-28 bg-gradient-to-r from-teal-400 via-cyan-500 to-teal-400 rounded-full"></div>
           </div>
 
           <div className="space-y-4">
@@ -466,93 +562,119 @@ export default function App(){
               "Начнёшь закрывать больше записей уже с первого дня.",
               "Повысишь средний чек через правильные предложения.",
               "Станешь увереннее — на всё есть готовый ответ.",
-            ].map((t,i)=>(
-              <div key={i} className="flex items-start gap-3 bg-white/85 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-teal-100/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3.5 h-3.5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
+            ].map((t, i) => (
+              <div key={i} className="flex items-start gap-3.5 bg-white/85 backdrop-blur-sm p-5 sm:p-6 rounded-2xl border border-teal-100/60 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
+                <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                  <svg className="w-3.5 h-3.5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                 </div>
-                <span className="text-[15px] sm:text-base font-medium text-gray-800 leading-relaxed">{t}</span>
+                <span className="text-[15.5px] sm:text-base font-medium text-gray-800 leading-relaxed">{t}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 07 - Reviews */}
-      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
+      {/* 07 - Отзывы + рилсы */}
+      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 section-bg-2">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8 fade-in-view">Отзывы клиентов</h2>
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-9 fade-in-view">
+            Отзывы клиентов
+          </h2>
 
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8 max-w-4xl mx-auto">
-            {[1,2,4].map(n=>(
-              <button key={n}
-                className="group cursor-pointer rounded-2xl overflow-hidden border border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 fade-in-view"
-                style={{animationDelay:`${n*0.05}s`}}
-                onClick={()=>openLightbox(`/images/reviews/review${n}.png`, n)}
-                aria-label={`Открыть отзыв ${n}`}>
-                <img src={`/images/reviews/review${n}.png`} alt={`Отзыв ${n}`} className="w-full h-36 sm:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy"/>
+          <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-9 max-w-4xl mx-auto">
+            {[1, 2, 4].map((n) => (
+              <button
+                key={n}
+                className="group cursor-pointer rounded-2xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 fade-in-view"
+                style={{ animationDelay: `${n * 0.05}s` }}
+                onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}
+                aria-label={`Открыть отзыв ${n}`}
+              >
+                <img
+                  src={`/images/reviews/review${n}.png`}
+                  alt={`Отзыв ${n}`}
+                  className="w-full h-36 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
               </button>
             ))}
           </div>
 
-          {/* Reels */}
-          <div className="flex gap-2.5 sm:gap-3.5 justify-center items-center overflow-x-auto pb-2 reels-container">
-            {INSTAGRAM_REELS.slice(0,3).map((url,idx)=>(
-              <div key={url}
-                className={`${idx===1?'reel-card-featured':'reel-card-small'} rounded-2xl overflow-hidden border-2 ${idx===1?'border-blue-400 shadow-xl':'border-gray-200'} flex-shrink-0 hover:shadow-2xl hover:scale-105 transition-all duration-300 fade-in-view`}
-                style={{animationDelay:`${idx*0.08}s`}}>
-                <InstaEmbed url={url} maxWidth={idx===1?280:220}/>
+          <div className="flex gap-3 sm:gap-4 justify-center items-center overflow-x-auto pb-2 reels-container">
+            {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
+              <div
+                key={url}
+                className={`${idx === 1 ? 'reel-card-featured' : 'reel-card-small'
+                  } rounded-2xl overflow-hidden border-2 ${idx === 1 ? 'border-blue-400 shadow-xl' : 'border-gray-200'
+                  } flex-shrink-0 hover:shadow-2xl hover:scale-105 transition-all duration-500 fade-in-view`}
+                style={{ animationDelay: `${idx * 0.08}s` }}
+              >
+                <InstaEmbed url={url} maxWidth={idx === 1 ? 280 : 220} />
               </div>
             ))}
           </div>
         </div>
 
-        <style>{`
-          .reels-container{max-width:100%;scroll-snap-type:x mandatory;}
-          .reels-container > *{scroll-snap-align:center;}
-          .reel-card-small{width:150px;height:267px;}
-          .reel-card-featured{width:190px;height:338px;}
-          @media (min-width:640px){.reel-card-small{width:210px;height:373px;} .reel-card-featured{width:270px;height:480px;}}
-          @media (min-width:1024px){.reel-card-small{width:220px;height:391px;} .reel-card-featured{width:280px;height:500px;}}
-          .reel-card-small :global(iframe), .reel-card-featured :global(iframe){width:100% !important;height:100% !important;display:block;border:none;}
+        <style jsx>{`
+          .reels-container { max-width: 100%; scroll-snap-type: x mandatory; }
+          .reels-container > * { scroll-snap-align: center; }
+
+          .reel-card-small { width: 150px; height: 267px; }
+          .reel-card-featured { width: 190px; height: 338px; }
+
+          @media (min-width:640px){
+            .reel-card-small { width: 210px; height: 373px; }
+            .reel-card-featured { width: 270px; height: 480px; }
+          }
+          @media (min-width:1024px){
+            .reel-card-small { width: 220px; height: 391px; }
+            .reel-card-featured { width: 280px; height: 500px; }
+          }
+
+          .reel-card-small :global(iframe),
+          .reel-card-featured :global(iframe) {
+            width: 100% !important;
+            height: 100% !important;
+            display: block; border: none;
+          }
         `}</style>
       </section>
 
-      {/* 08 - Offer / Оплата */}
-      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
+      {/* 08 - Оффер (исправлены переносы/компактность) */}
+      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
+          <div className="text-center mb-9 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Специальное предложение на этой неделе • Предложение действует ограниченное время
             </p>
           </div>
 
           <div className="max-w-lg mx-auto">
-            <div className="rounded-3xl p-7 sm:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-300 hover:scale-[1.01] fade-in-view">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16"/>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-rose-400/10 rounded-full translate-y-12 -translate-x-12"/>
+            <div className="rounded-3xl p-7 sm:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] fade-in-view">
+              <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl -translate-y-16 translate-x-16" />
+              <div className="absolute bottom-0 left-0 w-28 h-28 bg-purple-500/10 rounded-full blur-3xl translate-y-12 -translate-x-12" />
 
               <div className="relative z-10 text-center">
-                <div className="text-xs sm:text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
+                <div className="text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
 
-                <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4">
-                  <span className="text-gray-400 line-through text-xl sm:text-2xl">127€</span>
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">19€</span>
+                <div className="flex items-center justify-center gap-3.5 mb-4">
+                  <span className="text-gray-400 line-through text-2xl sm:text-3xl font-bold">127€</span>
+                  <span className="text-5xl sm:text-6xl font-extrabold text-white">19€</span>
                 </div>
 
                 <div className="mb-5">
-                  <div className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-5 py-2.5 hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+                  <div className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-4.5 py-2.5 hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
                     <span className="text-white text-lg">⏰</span>
                     {!finished ? (
                       <>
                         <span className="text-white text-sm font-medium">До конца:</span>
                         <span className="font-bold tabular-nums text-white text-base">
-                          {String(h).padStart(2,"0")}:{String(m).padStart(2,"0")}:{String(s).padStart(2,"0")}
+                          {String(h).padStart(2, "0")}:{String(m).padStart(2, "0")}:{String(s).padStart(2, "0")}
                         </span>
                       </>
                     ) : (
@@ -561,24 +683,23 @@ export default function App(){
                   </div>
                 </div>
 
-                <a href={STRIPE_URL} target="_blank" rel="noopener"
-                   className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group"
-                   aria-label="Купить полную систему со скидкой 85% — 19 евро">
+                <a
+                  href={STRIPE_URL}
+                  target="_blank"
+                  rel="noopener"
+                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-4.5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[52px] relative overflow-hidden group"
+                  aria-label="Купить полную систему со скидкой 85% — 19 евро"
+                >
                   <span className="relative z-10">Получить со скидкой 85%</span>
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"/>
+                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Исправлено: строка читается и не уезжает */}
-                <div className="text-xs text-gray-300 mb-6 flex flex-wrap justify-center gap-x-2 gap-y-1">
-                  <span>Без скрытых платежей</span>
-                  <span>•</span>
-                  <span>Пожизненный доступ</span>
-                  <span>•</span>
-                  <span>Обновления включены</span>
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 whitespace-nowrap overflow-x-auto text-center">
+                  Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
 
                 <div className="text-left mb-6">
-                  <h3 className="text-base sm:text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
+                  <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
                   <ul className="space-y-2.5 text-sm text-gray-200">
                     {[
                       "Готовые диалоги для всех ситуаций",
@@ -587,17 +708,16 @@ export default function App(){
                       "Бонус: 30+ источников клиентов (32€)",
                       "Бонус: продажи на консультации (20€)",
                       "Пожизненный доступ и обновления",
-                    ].map((t,i)=>(
+                    ].map((t, i) => (
                       <li key={i} className="flex gap-2.5 items-start">
-                        <span className="w-4 h-4 mt-0.5 text-green-400 flex-shrink-0 font-bold">✓</span>
+                        <span className="w-5 h-5 mt-0.5 text-green-400 flex-shrink-0 font-bold">✓</span>
                         <span className="leading-relaxed">{t}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Платёжные бейджи — только здесь, в одну строку (переносятся на очень узких) */}
-                <div className="flex items-center justify-center gap-2 text-[11px] sm:text-xs md:text-sm flex-wrap md:flex-nowrap">
+                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
@@ -610,28 +730,33 @@ export default function App(){
       </section>
 
       {/* 09 - FAQ */}
-      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
+      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8 fade-in-view">Частые вопросы</h2>
-          <div className="space-y-3">
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-9 fade-in-view">
+            Частые вопросы
+          </h2>
+
+          <div className="space-y-3.5">
             {[
-              { q:"Сработает в моей нише?", a:"Да. База универсальная и блоки под ногти/бровы/ресницы/волосы/косметологию/перманент." },
-              { q:"Не будет ли звучать «по-скриптовому»?", a:"Нет. Формулировки живые, адаптируешь под свой тон. Главное — следовать алгоритму." },
-              { q:"Зачем это админам?", a:"Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
-              { q:"Когда будут результаты?", a:"Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
-            ].map((f,i)=>(
-              <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all duration-300 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <button onClick={()=>setOpenFaq(openFaq===i?null:i)}
-                        className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50 flex justify-between items-center transition-colors min-h-[48px] group"
-                        aria-label={`Вопрос: ${f.q}`}>
-                  <span className="font-semibold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
-                  <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-transform flex-shrink-0 ${openFaq===i?"rotate-180":""}`}>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7"/></svg>
+              { q: "Сработает в моей нише?", a: "Да. База универсальная и блоки под ногти/бровы/ресницы/волосы/косметологию/перманент." },
+              { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное — следовать алгоритму." },
+              { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
+              { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
+            ].map((f, i) => (
+              <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
+                <button
+                  onClick={() => toggleFaq(i)}
+                  className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
+                  aria-label={`Вопрос: ${f.q}`}
+                >
+                  <span className="font-bold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
+                  <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-all flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                   </span>
                 </button>
-                {openFaq===i && (
-                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40 animate-fade-in">
+                {openFaq === i && (
+                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -644,26 +769,50 @@ export default function App(){
       {/* Footer */}
       <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Beauty Scripts</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
         </div>
       </footer>
 
       {/* Sticky CTA - Mobile */}
       {showStickyCTA && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-4 z-50 lg:hidden shadow-2xl">
-          <a href={STRIPE_URL} target="_blank" rel="noopener"
-             className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[56px] shadow-lg"
-             aria-label="Купить скрипты за 19 евро">
-            <span>Скрипты — 19€</span><span className="text-xl">→</span>
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
+          <a
+            href={STRIPE_URL}
+            target="_blank"
+            rel="noopener"
+            className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
+            aria-label="Купить скрипты за 19 евро"
+          >
+            <span>Скрипты — 19€</span>
+            <span className="text-xl">→</span>
           </a>
         </div>
       )}
 
-      <style>{`
-        .card-premium{position:relative;transition:all .3s ease;}
-        .fade-in-view{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease;}
-        .fade-in-view.is-visible{opacity:1;transform:translateY(0);}
+      <style jsx global>{`
+        /* Фон секций помягче */
+        .section-bg-1{
+          background: linear-gradient(180deg, #fafbfc 0%, #f2f5f8 100%);
+        }
+        .section-bg-2{
+          background: linear-gradient(180deg, #f8f9fb 0%, #eef2f6 60%, #ffffff 100%);
+        }
+
+        /* Премиум-обводка карточек */
+        .card-premium{ position:relative; transition:all .5s cubic-bezier(.4,0,.2,1); }
+        .card-premium::before{
+          content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+          background: linear-gradient(135deg, transparent 0%, rgba(59,130,246,.1) 50%, transparent 100%);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor; mask-composite: exclude;
+          opacity:0; transition: opacity .5s;
+        }
+        .card-premium:hover::before{ opacity:1; }
+
+        /* Анимация появления */
+        .fade-in-view{ opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+        .fade-in-view.is-visible{ opacity:1; transform: translateY(0); }
       `}</style>
     </div>
   );
