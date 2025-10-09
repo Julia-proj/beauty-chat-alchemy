@@ -157,16 +157,15 @@ export default function App(){
 
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-[55] border-b border-gray-200/40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
-          {/* Кнопка «Купить» держим справа в хедере, а в hero — прижимаем сильнее к левому краю */}
           <a href={STRIPE_URL} target="_blank" rel="noopener" className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 min-h-[44px]" aria-label="Купить скрипты">Купить</a>
         </div>
       </header>
 
       {/* ===== HERO ===== */}
-      <section className="relative w-full min-h-[92vh] overflow-hidden pt-[64px] sm:pt-[72px] bg-[#ebe9e6]">
-        {/* Фото-фон (не трогаем, как просила) */}
+      <section className="relative w-full min-h-screen overflow-hidden pt-[76px] sm:pt-[92px] bg-[#ebe9e6]">
+        {/* Фото-фон — не меняем, только позиционирование */}
         <img
           src="/images/IMG_6537.jpeg"
           alt="Beauty professional"
@@ -175,15 +174,15 @@ export default function App(){
           decoding="async"
         />
 
-        {/* Лёгкий левый градиент для читаемости текста (без подложек вокруг текста) */}
+        {/* Мягкий градиент слева */}
         <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#ebe9e6] via-[#ebe9e6]/60 to-transparent md:via-[#ebe9e6]/45 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#ebe9e6] via-[#ebe9e6]/55 to-transparent md:via-[#ebe9e6]/45 md:to-transparent" />
         </div>
 
-        {/* Контент: опускаем заголовок пониже, а верхнюю «пустоту» секции мы урезали pt-[64px] */}
+        {/* Контент */}
         <div className="relative z-[2] max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-12 items-start">
-            <div className="max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view mt-8 sm:mt-12 lg:mt-16">
+            <div className="hero-copy max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view">
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-4 sm:mb-5 text-gray-900">
                 Скрипты, которые превращают{" "}
                 <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -191,33 +190,23 @@ export default function App(){
                 </span>
               </h1>
 
-              {/* Подзаголовок — рядом с линией головы */}
-              <div className="result-subtitle mb-4 sm:mb-5">
+              <div className="result-subtitle mb-3 sm:mb-4">
                 <p className="text-base sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
                   Проверенная система общения с клиентами для бьюти-мастеров
                 </p>
               </div>
+
+              {/* РЕЗУЛЬТАТ — сдвинут на ~2/3 высоты фото на мобиле */}
+              <p className="hero-result text-sm sm:text-base lg:text-lg text-gray-800 mb-2 leading-relaxed">
+                <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
+                закрытые возражения, увеличенный средний чек, экономия времени
+              </p>
             </div>
             <div className="hidden lg:block lg:col-span-6" />
           </div>
         </div>
 
-        {/* РЕЗУЛЬТАТ — на 2/3 высоты фото (уровень кончиков волос). На мобайле остаётся ниже контента */}
-        <div className="relative z-[3]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <p className="lg:hidden text-sm sm:text-base text-gray-800 mt-6 mb-2 leading-relaxed">
-              <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
-              закрытые возражения, увеличенный средний чек, экономия времени
-            </p>
-          </div>
-
-          <p className="hidden lg:block absolute left-[max(1rem,calc((100vw-1280px)/2+1.5rem))] top-[66%] -translate-y-1/2 text-base lg:text-lg text-gray-800 leading-relaxed">
-            <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
-            закрытые возражения, увеличенный средний чек, экономия времени
-          </p>
-        </div>
-
-        {/* CTA снизу фото — сильнее прижимаем к левому краю */}
+        {/* CTA снизу фото — слева, без строчки Apple/GooglePay */}
         <div className="hero-cta">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col items-start gap-3">
@@ -227,14 +216,13 @@ export default function App(){
                 rel="noopener"
                 className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
                 aria-label="Купить скрипты за 19 евро"
-                style={{ marginLeft: 0 }}
               >
                 <span className="relative z-10">Купить</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </a>
 
-              {/* В hero — НИКАКИХ Apple Pay/Google Pay. Только это: */}
+              {/* только бейджи безопасности */}
               <div className="flex items-center gap-2 text-[11px] sm:text-xs text-gray-700">
                 <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
                   <span>🔒</span> Безопасная оплата
@@ -263,6 +251,16 @@ export default function App(){
           @media (max-width:767px){
             .hero-photo{ object-position:60% 80%; }
           }
+
+          /* обрезаем лишний "пустырь" над заголовком, но сам заголовок опускаем мягко */
+          .hero-copy{ padding-top: clamp(8vh, 12vh, 16vh); }
+          @media (min-width:1024px){ .hero-copy{ padding-top: 10vh; } }
+
+          /* "результат" на ~2/3 высоты фото на мобиле */
+          .hero-result{ margin-top: 36vh; }
+          @media (min-width:390px){ .hero-result{ margin-top: 38vh; } }
+          @media (min-width:480px){ .hero-result{ margin-top: 34vh; } }
+          @media (min-width:768px){ .hero-result{ margin-top: 2rem; } } /* на планшет/десктоп — обычный отступ */
 
           .hero-cta{
             position:absolute; bottom:20px; left:0; right:0; z-index:3;
@@ -544,7 +542,7 @@ export default function App(){
         `}</style>
       </section>
 
-      {/* 08 - Offer (оплата и тексты выровнены/не «уезжают») */}
+      {/* 08 - Offer (оплата + аккуратная строка + чек-лист) */}
       <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -598,18 +596,41 @@ export default function App(){
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Строчка — строго центр, не уезжает, переносы ок */}
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 whitespace-normal text-center leading-relaxed px-2 max-w-[28rem] mx-auto">
-                  Без скрытых платежей • Пожизненный доступ • Обновления включены
-                </div>
+                {/* строка «без скрытых…» — ровно центр, аккуратные разделители */}
+                <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-300 mb-6 px-2">
+                  {["Без скрытых платежей","Пожизненный доступ","Обновления включены"].map((t,i)=>(
+                    <li key={t} className="relative pl-0">
+                      {t}
+                      {i<2 && <span className="mx-3 text-gray-500">•</span>}
+                    </li>
+                  ))}
+                </ul>
 
-                {/* Платёжные бейджи — ТОЛЬКО здесь */}
+                {/* ЧТО ПОЛУЧИШЬ (галочки) — как просила, сохраняем */}
+                <ul className="text-left grid grid-cols-1 gap-2.5 mb-4">
+                  {[
+                    "PDF и текстовые шаблоны ответов",
+                    "Сценарии закрытия возражений",
+                    "Гайды по внедрению и реактивации",
+                    "3 бонуса (гайд, чек-лист, гайд)",
+                  ].map((t)=>(
+                    <li key={t} className="flex items-start gap-2">
+                      <span className="mt-0.5 inline-flex w-5 h-5 rounded-full bg-emerald-500/20 items-center justify-center">
+                        <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      </span>
+                      <span className="text-sm sm:text-base text-gray-100/95">{t}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Платёжные бейджи — только здесь */}
                 <div className="flex items-center justify-center gap-2 text-[11px] sm:text-xs md:text-sm flex-wrap md:flex-nowrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
-                  <div className="px-2.5 py-1.5" style={{background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:"0.5rem"}}>Visa</div>
-                  <div className="px-2.5 py-1.5" style={{background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:"0.5rem"}}>MasterCard</div>
+                  <div className="px-2.5 py-1.5 text-white rounded-lg font-medium whitespace-nowrap" style={{background:"rgba(255,255,255,0.2)"}}>Visa</div>
+                  <div className="px-2.5 py-1.5 text-white rounded-lg font-medium whitespace-nowrap" style={{background:"rgba(255,255,255,0.2)"}}>MasterCard</div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -630,7 +651,7 @@ export default function App(){
               { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
             ].map((f,i)=>(
               <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all duration-300 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <button onClick={()=>setOpenFaq(openFaq===i?null:i)} className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50 flex justify-between items-center transition-colors min-h-[48px] group" aria-label={`Вопрос: ${f.q}`}>
+                <button onClick={()=>toggleFaq(i)} className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50 flex justify-between items-center transition-colors min-h-[48px] group" aria-label={`Вопрос: ${f.q}`}>
                   <span className="font-semibold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
                   <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-transform flex-shrink-0 ${openFaq===i?"rotate-180":""}`}>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
