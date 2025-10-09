@@ -159,13 +159,14 @@ export default function App(){
       <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-[55] border-b border-gray-200/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
+          {/* Кнопка «Купить» держим справа в хедере, а в hero — прижимаем сильнее к левому краю */}
           <a href={STRIPE_URL} target="_blank" rel="noopener" className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 min-h-[44px]" aria-label="Купить скрипты">Купить</a>
         </div>
       </header>
 
       {/* ===== HERO ===== */}
-      <section className="relative w-full min-h-screen overflow-hidden pt-[88px] sm:pt-[96px] bg-[#ebe9e6]">
-        {/* Фото-фон */}
+      <section className="relative w-full min-h-[92vh] overflow-hidden pt-[64px] sm:pt-[72px] bg-[#ebe9e6]">
+        {/* Фото-фон (не трогаем, как просила) */}
         <img
           src="/images/IMG_6537.jpeg"
           alt="Beauty professional"
@@ -174,15 +175,15 @@ export default function App(){
           decoding="async"
         />
 
-        {/* Мягкий градиент слева — осветление уменьшено */}
+        {/* Лёгкий левый градиент для читаемости текста (без подложек вокруг текста) */}
         <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-r from-[#ebe9e6] via-[#ebe9e6]/60 to-transparent md:via-[#ebe9e6]/45 md:to-transparent" />
         </div>
 
-        {/* Контент слева */}
+        {/* Контент: опускаем заголовок пониже, а верхнюю «пустоту» секции мы урезали pt-[64px] */}
         <div className="relative z-[2] max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-12 items-center">
-            <div className="max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view">
+          <div className="grid lg:grid-cols-12 items-start">
+            <div className="max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view mt-8 sm:mt-12 lg:mt-16">
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-4 sm:mb-5 text-gray-900">
                 Скрипты, которые превращают{" "}
                 <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -196,19 +197,27 @@ export default function App(){
                   Проверенная система общения с клиентами для бьюти-мастеров
                 </p>
               </div>
-
-              {/* РЕЗУЛЬТАТ — сдвинут ниже (уровень груди/кончиков волос) */}
-              <p className="text-sm sm:text-base lg:text-lg text-gray-800 mt-8 sm:mt-12 lg:mt-20 mb-2 leading-relaxed">
-                <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
-                закрытые возражения, увеличенный средний чек, экономия времени
-              </p>
             </div>
-            {/* Буфер-колонка, чтобы текст не наползал на лицо на десктопе */}
             <div className="hidden lg:block lg:col-span-6" />
           </div>
         </div>
 
-        {/* CTA снизу фото — слева, с подписью безопасной оплаты */}
+        {/* РЕЗУЛЬТАТ — на 2/3 высоты фото (уровень кончиков волос). На мобайле остаётся ниже контента */}
+        <div className="relative z-[3]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <p className="lg:hidden text-sm sm:text-base text-gray-800 mt-6 mb-2 leading-relaxed">
+              <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
+              закрытые возражения, увеличенный средний чек, экономия времени
+            </p>
+          </div>
+
+          <p className="hidden lg:block absolute left-[max(1rem,calc((100vw-1280px)/2+1.5rem))] top-[66%] -translate-y-1/2 text-base lg:text-lg text-gray-800 leading-relaxed">
+            <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
+            закрытые возражения, увеличенный средний чек, экономия времени
+          </p>
+        </div>
+
+        {/* CTA снизу фото — сильнее прижимаем к левому краю */}
         <div className="hero-cta">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col items-start gap-3">
@@ -218,13 +227,14 @@ export default function App(){
                 rel="noopener"
                 className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
                 aria-label="Купить скрипты за 19 евро"
+                style={{ marginLeft: 0 }}
               >
                 <span className="relative z-10">Купить</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </a>
 
-              {/* Только «Безопасная оплата / Stripe» (без логотипов платежей в hero) */}
+              {/* В hero — НИКАКИХ Apple Pay/Google Pay. Только это: */}
               <div className="flex items-center gap-2 text-[11px] sm:text-xs text-gray-700">
                 <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
                   <span>🔒</span> Безопасная оплата
@@ -251,7 +261,7 @@ export default function App(){
             }
           }
           @media (max-width:767px){
-            .hero-photo{ object-fit:cover; object-position:60% 80%; }
+            .hero-photo{ object-position:60% 80%; }
           }
 
           .hero-cta{
@@ -421,7 +431,7 @@ export default function App(){
         </div>
       </section>
 
-      {/* 05 - Bonuses (компактнее) */}
+      {/* 05 - Bonuses */}
       <section id="bonuses" className="relative py-8 sm:py-10 lg:py-12 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
         <div className="confetti-container">
@@ -469,7 +479,7 @@ export default function App(){
         `}</style>
       </section>
 
-      {/* 06 - Immediate (gradient blue→green + тонкая полоса ближе) */}
+      {/* 06 - Immediate */}
       <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -534,7 +544,7 @@ export default function App(){
         `}</style>
       </section>
 
-      {/* 08 - Offer (оплата и тексты выровнены/видны) */}
+      {/* 08 - Offer (оплата и тексты выровнены/не «уезжают») */}
       <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -588,17 +598,17 @@ export default function App(){
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* строка с «без скрытых…» теперь читаемая и не обрезается */}
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 whitespace-normal text-center leading-relaxed px-2">
+                {/* Строчка — строго центр, не уезжает, переносы ок */}
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 whitespace-normal text-center leading-relaxed px-2 max-w-[28rem] mx-auto">
                   Без скрытых платежей • Пожизненный доступ • Обновления включены
                 </div>
 
-                {/* Платёжные бейджи — только здесь и в одну строку */}
+                {/* Платёжные бейджи — ТОЛЬКО здесь */}
                 <div className="flex items-center justify-center gap-2 text-[11px] sm:text-xs md:text-sm flex-wrap md:flex-nowrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
-                  <div className="px-2.5 py-1.5 bg_white/20 text-white rounded-lg font-medium whitespace-nowrap" style={{background:"rgba(255,255,255,0.2)"}}>Visa</div>
-                  <div className="px-2.5 py-1.5 bg_white/20 text-white rounded-lg font-medium whitespace-nowrap" style={{background:"rgba(255,255,255,0.2)"}}>MasterCard</div>
+                  <div className="px-2.5 py-1.5" style={{background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:"0.5rem"}}>Visa</div>
+                  <div className="px-2.5 py-1.5" style={{background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:"0.5rem"}}>MasterCard</div>
                 </div>
               </div>
             </div>
@@ -620,7 +630,7 @@ export default function App(){
               { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
             ].map((f,i)=>(
               <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all duration-300 fade-in-view" style={{animationDelay:`${i*0.06}s`}}>
-                <button onClick={()=>toggleFaq(i)} className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50 flex justify-between items-center transition-colors min-h-[48px] group" aria-label={`Вопрос: ${f.q}`}>
+                <button onClick={()=>setOpenFaq(openFaq===i?null:i)} className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50 flex justify-between items-center transition-colors min-h-[48px] group" aria-label={`Вопрос: ${f.q}`}>
                   <span className="font-semibold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
                   <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-transform flex-shrink-0 ${openFaq===i?"rotate-180":""}`}>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
