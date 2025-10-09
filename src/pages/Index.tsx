@@ -227,12 +227,12 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Ослабленный градиент слева для читаемости (меньше отбеления) */}
+        {/* Градиент слева — ЧУТЬ менее белый */}
         <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#ebe9e6]/92 via-[#ebe9e6]/65 to-transparent md:from-[#ebe9e6]/85 md:via-[#ebe9e6]/45 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#ebe9e6] via-[#ebe9e6]/75 to-transparent md:via-[#ebe9e6]/55 md:to-transparent" />
         </div>
 
-        {/* Контент */}
+        {/* Контент слева */}
         <div className="relative z-[2] max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-12 items-start">
             <div className="max-w-xl lg:max-w-2xl lg:col-span-6 fade-in-view">
@@ -243,71 +243,110 @@ export default function App() {
                 </span>
               </h1>
 
-              <div className="result-subtitle mb-3 sm:mb-4">
+              <div className="result-subtitle mb-2 sm:mb-3">
                 <p className="text-base sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800">
                   Проверенная система общения с клиентами для бьюти-мастеров
                 </p>
               </div>
-
-              {/* Кнопка — левее и ниже; под ней — безопасная оплата/Stripe */}
-              <div className="mt-4 sm:mt-5">
-                <a
-                  href={STRIPE_URL}
-                  target="_blank"
-                  rel="noopener"
-                  className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px]"
-                  aria-label="Купить скрипты за 19 евро"
-                >
-                  Купить <span className="translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
-                </a>
-
-                <div className="mt-2 flex items-center gap-2 text-[11px] sm:text-xs text-gray-700">
-                  <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                    <span>🔒</span> Безопасная оплата
-                  </span>
-                  <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
-                    <span>✓</span> Stripe
-                  </span>
-                </div>
-              </div>
-
-              {/* РЕЗУЛЬТАТ — опущен вниз (уровень груди/волос) */}
-              <p className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed lg:mt-[18vh] md:mt-[14vh] mt-10">
-                <span className="font-semibold uppercase tracking-wide text-blue-600">
-                  РЕЗУЛЬТАТ:
-                </span>{" "}
-                закрытые возражения, увеличенный средний чек, экономия времени
-              </p>
             </div>
 
-            {/* Буфер справа, чтобы текст не залезал на лицо */}
             <div className="hidden lg:block lg:col-span-6" />
+          </div>
+        </div>
+
+        {/* Блок "РЕЗУЛЬТАТ" — опущен вниз (к зоне кончиков волос) */}
+        <div className="hero-result">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-900 leading-relaxed bg-white/65 backdrop-blur-[2px] rounded-xl px-3.5 py-2 shadow-[0_0_1px_rgba(255,255,255,.6)_inset]">
+            <span className="font-semibold uppercase tracking-wide text-blue-600">РЕЗУЛЬТАТ:</span>{" "}
+            закрытые возражения, увеличенный средний чек, экономия времени
+          </p>
+        </div>
+
+        {/* CTA — внизу СЛЕВА; без Apple/Google/Visa/MC (они только в блоке оплаты) */}
+        <div className="hero-cta-left">
+          <a
+            href={STRIPE_URL}
+            target="_blank"
+            rel="noopener"
+            className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
+            aria-label="Купить скрипты за 19 евро"
+          >
+            <span className="relative z-10">Купить</span>
+            <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </a>
+
+          <div className="mt-2 flex items-center gap-2 text-[11px] sm:text-xs text-gray-700">
+            <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
+              <span>🔒</span> Безопасная оплата
+            </span>
+            <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/70 flex items-center gap-1.5">
+              <span>✓</span> Stripe
+            </span>
           </div>
         </div>
 
         <style>{`
           html, body { background: #ebe9e6; overscroll-behavior-y: none; }
 
-          /* Фото: лёгкое «подрезание» верха + близко к тексту, лицо не у края */
+          /* Фото героя: немного "съедаем" верх, чтобы дать место H1 */
           .hero-photo {
             position: absolute;
             inset: 0;
             width: 100%;
-            height: 100%;
+            height: 115%;
+            top: -8%;
             object-fit: cover;
-            object-position: 70% 18%; /* немного выше — создаёт место для заголовка */
+            object-position: 72% center; /* смещаем чуть левее от правого края */
           }
+
           @media (min-width: 1024px) {
             .hero-photo {
-              object-fit: cover;
-              object-position: 68% 22%;
+              height: 110%;
+              top: -6%;
+              object-position: 70% center; /* держим лицо правее текста, но не у края */
             }
+          }
+
+          /* Плашка "РЕЗУЛЬТАТ" — позиционирование относительно высоты фото */
+          .hero-result{
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            z-index: 3;
+            transform: translateY(0);
+          }
+          /* моб: примерно чуть ниже середины фото */
+          @media (max-width: 767px){
+            .hero-result{ top: 58%; }
+          }
+          /* планшет: пониже */
+          @media (min-width: 768px) and (max-width: 1023px){
+            .hero-result{ top: 60%; left: 24px; right: auto; }
+          }
+          /* десктоп: в зоне кончиков волос, левее текста */
+          @media (min-width: 1024px){
+            .hero-result{ top: 62%; left: calc(50% - 520px); right: auto; }
+          }
+
+          /* CTA слева внизу */
+          .hero-cta-left{
+            position: absolute;
+            left: 16px;
+            bottom: 20px;
+            z-index: 3;
+          }
+          @media (min-width:768px){
+            .hero-cta-left{ left: 24px; bottom: 24px; }
+          }
+          @media (min-width:1024px){
+            .hero-cta-left{ left: calc(50% - 520px); bottom: 28px; }
           }
 
           .result-subtitle {
             position: relative;
-            padding-top: 10px;
-            margin-top: 6px;
+            padding-top: 8px;
+            margin-top: 4px;
           }
           .result-subtitle::before {
             content: '';
@@ -492,27 +531,12 @@ export default function App() {
       </section>
 
       {/* 05 - Bonuses (компактнее) */}
-      <section id="bonuses" className="relative py-7 sm:py-10 lg:py-12 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
+      <section id="bonuses" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Confetti */}
-        <div className="confetti-container">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="confetti"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${3 + Math.random() * 2}s`
-              }}
-            />
-          ))}
-        </div>
-
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-          <div className="text-center mb-7 fade-in-view">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
+          <div className="text-center mb-8 fade-in-view">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
             <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">
@@ -532,7 +556,7 @@ export default function App() {
                 </div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">{b.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed mt-1.5">{b.desc}</p>
-                <div className="mt-2.5 flex items-center justify-center gap-2">
+                <div className="mt-2 flex items-center justify-center gap-2">
                   <span className="text-sm font-bold text-gray-400 line-through">{b.old}</span>
                   <span className="text-base font-bold text-green-600">0€</span>
                 </div>
@@ -540,34 +564,17 @@ export default function App() {
             ))}
           </div>
         </div>
-
-        <style>{`
-          .confetti-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-          .confetti {
-            position:absolute; width:8px; height:8px; opacity:0;
-            background: linear-gradient(45deg, #b197fc 0%, #a29bfe 100%);
-            animation: confetti-fall linear infinite;
-            border-radius: 2px;
-          }
-          .confetti:nth-child(2n){ background: linear-gradient(45deg,#f093fb 0%,#f5576c 100%); }
-          .confetti:nth-child(3n){ background: linear-gradient(45deg,#4facfe 0%,#00f2fe 100%); }
-          .confetti:nth-child(4n){ background: linear-gradient(45deg,#43e97b 0%,#38f9d7 100%); }
-          @keyframes confetti-fall {
-            0% { transform: translateY(-80px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-          }
-        `}</style>
       </section>
 
-      {/* 06 - Immediate (тонкая сине-зелёная полоса ближе к заголовку) */}
+      {/* 06 - Immediate (underline сине-зелёный) */}
       <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-7 fade-in-view">
+          <div className="text-center mb-8 fade-in-view">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 inline-block">
-              Что изменится <span className="text-teal-600">сразу</span>
+              Что изменится <span className="text-teал-600">сразу</span>
             </h2>
-            <div className="mx-auto mt-2 h-[2px] w-24 sm:w-28 bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-500 rounded-full"></div>
+            <div className="mx-auto mt-2 h-[2px] w-28 bg-gradient-to-r from-sky-500 via-emerald-500 to-sky-500 rounded-full"></div>
           </div>
 
           <div className="space-y-4">
@@ -652,7 +659,7 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 08 - Offer (все платежи тут; строка про «Без скрытых…» не обрезается) */}
+      {/* 08 - Offer */}
       <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -706,36 +713,20 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* ТЕПЕРЬ строка не улетает — нормальные переносы */}
-                <p className="text-xs sm:text-sm text-gray-300 mb-6 text-center leading-relaxed px-2">
+                <div className="text-xs text-gray-300 mb-6 whitespace-nowrap overflow-visible text-center">
                   Без скрытых платежей • Пожизненный доступ • Обновления включены
-                </p>
-
-                <div className="text-left mb-6">
-                  <h3 className="text-base sm:text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
-                  <ul className="space-y-2.5 text-sm text-gray-200">
-                    {[
-                      "Готовые диалоги для всех ситуаций",
-                      "Шаблоны под конкретную услугу",
-                      "Бонус: гайд по работе с базой (27€)",
-                      "Бонус: 30+ источников клиентов (32€)",
-                      "Бонус: продажи на консультации (20€)",
-                      "Пожизненный доступ и обновления",
-                    ].map((t, i) => (
-                      <li key={i} className="flex gap-2.5 items-start">
-                        <span className="w-4 h-4 mt-0.5 text-green-400 flex-shrink-0 font-bold">✓</span>
-                        <span className="leading-relaxed">{t}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
 
-                {/* Все платежные бейджи — ТОЛЬКО здесь */}
+                {/* Платёжные бейджи — только здесь */}
                 <div className="flex items-center justify-center gap-2 text-[11px] sm:text-xs md:text-sm flex-wrap md:flex-nowrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">MasterCard</div>
+                </div>
+
+                <div className="text-[11px] sm:text-xs text-gray-400 mt-3">
+                  Оплата обрабатывается через Stripe. Данные карты защищены.
                 </div>
               </div>
             </div>
@@ -805,10 +796,7 @@ export default function App() {
       )}
 
       <style>{`
-        /* Premium card effect */
         .card-premium { position: relative; transition: all .3s ease; }
-
-        /* Intersection animation */
         .fade-in-view { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
         .fade-in-view.is-visible { opacity: 1; transform: translateY(0); }
       `}</style>
