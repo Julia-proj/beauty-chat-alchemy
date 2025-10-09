@@ -52,7 +52,7 @@ function SectionMarker({ n }: { n: string }) {
         .section-marker {
           position: absolute;
           left: 1rem;
-          top: .75rem;
+          top: 1.5rem;
           display: flex;
           align-items: center;
           gap: 10px;
@@ -63,7 +63,7 @@ function SectionMarker({ n }: { n: string }) {
           animation-delay: .15s;
         }
         @media (min-width:1024px){
-          .section-marker{ left:0; top:.5rem; transform: translate(-60px, 0); }
+          .section-marker{ left:0; top:1rem; transform: translate(-60px, 0); }
         }
         .marker-number{ font-weight:700; font-size:13px; letter-spacing:.12em; color: rgba(148,163,184,.72); font-variant-numeric: tabular-nums; }
         @media (min-width:1024px){ .marker-number{ font-size:15px; } }
@@ -140,6 +140,7 @@ export default function App() {
   const [lightboxImage, setLightboxImage] = useState("");
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
@@ -157,7 +158,10 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (scrollPx / winHeightPx) * 100;
+      setScrollProgress(scrolled);
       setShowStickyCTA(scrolled > 30);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -189,8 +193,6 @@ export default function App() {
         reviewNumber={lightboxReviewNumber}
       />
 
-      <ScrollProgress />
-
       {/* viewers badge desktop */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
         <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300">
@@ -204,6 +206,9 @@ export default function App() {
 
       {/* header */}
       <header className="fixed top-0 left-0 right-0 bg-white/60 sm:bg-white/70 backdrop-blur-2xl z-50 border-b border-gray-200/30 shadow-sm">
+        <div className="h-1 bg-gray-100 absolute top-0 left-0 right-0">
+          <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
           <a
@@ -219,7 +224,7 @@ export default function App() {
       </header>
 
       {/* HERO - фото как фон, гармоничная интеграция */}
-      <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden pt-24 sm:pt-28 lg:pt-20 bg-[#f7f4f1]">
+      <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden pt-20 sm:pt-28 lg:pt-20 bg-[#f7f4f1]">
         {/* Фото */}
         <img
           src="/images/IMG_6537.jpeg"
@@ -248,7 +253,7 @@ export default function App() {
               </p>
             </div>
 
-            <p className="text-pretty text-sm sm:text-base lg:text-lg text-gray-800 mb-5 sm:mb-8 leading-relaxed">
+            <p className="text-pretty text-sm sm:text-base lg:text-lg text-gray-800 mb-5 sm:mb-8 leading-relaxed mt-4 sm:mt-0">
               <span className="font-semibold uppercase tracking-wide text-blue-600">
                 РЕЗУЛЬТАТ:
               </span>{" "}
@@ -296,14 +301,15 @@ export default function App() {
             position:absolute; z-index:0;
             max-width:none;
           }
+          /* Мобила: фото на весь экран как полный фон */
           @media (max-width: 767px){
             .hero-image{
-              bottom:0; left:50%;
-              transform: translateX(-50%);
-              height: 55vh; width: auto;
-              object-fit: contain; object-position: bottom center;
+              top:0; left:0; right:0; bottom:0;
+              width: 100%; height: 100vh;
+              object-fit: cover; object-position: center 30%;
             }
           }
+          /* Планшет: фото правее, видно полностью */
           @media (min-width:768px) and (max-width:1023px){
             .hero-image{
               top:50%; right:0;
@@ -312,6 +318,7 @@ export default function App() {
               object-fit: contain; object-position: center right;
             }
           }
+          /* Десктоп: фото служит фоном слева для текста, лицо справа */
           @media (min-width:1024px){
             .hero-image{
               top:50%; right:5%;
@@ -321,6 +328,7 @@ export default function App() {
             }
           }
 
+          /* Оверлей: мягкий переход, на мобиле прозрачнее чтобы видно было фото */
           .hero-overlay{
             position:absolute; inset:0; z-index:1;
             background: linear-gradient(to right,
@@ -333,10 +341,11 @@ export default function App() {
           @media (max-width:767px){
             .hero-overlay{
               background: linear-gradient(to bottom,
-                rgba(255,255,255,0.95) 0%,
-                rgba(247,244,241,0.85) 35%,
-                rgba(247,244,241,0.4) 60%,
-                transparent 100%
+                rgba(247,244,241,0.75) 0%,
+                rgba(247,244,241,0.65) 30%,
+                rgba(247,244,241,0.55) 50%,
+                rgba(247,244,241,0.7) 70%,
+                rgba(247,244,241,0.85) 100%
               );
             }
           }
