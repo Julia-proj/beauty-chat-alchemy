@@ -233,7 +233,7 @@ export default function App() {
           loading="eager"
           decoding="async"
         />
-        
+
         {/* Белый overlay */}
         <div className="hero-overlay"></div>
 
@@ -241,7 +241,7 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 sm:mb-7 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -257,13 +257,12 @@ export default function App() {
           {/* Нижняя часть - блок результата и кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
             {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
-            <div className="max-w-md">
-              <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
-                <span className="font-bold uppercase tracking-wide text-blue-600" style={{ fontStyle: 'italic' }}>
+            <div className="max-w-md result-block">
+              <p className="text-pretty leading-[1.45]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
+                <span className="font-bold uppercase bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" style={{ fontStyle: 'italic', letterSpacing: '0.03em' }}>
                   РЕЗУЛЬТАТ:
                 </span>{" "}
-                закрытые возражения, увеличенный<br className="sm:hidden" />
-                <span className="sm:whitespace-normal">средний чек, экономия времени</span>
+                <span className="text-gray-700">закрытые возражения, увеличенный средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -325,19 +324,30 @@ export default function App() {
 
           /* Чуть опустить контент на мобиле (верхний заголовок не упирается в шапку) */
           @media (max-width: 767px){
-            .hero-content{ padding-top: 102px !important; }
+            .hero-content{ padding-top: 106px !important; }
+          }
+
+          /* Блок результата */
+          .result-block{
+            margin-top: 28px;
+          }
+          @media (max-width: 767px){
+            .result-block{
+              padding-left: 8px;
+            }
           }
           
           /* --- MOBILE ≤767px: фокус справа + "призмовая" полупрозрачная вуаль --- */
           @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
-              filter: brightness(1.18) contrast(1.02);
+              filter: brightness(1.08) saturate(1.05);
             }
             .hero-overlay{
               background:
-                radial-gradient(120% 90% at 15% 8%, rgba(255,255,255,.28) 0%, rgba(255,255,255,.14) 42%, rgba(255,255,255,0) 70%),
-                linear-gradient(135deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.06) 45%, rgba(255,255,255,0) 80%);
+                radial-gradient(ellipse 125% 95% at 18% 10%, rgba(255,255,255,.16) 0%, rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 72%),
+                linear-gradient(135deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.08) 40%, rgba(255,255,255,0) 75%);
+              backdrop-filter: brightness(1.08) saturate(1.05);
               mix-blend-mode: normal;
             }
           }
@@ -353,7 +363,7 @@ export default function App() {
           @media (min-width:1024px){
             .hero-image{
               object-position: 48% center;
-              transform: scale(0.96);
+              transform: scale(0.94);
               transform-origin: center right;
             }
           }
@@ -362,7 +372,7 @@ export default function App() {
           @media (min-width:1280px){
             .hero-image{
               object-position: 46% center;
-              transform: scale(0.93);
+              transform: scale(0.92);
             }
           }
         `}</style>
@@ -577,10 +587,10 @@ export default function App() {
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block relative">
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" style={{ width: '45%' }}></div>
             </h2>
-            <div className="mx-auto mt-4 h-1.5 w-36 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-sm"></div>
           </div>
 
           <div className="space-y-3">
@@ -721,7 +731,7 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 whitespace-nowrap overflow-x-auto text-center">
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center" style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
 
