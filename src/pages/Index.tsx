@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";  
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -347,7 +347,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
               Сравните результаты до и после внедрения скриптов
             </p>
           </div>
@@ -407,12 +407,12 @@ export default function App() {
       {/* 02 - Почему */}
       <section id="why" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
         <SectionMarker n="02" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+        <div className="max-w-6xl mx_auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
               Каждая потерянная заявка - это упущенная прибыль
             </p>
           </div>
@@ -476,24 +476,24 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
+            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { img: "/images/xmind.png", title: "Готовые диалоги", desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово.", highlight: "презентация ценности" },
-              { img: "/images/target.png", title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления.", highlight: "мягкие ответы без давления" },
-              { img: "/images/salons.png", title: "Под каждую услугу", desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши.", highlight: "учтена специфика каждой ниши" },
-              { img: "/images/bucle.png", title: "Возврат клиентов", desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы.", highlight: "реактивации «спящей» базы без рекламы" },
-              { img: "/images/phone.png", title: "Гайд по внедрению", desc: "Старт за один день: пошаговый план и стандарты для команды.", highlight: "Старт за один день" },
-              { img: "/images/rocket.png", title: "Итог", desc: "Больше записей, выше средний чек, меньше времени в переписке.", highlight: "выше средний чек", big: true },
+              { img: "/images/xmind.png", title: "Готовые диалоги", desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово." },
+              { img: "/images/target.png", title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления." },
+              { img: "/images/salons.png", title: "Под каждую услугу", desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши." },
+              { img: "/images/bucle.png", title: "Возврат клиентов", desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы." },
+              { img: "/images/phone.png", title: "Гайд по внедрению", desc: "Старт за один день: пошаговый план и стандарты для команды." },
+              { img: "/images/rocket.png", title: "Итог", desc: "Больше записей, выше средний чек, меньше времени в переписке." },
             ].map((item, k) => (
               <div key={k} className="card-premium rounded-3xl border border-gray-100 p-4 sm:p-6 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
                 <div className="mb-3 inline-flex items-center justify-center">
                   <img
                     src={item.img}
                     alt=""
-                    className={`${item.big ? "w-14 h-14" : "w-12 h-12"} object-contain group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300`}
                     loading="lazy"
                   />
                 </div>
@@ -511,8 +511,8 @@ export default function App() {
       <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти */}
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-600 confetti-layer">
+        {/* Конфетти (поверх контента) */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 confetti-layer">
           {Array.from({ length: 18 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
           ))}
@@ -523,7 +523,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -551,6 +551,7 @@ export default function App() {
 
         <style>{`
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
+          .confetti-layer{ z-index: 5; transition: opacity .6s ease; } /* <-- поверх контента */
           .confetti{
             position:absolute; top:-8vh;
             width:5px; height:9px; border-radius:2px;
@@ -628,16 +629,17 @@ export default function App() {
             ))}
           </div>
 
+          {/* Пять рилсов вместо трёх */}
           <div className="flex gap-3 sm:gap-4 justify-center items-center overflow-x-auto pb-2 reels-container">
-            {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
+            {INSTAGRAM_REELS.map((url, idx) => (
               <div
                 key={url}
-                className={`${idx === 1 ? 'reel-card-featured' : 'reel-card-small'
-                  } rounded-2xl overflow-hidden border-2 ${idx === 1 ? 'border-blue-400 shadow-xl' : 'border-gray-200'
+                className={`${idx === 2 ? 'reel-card-featured' : 'reel-card-small'
+                  } rounded-2xl overflow-hidden border-2 ${idx === 2 ? 'border-blue-400 shadow-xl' : 'border-gray-200'
                   } flex-shrink-0 hover:shadow-2xl hover:scale-105 transition-all duration-500 fade-in-view`}
                 style={{ animationDelay: `${idx * 0.08}s` }}
               >
-                <InstaEmbed url={url} maxWidth={idx === 1 ? 280 : 220} />
+                <InstaEmbed url={url} maxWidth={idx === 2 ? 280 : 220} />
               </div>
             ))}
           </div>
@@ -716,14 +718,14 @@ export default function App() {
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
+                  className="block w-full text_center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
                   aria-label="Купить полную систему со скидкой 85% - 19 евро"
                 >
                   <span className="relative z-10">Получить со скидкой 85%</span>
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Исправленный перенос: НЕ обрезается на десктопе/мобайле */}
+                {/* Исправленный перенос */}
                 <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center offer-bullets">
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
@@ -749,7 +751,7 @@ export default function App() {
 
                 <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
-                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
+                  <div className="px-2.5 py-1.5 bg_white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Mastercard</div>
                 </div>
@@ -762,7 +764,7 @@ export default function App() {
           .offer-bullets{
             font-size: clamp(11px, 2vw, 13.5px);
             letter-spacing: -0.01em;
-            white-space: normal;      /* было nowrap — из-за этого съедалось */
+            white-space: normal;
             overflow: visible;
             text-overflow: clip;
           }
@@ -815,7 +817,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile (текст изменён) */}
+      {/* Sticky CTA - Mobile */}
       {showStickyCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
