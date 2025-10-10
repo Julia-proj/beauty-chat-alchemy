@@ -227,7 +227,7 @@ export default function App() {
       <section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#faf5f0] to-white" style={{ minHeight: '100svh' }}>
         {/* Фото - фоновое на весь экран */}
         <img
-          src="/images/IMG_6601.jpeg"
+          src="/images/IMG_6603.jpeg"
           alt="Beauty professional"
           className="hero-image"
           loading="eager"
