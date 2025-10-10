@@ -92,6 +92,20 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   );
 }
 
+/* Компонент мягкой подсветки (синим) первого вхождения строки */
+function Emph({ text, hit }: { text: string; hit?: string }) {
+  if (!hit) return <>{text}</>;
+  const i = text.indexOf(hit);
+  if (i === -1) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, i)}
+      <span className="hl">{hit}</span>
+      {text.slice(i + hit.length)}
+    </>
+  );
+}
+
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -486,12 +500,12 @@ export default function App() {
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { img: "/images/xmind.png", title: "Готовые диалоги", desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово." },
-              { img: "/images/target.png", title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления." },
-              { img: "/images/salons.png", title: "Под каждую услугу", desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши." },
-              { img: "/images/bucle.png", title: "Возврат клиентов", desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы." },
-              { img: "/images/phone.png", title: "Гайд по внедрению", desc: "Старт за один день: пошаговый план и стандарты для команды." },
-              { img: "/images/rocket.png", title: "Итог", desc: "Больше записей, выше средний чек, меньше времени в переписке." },
+              { img: "/images/xmind.png",   title: "Готовые диалоги",     desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово.",                highlight: "презентация ценности" },
+              { img: "/images/target.png",  title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления.",                      highlight: "Мягкие ответы без давления" },
+              { img: "/images/salons.png",  title: "Под каждую услугу",   desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши.",                highlight: "Учтена специфика каждой ниши" },
+              { img: "/images/bucle.png",   title: "Возврат клиентов",    desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы.",                         highlight: "реактивации «спящей» базы без рекламы" },
+              { img: "/images/phone.png",   title: "Гайд по внедрению",   desc: "Старт за один день: пошаговый план и стандарты для команды.",                                 highlight: "Старт за один день" },
+              { img: "/images/rocket.png",  title: "Итог",                desc: "Больше записей, выше средний чек, меньше времени в переписке.",                              highlight: "выше средний чек" },
             ].map((item, k) => (
               <div key={k} className="card-premium rounded-3xl border border-gray-100 p-4 sm:p-6 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
                 <div className="mb-3 inline-flex items-center justify-center">
@@ -504,12 +518,23 @@ export default function App() {
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {item.desc}
+                  <Emph text={item.desc} hit={item.highlight} />
                 </p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Синие выделения маркером */}
+        <style>{`
+          .hl{
+            background: linear-gradient(transparent 60%, rgba(59,130,246,.28) 0);
+            padding: 0 .1em;
+            border-radius: .25em;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+          }
+        `}</style>
       </section>
 
       {/* 05 - Бонусы — конфетти */}
@@ -561,11 +586,11 @@ export default function App() {
             width:5px; height:9px; border-radius:2px;
             opacity:.9; 
             animation: confetti-fall linear forwards;
-            animation-play-state: paused; /* <-- пауза по умолчанию */
+            animation-play-state: paused; /* пауза по умолчанию */
             filter: drop-shadow(0 1px 1px rgba(0,0,0,.08));
           }
           #bonuses.confetti-on .confetti{
-            animation-play-state: running; /* <-- запускаем при появлении секции */
+            animation-play-state: running; /* запускаем при появлении секции */
           }
           @keyframes confetti-fall{
             0%{ transform: translateY(-8vh) rotate(0deg); }
