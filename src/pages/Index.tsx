@@ -241,7 +241,7 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 sm:mb-7 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 sm:mb-4 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="text-blue-600">
@@ -249,21 +249,21 @@ export default function App() {
               </span>
             </h1>
 
-            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg">
+            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg mt-[-2px]">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
           {/* Нижняя часть - блок результата и кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
-            <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] result-text" style={{ fontSize: 'clamp(15px, 1.85vw, 19.5px)' }}>
-                <span className="font-bold uppercase text-blue-600" style={{ fontStyle: 'normal', letterSpacing: '0.04em' }}>
-                  РЕЗУЛЬТАТ:
-                </span>{" "}
-                <span className="text-white font-semibold" style={{ letterSpacing: '0.01em' }}>закрытые возражения, увеличенный средний чек, экономия времени</span>
-              </p>
+            {/* РЕЗУЛЬТАТ: синий мини-тэг + горизонтальные glass-pills */}
+            <div className="max-w-2xl result-block">
+              <div className="result-tag">РЕЗУЛЬТАТ</div>
+              <div className="chips-wrap">
+                <span className="pill">закрытые возражения</span>
+                <span className="pill">увеличенный средний чек</span>
+                <span className="pill">экономия времени</span>
+              </div>
             </div>
 
             {/* Кнопка Купить */}
@@ -327,19 +327,51 @@ export default function App() {
             .hero-content{ padding-top: 106px !important; }
           }
 
-          /* Блок результата */
+          /* ----- RESULT block ----- */
           .result-block{
-            margin-top: 28px;
+            display:flex;
+            flex-direction: column;
+            gap:10px;
           }
-          .result-text{
-            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+          .result-tag{
+            width:max-content;
+            padding:6px 10px;
+            border-radius:9999px;
+            font-size:12px;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            font-weight:800;
+            color:#2563eb; /* blue-600 */
+            background: rgba(37,99,235,0.08);
+            border:1px solid rgba(37,99,235,0.18);
+            backdrop-filter:saturate(1.05);
+          }
+          .chips-wrap{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+          }
+          .pill{
+            display:inline-flex;
+            align-items:center;
+            padding:8px 12px;
+            border-radius:9999px;
+            font-size:14px;
+            line-height:1;
+            font-weight:600;
+            color:#ffffff;
+            text-shadow:0 1px 2px rgba(0,0,0,.35);
+            background:
+              linear-gradient(180deg, rgba(15,23,42,.34) 0%, rgba(15,23,42,.28) 100%); /* сине-серое стекло */
+            border:1px solid rgba(255,255,255,.22);
+            backdrop-filter: blur(8px) saturate(1.05);
+            -webkit-backdrop-filter: blur(8px) saturate(1.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,.12);
           }
           @media (max-width: 767px){
-            .result-block{
-              padding-left: 8px;
-            }
+            .pill{ font-size:13.5px; padding:7px 11px; }
           }
-          
+
           /* --- MOBILE ≤767px: фокус справа + "призмовая" полупрозрачная вуаль --- */
           @media (max-width: 767px){
             .hero-image{
@@ -562,7 +594,7 @@ export default function App() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+            <h2 className="text-balance text-3л sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               <span className="text-blue-600">Бонусы</span> при покупке
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
