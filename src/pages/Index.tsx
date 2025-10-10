@@ -244,7 +244,7 @@ export default function App() {
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 sm:mb-7 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-blue-600">
                 сообщения в деньги
               </span>
             </h1>
@@ -258,11 +258,11 @@ export default function App() {
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
             {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
-                <span className="font-bold uppercase bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" style={{ fontStyle: 'italic', letterSpacing: '0.03em' }}>
+              <p className="text-pretty leading-[1.45] result-text" style={{ fontSize: 'clamp(15px, 1.85vw, 19.5px)' }}>
+                <span className="font-bold uppercase text-blue-600" style={{ fontStyle: 'normal', letterSpacing: '0.04em' }}>
                   РЕЗУЛЬТАТ:
                 </span>{" "}
-                <span className="text-gray-700">закрытые возражения, увеличенный средний чек, экономия времени</span>
+                <span className="text-white font-semibold" style={{ letterSpacing: '0.01em' }}>закрытые возражения, увеличенный средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -331,6 +331,9 @@ export default function App() {
           .result-block{
             margin-top: 28px;
           }
+          .result-text{
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+          }
           @media (max-width: 767px){
             .result-block{
               padding-left: 8px;
@@ -340,14 +343,15 @@ export default function App() {
           /* --- MOBILE ≤767px: фокус справа + "призмовая" полупрозрачная вуаль --- */
           @media (max-width: 767px){
             .hero-image{
-              object-position: 62% 42%;
-              filter: brightness(1.08) saturate(1.05);
+              object-position: 68% 35%;
+              filter: brightness(1.06) saturate(1.03);
+              transform: scale(1.08);
             }
             .hero-overlay{
               background:
-                radial-gradient(ellipse 125% 95% at 18% 10%, rgba(255,255,255,.16) 0%, rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 72%),
-                linear-gradient(135deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.08) 40%, rgba(255,255,255,0) 75%);
-              backdrop-filter: brightness(1.08) saturate(1.05);
+                radial-gradient(ellipse 120% 85% at 15% 8%, rgba(255,255,255,.14) 0%, rgba(255,255,255,.07) 45%, rgba(255,255,255,0) 72%),
+                linear-gradient(135deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.06) 40%, rgba(255,255,255,0) 75%);
+              backdrop-filter: brightness(1.04) saturate(1.02);
               mix-blend-mode: normal;
             }
           }
@@ -362,17 +366,23 @@ export default function App() {
           /* Десктоп: отдаляем фото, больше «стены» слева */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 48% center;
-              transform: scale(0.94);
+              object-position: 56% center;
+              transform: scale(0.91);
               transform-origin: center right;
+              filter: brightness(1.14) contrast(1.01) saturate(1.02);
+            }
+            .hero-overlay{
+              background:
+                linear-gradient(90deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.11) 35%, rgba(255,255,255,0) 68%);
+              backdrop-filter: brightness(1.06);
             }
           }
 
           /* Крупные десктопы: ещё немного дальше */
           @media (min-width:1280px){
             .hero-image{
-              object-position: 46% center;
-              transform: scale(0.92);
+              object-position: 58% center;
+              transform: scale(0.89);
             }
           }
         `}</style>
@@ -384,7 +394,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
+              Как изменится ваша <span className="text-blue-600">работа с клиентами</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Сравните результаты до и после внедрения скриптов
@@ -449,7 +459,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              Почему это <span className="text-rose-600">важно</span>
+              Почему это <span className="text-blue-600">важно</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Каждая потерянная заявка - это упущенная прибыль
@@ -479,7 +489,7 @@ export default function App() {
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
-            Кому подходят <span className="text-emerald-600">скрипты</span>
+            Кому подходят <span className="text-blue-600">скрипты</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
@@ -513,7 +523,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
+              Что входит в <span className="text-blue-600">систему скриптов</span>
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
           </div>
@@ -553,7 +563,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
+              <span className="text-blue-600">Бонусы</span> при покупке
             </h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность - 79€. Сегодня идут бесплатно со скриптами
@@ -588,8 +598,8 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block relative">
-              Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" style={{ width: '45%' }}></div>
+              Что изменится <span className="text-blue-600">сразу</span>
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-blue-600" style={{ width: '45%' }}></div>
             </h2>
           </div>
 
@@ -684,7 +694,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
-              Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
+              Полная система со скидкой <span className="text-blue-600">85%</span>
             </h2>
             <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Специальное предложение на этой неделе • Предложение действует ограниченное время
