@@ -134,7 +134,7 @@ export default function App() {
     setLightboxOpen(true);
   };
 
-  // появление секций (для fade-in и конфетти)
+  // появление секций (fade-in + запуск конфетти)
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
@@ -151,7 +151,7 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  // плавный скролл по якорям
+  // плавный скролл
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
     return () => { document.documentElement.style.scrollBehavior = ''; };
@@ -196,9 +196,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — мобайл полноэкранный; десктоп: слева контент + мягкий градиент, справа фото */}
+      {/* HERO */}
       <section className="relative w-[100vw] h-[100svh] overflow-hidden hero-wrap" style={{ isolation: 'isolate' }}>
-        {/* Фото */}
         <img
           src="/images/IMG_6646.jpeg"
           alt="Beauty professional"
@@ -207,13 +206,11 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Разделительный мягкий градиент слева (виден на десктопе) */}
+        {/* Мягкое разделение (градиент) для десктопа */}
         <div className="hero-split-gradient" />
 
-        {/* Лёгкая виньетка */}
         <div className="hero-vignette" />
 
-        {/* Контент */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
@@ -224,7 +221,8 @@ export default function App() {
                 сообщения в деньги
               </span>
             </h1>
-            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-white drop-volume max-w-xl">
+            {/* подзаголовок: белый на мобайле, ЧЁРНЫЙ на десктопе */}
+            <p className="hero-sub text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed drop-volume max-w-xl">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
@@ -232,7 +230,8 @@ export default function App() {
           {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-white drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+              {/* результат: белый на мобайле, ЧЁРНЫЙ на десктопе */}
+              <p className="result-text text-pretty leading-[1.45] drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
                 <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
                   Результат:
                 </span>{" "}
@@ -240,7 +239,6 @@ export default function App() {
               </p>
             </div>
 
-            {/* Кнопка: ПОЛУЧИТЬ СКРИПТЫ → к офферу */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href="#offer"
@@ -253,7 +251,6 @@ export default function App() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-white transition-opacity duration-300"></div>
               </a>
 
-              {/* Платёжные бейджи — Google Pay серо-прозрачный */}
               <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
                 <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
                 <span className="px-2.5 py-1.5 bg-white/30 text-gray-900 rounded-lg font-medium border border-gray-300">
@@ -262,12 +259,11 @@ export default function App() {
               </div>
             </div>
 
-            {/* Безопасная оплата / Stripe — переносы безопасны на всех экранах */}
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90">
-              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90 lg:text-gray-700">
+              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 lg:border-gray-200 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 lg:border-gray-200 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -282,7 +278,6 @@ export default function App() {
           :global(.text-pretty){ text-wrap: pretty; }
           :root { --safe-edge: 0px; }
 
-          /* Базово мобайл — фото на весь экран */
           .hero-wrap{ background:#fff; }
           .hero-image{
             position:absolute; 
@@ -303,7 +298,10 @@ export default function App() {
             pointer-events:none;
           }
 
-          /* Десктоп-раскладка: фото справа ~55%, слева мягкий серый→белый (сгладил переходы) */
+          /* Подзаголовки: белые по умолчанию */
+          .hero-sub, .result-text { color:#ffffff; }
+
+          /* Десктоп — мягкое разделение и чёрные тексты */
           @media (min-width:1024px){
             .hero-wrap{ position:relative; }
             .hero-image{
@@ -316,15 +314,16 @@ export default function App() {
               background:
                 linear-gradient(90deg,
                   #f4f6f8 0%,
-                  #f6f8fb 20%,
-                  #f8fafc 36%,
-                  rgba(248,250,252,0.75) 46%,
-                  rgba(255,255,255,0.35) 54%,
-                  rgba(255,255,255,0.00) 60%);
+                  #f7f9fb 32%,
+                  #fafbfe 48%,
+                  rgba(255,255,255,0.0) 62%);
             }
-            .hero-content{
-              padding-top: 130px !important;
-              max-width: 1200px;
+            .hero-content{ padding-top:130px !important; max-width:1200px; }
+
+            /* важное: на светлом фоне делаем текст чёрным и без объёмной тени */
+            .hero-sub, .result-text{
+              color:#111 !important;
+              text-shadow:none !important;
             }
           }
 
@@ -353,7 +352,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
-            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Сравните результаты до и после внедрения скриптов
             </p>
           </div>
@@ -418,7 +417,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
-            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Каждая потерянная заявка - это упущенная прибыль
             </p>
           </div>
@@ -482,7 +481,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
-            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">Полный набор инструментов для увеличения продаж</p>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -499,12 +498,14 @@ export default function App() {
                   <img
                     src={item.img}
                     alt=""
-                    className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
+                    className={`w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300`}
                     loading="lazy"
                   />
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {item.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -515,7 +516,7 @@ export default function App() {
       <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти */}
+        {/* Конфетти (стартуют ТОЛЬКО при confetti-on) */}
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-600 confetti-layer">
           {Array.from({ length: 18 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
@@ -527,7 +528,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -554,25 +555,22 @@ export default function App() {
         </div>
 
         <style>{`
-          /* включаем слой при входе секции */
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
-
-          /* по умолчанию анимация на паузе, чтобы не "отстреливала" до появления */
           .confetti{
             position:absolute; top:-8vh;
             width:5px; height:9px; border-radius:2px;
-            opacity:.95; 
+            opacity:.9; 
             animation: confetti-fall linear forwards;
-            animation-play-state: paused;
+            animation-play-state: paused; /* <-- пауза по умолчанию */
             filter: drop-shadow(0 1px 1px rgba(0,0,0,.08));
           }
-          #bonuses.confetti-on .confetti{ animation-play-state: running; }
-
+          #bonuses.confetti-on .confetti{
+            animation-play-state: running; /* <-- запускаем при появлении секции */
+          }
           @keyframes confetti-fall{
             0%{ transform: translateY(-8vh) rotate(0deg); }
             100%{ transform: translateY(105vh) rotate(360deg); }
           }
-
           ${Array.from({length:18}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
             const dur = (Math.random()*2.5 + 3.8).toFixed(2);
@@ -593,7 +591,6 @@ export default function App() {
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
               <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" style={{ width: '45%' }}></div>
             </h2>
-            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead"></p>
           </div>
 
           <div className="space-y-3">
@@ -641,6 +638,7 @@ export default function App() {
             ))}
           </div>
 
+          {/* ТЕПЕРЬ 5 РИЛСОВ */}
           <div className="flex gap-3 sm:gap-4 justify-center items-center overflow-x-auto pb-2 reels-container">
             {INSTAGRAM_REELS.slice(0, 5).map((url, idx) => (
               <div
@@ -648,7 +646,7 @@ export default function App() {
                 className={`${idx === 2 ? 'reel-card-featured' : 'reel-card-small'
                   } rounded-2xl overflow-hidden border-2 ${idx === 2 ? 'border-blue-400 shadow-xl' : 'border-gray-200'
                   } flex-shrink-0 hover:shadow-2xl hover:scale-105 transition-all duration-500 fade-in-view`}
-                style={{ animationDelay: `${idx * 0.06}s` }}
+                style={{ animationDelay: `${idx * 0.08}s` }}
               >
                 <InstaEmbed url={url} maxWidth={idx === 2 ? 280 : 220} />
               </div>
@@ -689,7 +687,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
-            <p className="text-sm sm:text-base text-black max-w-2xl mx-auto leading-relaxed subhead">
+            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Специальное предложение на этой неделе • Предложение действует ограниченное время
             </p>
           </div>
@@ -724,7 +722,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* CTA к Stripe */}
+                {/* CTA */}
                 <a
                   href={STRIPE_URL}
                   target="_blank"
@@ -736,7 +734,6 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Исправленный перенос */}
                 <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center offer-bullets">
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
@@ -828,7 +825,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile (текст изменён) */}
+      {/* Sticky CTA - Mobile */}
       {showStickyCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
