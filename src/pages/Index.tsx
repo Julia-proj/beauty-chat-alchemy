@@ -133,99 +133,23 @@ function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: 
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-/** Премиальная конфетти-анимация для блока бонусов */
-function useConfettiOnce(ref: React.RefObject<HTMLElement>) {
+/** Премиальная конфетти-анимация (ненавязчивая) */
+function useConfettiOnceInView(ref: React.RefObject<HTMLElement>) {
+  const launchedRef = useRef(false);
   useEffect(() => {
-    if (!ref.current) return;
-    const section = ref.current;
-    const canvas = document.createElement('canvas');
-    canvas.className = 'confetti-canvas';
-    canvas.style.position = 'absolute';
-    canvas.style.inset = '0';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '1';
-    section.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let w = canvas.width = section.clientWidth;
-    let h = canvas.height = section.clientHeight;
-    const onResize = () => {
-      w = canvas.width = section.clientWidth;
-      h = canvas.height = section.clientHeight;
-    };
-    window.addEventListener('resize', onResize);
-
-    let raf = 0;
-    let started = false;
-    let particles: {x:number;y:number;vx:number;vy:number;sz:number;rot:number;vr:number;color:string;life:number}[] = [];
-
-    const palette = [
-      'rgba(59,130,246,0.85)',   // blue-500
-      'rgba(139,92,246,0.85)',   // violet-500
-      'rgba(236,72,153,0.85)',   // pink-500
-      'rgba(99,102,241,0.85)',   // indigo-500
-      'rgba(16,185,129,0.85)'    // emerald-500
-    ];
-
-    const createParticles = (count=80) => {
-      particles = Array.from({length: count}).map(()=>({
-        x: Math.random()*w,
-        y: -20 - Math.random()*h*0.2,
-        vx: (Math.random()-0.5)*0.6,
-        vy: 1.2 + Math.random()*1.6,
-        sz: 4 + Math.random()*6,
-        rot: Math.random()*Math.PI,
-        vr: (Math.random()-0.5)*0.15,
-        color: palette[(Math.random()*palette.length)|0],
-        life: 1
-      }));
-    };
-
-    const draw = (t:number) => {
-      if (!ctx) return;
-      ctx.clearRect(0,0,w,h);
-      particles.forEach(p=>{
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.vr;
-        p.vy += 0.015; // лёгкая гравитация
-        p.life -= 0.003; // плавное затухание
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.globalAlpha = Math.max(0, p.life);
-        // «конфетти» как тонкие прямоугольники
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.sz/2, -p.sz/6, p.sz, p.sz/3);
-        ctx.restore();
-      });
-      particles = particles.filter(p => p.y < h+30 && p.life > 0);
-      if (particles.length > 0) raf = requestAnimationFrame(draw);
-    };
-
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if (e.isIntersecting && !started) {
-          started = true;
-          createParticles(90);
-          raf = requestAnimationFrame(draw);
-          // останавливаем через ~2.5 сек, чтобы было «премиально»
-          setTimeout(()=>{ particles.forEach(p=>p.life = Math.min(p.life, 0.4)); }, 1600);
-          setTimeout(()=>{ cancelAnimationFrame(raf); ctx.clearRect(0,0,w,h); }, 2600);
-          io.disconnect();
+    if (!ref.current || launchedRef.current) return;
+    const el = ref.current;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting && !launchedRef.current) {
+          launchedRef.current = true;
+          el.classList.add("confetti-on");
+          setTimeout(() => el.classList.remove("confetti-on"), 2000);
         }
       });
-    }, { threshold: 0.25 });
-    io.observe(section);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(raf);
-      io.disconnect();
-      canvas.remove();
-    };
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
   }, [ref]);
 }
 
@@ -238,8 +162,8 @@ export default function App() {
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  const bonusesRef = useRef<HTMLElement>(null);
-  useConfettiOnce(bonusesRef);
+  const bonusesRef = useRef<HTMLDivElement>(null);
+  useConfettiOnceInView(bonusesRef);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
@@ -299,7 +223,7 @@ export default function App() {
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
           </div>
-          <span className="font-medium tabular-nums">{viewersCount} онлайн</span>
+            <span className="font-medium tabular-nums">{viewersCount} онлайн</span>
         </div>
       </div>
 
@@ -323,7 +247,7 @@ export default function App() {
       </header>
 
       {/* HERO */}
-      <section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#faf5f0] to-white" style={{ minHeight: '100svh' }}>
+      <section className="relative w-full flex items-center justify-start overflow-hidden hero-bg" style={{ minHeight: '100svh' }}>
         {/* Фото */}
         <img
           src="/images/IMG_6603.jpeg"
@@ -333,16 +257,15 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Белый мягкий градиент к правому краю для «сшивки» с фоном */}
-        <div className="hero-edge-fade" aria-hidden="true"></div>
-        {/* Общий лёгкий overlay */}
-        <div className="hero-overlay" aria-hidden="true"></div>
+        {/* Переходные оверлеи для плавного «схождения» к белому */}
+        <div className="hero-overlay"></div>
+        <div className="hero-fade-edge" aria-hidden="true"></div>
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '108px', paddingBottom: '40px' }}>
-          {/* Верх: заголовок + подзаголовок */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '112px', paddingBottom: '44px' }}>
+          {/* Верх: заголовок + подзаголовок (подняли и укрупнили подзаголовок; без попадания на голову) */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-4 sm:mb-5 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-6 sm:mb-6 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -350,19 +273,18 @@ export default function App() {
               </span>
             </h1>
 
-            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg -mt-0.5">
+            <p className="text-pretty text-[18px] sm:text-[19px] lg:text-[22px] font-semibold leading-relaxed text-gray-800 max-w-lg mt-[-2px]">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
-          {/* Низ: Результат + кнопка */}
+          {/* Низ: Результат + CTA */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
+            {/* Результат — с Большой буквы, крупнее, белым */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
-                <span className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" style={{ letterSpacing: '0.02em' }}>
-                  Результат:
-                </span>{" "}
-                <span className="text-gray-700">закрытые возражения, увеличенный средний чек, экономия времени</span>
+              <p className="leading-[1.4] result-text">
+                <span className="font-extrabold tracking-[-0.01em]">Результат: </span>
+                <span className="opacity-95">закрытые возражения, увеличенный средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -397,11 +319,15 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#faf5f0; overscroll-behavior-y: contain; }
+          :global(html, body, #__next){ background:#ffffff; overscroll-behavior-y: contain; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
+
+          .hero-bg{
+            background: linear-gradient(180deg, #faf5f0 0%, #fff 40%);
+          }
 
           .hero-image{
             position:absolute; 
@@ -411,74 +337,76 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            filter: brightness(1.04) contrast(1.02);
+            filter: brightness(1.06) contrast(1.02);
+            /* Мягкая маска снизу, чтобы не было резкого перехода к белому */
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
+                    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
           }
           
-          /* общий лёгкий слой для мягкости */
+          /* Полупрозрачные градиенты для плавного сведения к белому */
           .hero-overlay{
             position:absolute;
             inset:0;
             z-index:1;
-            background: radial-gradient(120% 90% at 20% 15%, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 60%);
+            background:
+              linear-gradient(180deg, rgba(255,255,255,.00) 0%, rgba(255,255,255,.12) 60%, rgba(255,255,255,.22) 100%),
+              radial-gradient(120% 80% at 5% 20%, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%);
             pointer-events: none;
+            mix-blend-mode: normal;
           }
-
-          /* правый мягкий fade в белое, чтобы не было резкого перехода */
-          .hero-edge-fade{
+          /* Дополнительная вертикальная растушёвка справа для плавного стыка с белым */
+          .hero-fade-edge{
             position:absolute;
-            top:0; right:0; bottom:0; width:min(28vw, 520px);
-            z-index:2;
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 55%, rgba(255,255,255,.9) 90%, #ffffff 100%);
+            inset:0;
+            z-index:1;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 70%, rgba(255,255,255,.85) 100%);
             pointer-events:none;
           }
 
-          /* Позиционирование контента так, чтобы текст не «влезал» на голову модели */
-          .hero-content { 
-            /* добавил чуть больше паддинг сверху (чтобы H1 не упирался в потолок) */
-            padding-top: 112px !important;
-          }
-
-          /* MOBILE ≤767px */
+          /* Контент не упирается в потолок */
           @media (max-width: 767px){
             .hero-content{ padding-top: 106px !important; }
+          }
+
+          /* Результат — белым и крупнее */
+          .result-text{
+            font-size: clamp(18px, 2vw, 22px);
+            color: #fff;
+            text-shadow: 0 1px 10px rgba(0,0,0,.25);
+          }
+
+          /* Мобильная фокусировка на правой части, но так, чтобы текст не попадал на голову */
+          @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
               filter: brightness(1.08) saturate(1.05);
             }
-            .hero-edge-fade{
-              width: 40vw;
-              background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 70%, #fff 100%);
+            .hero-overlay{
+              background:
+                radial-gradient(ellipse 125% 95% at 18% 10%, rgba(255,255,255,.16) 0%, rgba(255,255,255,.08) 45%, rgba(255,255,255,0) 72%),
+                linear-gradient(135deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.06) 40%, rgba(255,255,255,0) 75%);
             }
           }
           
-          /* TABLET */
+          /* Планшет */
           @media (min-width:768px) and (max-width:1023px){
             .hero-image{ object-position: 66% center; }
           }
           
-          /* DESKTOP: смещаем правее и «отдаляем» */
+          /* Десктоп: отдаляем фото и сдвигаем девушку вправо (качество не «плывёт») */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 58% center;    /* правее */
-              transform: scale(0.90);         /* дальше */
+              object-position: 72% center; /* девушка уходит вправо */
+              transform: scale(0.90);      /* «подальше» */
               transform-origin: center right;
             }
           }
-
-          /* XL: ещё немного отдаляем */
           @media (min-width:1280px){
             .hero-image{
-              object-position: 60% center;
+              object-position: 75% center;
               transform: scale(0.88);
             }
           }
-
-          /* Заголовок ближе к подзаголовку */
-          h1 + p { margin-top: 0.3rem !important; }
-
-          /* Блок результата */
-          .result-block{ margin-top: 22px; }
-          @media (max-width: 767px){ .result-block{ padding-left: 8px; } }
         `}</style>
       </section>
 
@@ -486,7 +414,7 @@ export default function App() {
       <section id="comparison" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
+          <div className="text-center mb-6 sm:mb-8 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
@@ -497,7 +425,7 @@ export default function App() {
 
           <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
             <div className="card-premium bg-white rounded-3xl p-4 sm:p-6 border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 fade-in-view">
-              <div className="text-center mb-5">
+              <div className="text-center mb-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-full font-semibold text-sm">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   Сейчас
@@ -521,7 +449,7 @@ export default function App() {
             </div>
 
             <div className="card-premium bg-white rounded-3xl p-4 sm:p-6 border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 fade-in-view" style={{ animationDelay: "0.05s" }}>
-              <div className="text-center mb-5">
+              <div className="text-center mb-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full font-semibold text-sm">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   После
@@ -615,7 +543,7 @@ export default function App() {
       <section id="whats-included" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
+          <div className="text-center mb-6 sm:mb-8 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
@@ -650,16 +578,19 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы */}
-      <section id="bonuses" ref={bonusesRef} className="relative py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
+      {/* 05 - Бонусы (компакт + премиум-конфетти) */}
+      <section id="bonuses" ref={bonusesRef} className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/40 via-pink-50/25 to-white overflow-hidden confetti-wrap">
         <SectionMarker n="05" />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
+        {/* Конфетти псевдо-частицы */}
+        <div className="confetti-layer" aria-hidden="true"></div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4 relative">
           <div className="text-center mb-5 sm:mb-7 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -670,15 +601,15 @@ export default function App() {
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="card-premium rounded-2xl p-4 sm:p-5 text-center bg-white shadow-md border border-purple-100/50 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
-                <div className="mb-3.5">
-                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-xl shadow-md" loading="lazy" />
+              <div key={i} className="card-premium rounded-3xl p-4 sm:p-5 text-center bg-white shadow-md border border-purple-100/50 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div className="mb-3">
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-36 sm:w-28 sm:h-40 mx-auto object-cover rounded-xl shadow" loading="lazy" />
                 </div>
-                <h3 className="text-pretty text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-2">{b.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{b.desc}</p>
+                <h3 className="text-pretty text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-1.5">{b.title}</h3>
+                <p className="text-[13.5px] sm:text-sm text-gray-600 leading-relaxed mb-2.5">{b.desc}</p>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-[14.5px] font-bold text-gray-400 line-through">{b.old}</span>
-                  <span className="text-base font-bold text-green-600">0€</span>
+                  <span className="text-[16px] font-bold text-green-600">0€</span>
                 </div>
               </div>
             ))}
@@ -686,7 +617,31 @@ export default function App() {
         </div>
 
         <style>{`
-          #bonuses .confetti-canvas { filter: saturate(1) blur(0px); opacity: 0.9; }
+          /* Конфетти — неброско, премиально */
+          .confetti-wrap { position: relative; }
+          .confetti-layer::before,
+          .confetti-layer::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            opacity:0;
+            transition: opacity .6s ease;
+            background:
+              radial-gradient(2px 2px at 10% 20%, rgba(139,92,246,.8) 0, rgba(139,92,246,0) 60%),
+              radial-gradient(2px 2px at 25% 35%, rgba(236,72,153,.8) 0, rgba(236,72,153,0) 60%),
+              radial-gradient(2px 2px at 40% 18%, rgba(59,130,246,.8) 0, rgba(59,130,246,0) 60%),
+              radial-gradient(2px 2px at 65% 28%, rgba(99,102,241,.8) 0, rgba(99,102,241,0) 60%),
+              radial-gradient(2px 2px at 80% 22%, rgba(244,114,182,.8) 0, rgba(244,114,182,0) 60%),
+              radial-gradient(2px 2px at 55% 12%, rgba(147,197,253,.8) 0, rgba(147,197,253,0) 60%);
+            filter: blur(.2px);
+          }
+          .confetti-on .confetti-layer::before,
+          .confetti-on .confetti-layer::after{ opacity:1; animation: confetti-fall 1.8s ease-out forwards; }
+          @keyframes confetti-fall{
+            0%{ transform: translateY(-16px); }
+            100%{ transform: translateY(32px); opacity:.0; }
+          }
         `}</style>
       </section>
 
@@ -734,7 +689,7 @@ export default function App() {
                 className="group cursor-pointer rounded-2xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 fade-in-view"
                 style={{ animationDelay: `${n * 0.05}s` }}
                 onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}
-                aria-label={`Открыть отзыв ${n}`}
+                aria-label={`Отзыв ${n}`}
               >
                 <img
                   src={`/images/reviews/review${n}.png`}
