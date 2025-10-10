@@ -92,46 +92,6 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   );
 }
 
-function ScrollProgress() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (scrollPx / winHeightPx) * 100;
-      setScrollProgress(scrolled);
-    };
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    updateScrollProgress();
-    return () => window.removeEventListener('scroll', updateScrollProgress);
-  }, []);
-  return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
-      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
-    </div>
-  );
-}
-
-function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
-  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  let html = escapeHtml(text);
-  if (primaryHighlight) {
-    const ph = escapeHtml(primaryHighlight);
-    html = html.replace(
-      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${ph}</span>`
-    );
-  }
-  for (const phrase of extraPhrases) {
-    const p = escapeHtml(phrase);
-    html = html.replace(
-      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${p}</span>`
-    );
-  }
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
-}
-
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -140,10 +100,9 @@ export default function App() {
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [showMoreVideos, setShowMoreVideos] = useState(false);
+  const { h, m, s, finished } = useCountdown(12);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
-  const { h, m, s, finished } = useCountdown(12);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -175,7 +134,7 @@ export default function App() {
     setLightboxOpen(true);
   };
 
-  // наблюдатель появления секций (для fade-in и конфетти)
+  // появление секций (для fade-in и конфетти)
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
@@ -192,10 +151,11 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  const scrollToOffer = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    document.getElementById("offer")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  // плавный скролл по якорям
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => { document.documentElement.style.scrollBehavior = ''; };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
@@ -236,9 +196,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — mobile: fullscreen image; desktop: split (left text on light bg, right image) */}
-      <section className="relative w-[100vw] overflow-hidden hero-desktop-split" style={{ minHeight: '100svh', isolation: 'isolate' }}>
-        {/* Фото (на мобилке — фулскрин, на десктопе — вправо половина) */}
+      {/* HERO — мобайл полноэкранный; десктоп: слева контент + мягкий градиент, справа фото */}
+      <section className="relative w-[100vw] h-[100svh] overflow-hidden hero-wrap" style={{ isolation: 'isolate' }}>
+        {/* Фото */}
         <img
           src="/images/IMG_6646.jpeg"
           alt="Beauty professional"
@@ -247,13 +207,16 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Лёгкая виньетка поверх картинки (мобайл) */}
+        {/* Разделительный мягкий градиент слева (виден на десктопе) */}
+        <div className="hero-split-gradient" />
+
+        {/* Лёгкая виньетка */}
         <div className="hero-vignette" />
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col lg:flex-row justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
-          {/* Левая колонка (текст) */}
-          <div className="max-w-xl lg:max-w-2xl fade-in-view flex flex-col justify-start">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
+          {/* Верх: заголовок + подзаголовок */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
@@ -261,44 +224,54 @@ export default function App() {
                 сообщения в деньги
               </span>
             </h1>
-
-            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-white lg:text-gray-800 drop-volume lg:drop-volume-none max-w-xl">
+            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-white drop-volume max-w-xl">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
+          </div>
 
-            {/* Кнопка «Получить скрипты» — скролл к офферу */}
-            <div className="mt-6 sm:mt-7 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+          {/* Низ: Результат + кнопка */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
+            <div className="max-w-md result-block">
+              <p className="text-pretty leading-[1.45] text-white drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+                <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
+                  Результат:
+                </span>{" "}
+                закрытые возражения, увеличенный средний чек, экономия времени
+              </p>
+            </div>
+
+            {/* Кнопка: ПОЛУЧИТЬ СКРИПТЫ → к офферу */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href="#offer"
-                onClick={scrollToOffer}
                 className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden
                            bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                aria-label="Перейти к офферу"
+                aria-label="Получить скрипты"
               >
                 <span className="relative z-10">Получить скрипты</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-white"></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-white transition-opacity duration-300"></div>
               </a>
 
-              {/* бейджи оплаты — видны и не обрезаются */}
-              <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap lg:whitespace-normal">
+              {/* Платёжные бейджи — Google Pay серо-прозрачный */}
+              <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
                 <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
-                <span className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
+                <span className="px-2.5 py-1.5 bg-white/30 text-gray-900 rounded-lg font-medium border border-gray-300">
+                  Google Pay
+                </span>
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-white/90 lg:text-gray-700">
-              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 lg:text-gray-800 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5 whitespace-nowrap">
+            {/* Безопасная оплата / Stripe — переносы безопасны на всех экранах */}
+            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90">
+              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 lg:text-gray-800 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
           </div>
-
-          {/* Правая колонка (пустая в мобайле, а на десктопе зарезервирована под картинку) */}
-          <div className="hidden lg:block flex-1" />
         </div>
 
         <style>{`
@@ -309,7 +282,8 @@ export default function App() {
           :global(.text-pretty){ text-wrap: pretty; }
           :root { --safe-edge: 0px; }
 
-          /* MOBILE: фото фулскрин */
+          /* Базово мобайл — фото на весь экран */
+          .hero-wrap{ background:#fff; }
           .hero-image{
             position:absolute; 
             left:0; top:0;
@@ -320,6 +294,7 @@ export default function App() {
             will-change: transform;
             background:#000;
           }
+
           .hero-vignette{
             position:absolute; inset:0; z-index:1;
             background:
@@ -328,12 +303,27 @@ export default function App() {
             pointer-events:none;
           }
 
-          /* Контент отступы */
+          /* Десктоп-раскладка: фото справа ~55%, слева мягкий серый→белый */
+          @media (min-width:1024px){
+            .hero-wrap{ position:relative; }
+            .hero-image{
+              width:56vw; height:100%;
+              left:unset; right:0;
+              object-position: 62% center;
+            }
+            .hero-split-gradient{
+              position:absolute; inset:0; z-index:0;
+              background:
+                linear-gradient(90deg, #f4f6f8 0%, #f8fafc 35%, rgba(248,250,252,0.6) 45%, rgba(255,255,255,0.0) 55%);
+            }
+            .hero-content{
+              padding-top: 130px !important;
+              max-width: 1200px;
+            }
+          }
+
           @media (max-width: 767px){
             .hero-content{ padding-top: 120px !important; }
-          }
-          @media (min-width:1280px){
-            .hero-content{ padding-top: 130px; }
           }
 
           .drop-volume{
@@ -343,21 +333,6 @@ export default function App() {
               0 2px 6px rgba(0,0,0,0.28);
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
-          }
-
-          /* DESKTOP SPLIT: слева светло-серый фон с мягким переходом, справа фото ровно на половине */
-          @media (min-width:1024px){
-            .hero-desktop-split{
-              min-height: 92vh;
-              background:
-                linear-gradient(90deg, #f6f7f9 0%, #f6f7f9 50%, rgba(246,247,249,0) 50%),
-                radial-gradient(80% 100% at 50% 50%, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 70%);
-            }
-            .hero-image{
-              clip-path: inset(0 0 0 50%); /* показываем правую половину */
-              object-position: 60% center;
-            }
-            .hero-vignette{ display:none; }
           }
 
           .result-block{ margin-top: 14px; }
@@ -524,7 +499,7 @@ export default function App() {
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  <HighlightedDesc text={item.desc} primaryHighlight={item.highlight} extraPhrases={["без давления", "каждой ниши"]} />
+                  {item.desc}
                 </p>
               </div>
             ))}
@@ -626,7 +601,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 - Отзывы + рилсы + гармошка с ещё 2 видео */}
+      {/* 07 - Отзывы + рилсы */}
       <section id="reviews" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
@@ -665,28 +640,6 @@ export default function App() {
                 <InstaEmbed url={url} maxWidth={idx === 1 ? 280 : 220} />
               </div>
             ))}
-          </div>
-
-          {/* гармошка с ещё 2 видео-отзывами */}
-          <div className="mt-6 max-w-xl mx-auto">
-            <button
-              onClick={() => setShowMoreVideos(v => !v)}
-              className="w-full px-5 py-3 rounded-xl border-2 border-gray-200 bg-white hover:bg-gray-50 transition-all font-semibold text-gray-900 flex items-center justify-between"
-              aria-expanded={showMoreVideos}
-              aria-controls="more-videos"
-            >
-              <span>Ещё видео-отзывы</span>
-              <span className={`transition-transform ${showMoreVideos ? 'rotate-180' : ''}`}>⌄</span>
-            </button>
-            {showMoreVideos && (
-              <div id="more-videos" className="mt-3 space-y-3 border border-gray-100 rounded-xl p-3 bg-gray-50/60">
-                {INSTAGRAM_REELS.slice(3, 5).map((url, idx) => (
-                  <div key={url} className="rounded-xl overflow-hidden border-2 border-gray-200">
-                    <InstaEmbed url={url} maxWidth={560} />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
@@ -741,6 +694,7 @@ export default function App() {
                   <span className="text-5xl sm:text-6xl font-extrabold text-white">19€</span>
                 </div>
 
+                {/* Таймер */}
                 <div className="mb-5">
                   <div className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
                     <span className="text-white text-xl">⏰</span>
@@ -757,6 +711,7 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* CTA к Stripe */}
                 <a
                   href={STRIPE_URL}
                   target="_blank"
@@ -768,15 +723,9 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Блок с преимуществами — БЕЗ nowrap, чтобы ничего не уходило вправо */}
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center px-2">
-                  <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-                    <span>Пожизненный доступ</span>
-                    <span>•</span>
-                    <span>Обновления включены</span>
-                    <span>•</span>
-                    <span>Без скрытых платежей</span>
-                  </span>
+                {/* Исправленный перенос: НЕ обрезается на десктопе/мобайле */}
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center offer-bullets">
+                  Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
 
                 <div className="text-left mb-6">
@@ -808,9 +757,19 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        <style>{`
+          .offer-bullets{
+            font-size: clamp(11px, 2vw, 13.5px);
+            letter-spacing: -0.01em;
+            white-space: normal;      /* было nowrap — из-за этого съедалось */
+            overflow: visible;
+            text-overflow: clip;
+          }
+        `}</style>
       </section>
 
-      {/* 09 - FAQ */}
+      {/* 09 - FAQ (+ ссылки на 2 видео-отзыва) */}
       <section id="faq" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
@@ -824,10 +783,11 @@ export default function App() {
               { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное - следовать алгоритму." },
               { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
               { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
+              { q: "Где посмотреть видео-отзывы?", a: `Тут два коротких рилса: ${INSTAGRAM_REELS[3]} и ${INSTAGRAM_REELS[4]}` },
             ].map((f, i) => (
               <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
                 <button
-                  onClick={() => toggleFaq(i)}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
                   aria-label={`Вопрос: ${f.q}`}
                 >
@@ -838,7 +798,7 @@ export default function App() {
                 </button>
                 {openFaq === i && (
                   <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
-                    <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
+                    <p className="text-sm lg:text-base text-gray-700 leading-relaxed whitespace-pre-wrap break-words">{f.a}</p>
                   </div>
                 )}
               </div>
@@ -855,12 +815,11 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile (нижняя тёмная плашка) */}
+      {/* Sticky CTA - Mobile (текст изменён) */}
       {showStickyCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
             href="#offer"
-            onClick={scrollToOffer}
             className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
             aria-label="Перейти к офферу"
           >
