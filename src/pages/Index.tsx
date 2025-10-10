@@ -5,6 +5,7 @@ const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 function InstaEmbed({ url, maxWidth }: { url: string; maxWidth: number }) {
   const reelId = url.split('/reel/')[1]?.split('/')[0];
   if (!reelId) return null;
+  
   return (
     <div style={{ width: maxWidth, margin: '0 auto' }}>
       <iframe
@@ -140,6 +141,7 @@ export default function App() {
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
 
@@ -173,7 +175,7 @@ export default function App() {
     setLightboxOpen(true);
   };
 
-  // fade-in + запуск конфетти
+  // наблюдатель появления секций (для fade-in и конфетти)
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
@@ -191,7 +193,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden no-awkward-breaks">
+    <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
       <ReviewLightbox
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
@@ -229,9 +231,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — только фото, без фона/лефтовых белых зон */}
-      <section className="relative w-full flex items-center justify-start overflow-hidden bg-transparent" style={{ minHeight: '100svh' }}>
-        {/* Фото */}
+      {/* HERO — фото закрывает экран без белых полей */}
+      <section className="relative w-full overflow-hidden" style={{ minHeight: '100svh' }}>
+        {/* Фоновое фото на весь экран с «переливом» за края (чтобы не появлялись белые поля слева/справа) */}
         <img
           src="/images/IMG_6603.jpeg"
           alt="Beauty professional"
@@ -240,14 +242,13 @@ export default function App() {
           decoding="async"
         />
 
-        {/* overlay отключаем (без белого) */}
+        {/* Мягкая вуаль + слева лёгкая тень, чтобы не было «обрыва» */}
         <div className="hero-overlay" />
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '104px', paddingBottom: '44px' }}>
-          {/* Верх: заголовок + подзаголовок (поднял, дал объём подзаголовку) */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '112px', paddingBottom: '44px' }}>
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-3 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 text-gray-900 heading-shadow">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -255,24 +256,24 @@ export default function App() {
               </span>
             </h1>
 
-            <p className="text-pretty text-lg sm:text-xl lg:text-[1.45rem] font-semibold leading-relaxed text-gray-50 subhead-emboss max-w-xl">
+            {/* «Проверенная система…» — поднята выше + объём (ч/б), чтобы не терялась на тёмном участке фото */}
+            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-900 max-w-lg raised-readable">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
           {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ — чёрный текст с белым свечением */}
+            {/* РЕЗУЛЬТАТ — премиально-синий с мягким белым свечением */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] result-glow" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
-                <span className="font-extrabold">
+              <p className="text-pretty leading-[1.45] text-blue-600 glow-soft" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+                <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
                   Результат:
                 </span>{" "}
                 закрытые возражения, увеличенный средний чек, экономия времени
               </p>
             </div>
 
-            {/* Кнопка Купить */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href={STRIPE_URL}
@@ -291,11 +292,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/95">
-              <span className="px-2.5 py-1.5 bg-black/35 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5 whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-800">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-black/35 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -303,72 +304,83 @@ export default function App() {
         </div>
 
         <style>{`
-          /* ВАЖНО: полностью убираем фоны, чтобы не появлялись белые поля по краям */
-          :global(html, body, #__next){ background: transparent; overscroll-behavior-y: contain; }
-          :global(body){ -webkit-overflow-scrolling: touch; margin:0; padding:0; }
+          :global(html, body, #__next){ background:#ffffff; overscroll-behavior-y: contain; }
+          :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
+          :global(*){ box-sizing:border-box; }
 
+          /* ГЛАВНОЕ: фото перекрывает экран без белых полос.
+             Делаем «заливку за края»: ширина > 100vw и лёгкое смещение. */
           .hero-image{
             position:absolute;
-            inset:0;
+            top:0; left:50%;
             z-index:0;
-            width:100%;
-            height:100%;
+            width: 112vw;                 /* чуть шире вьюпорта */
+            height: 112vh;                /* и по высоте тоже с запасом */
+            max-width:none;
+            transform: translateX(-50%) scale(0.90); /* отдаляем, чтобы качество не «ломалось» */
+            transform-origin: center right;
             object-fit: cover;
-            /* ГАРАНТИЯ отсутствия белых полос: лёгкий оверфилл */
-            transform: scale(1.03);
-            transform-origin: center;
-            /* Сдвигаем модель правее, чтобы текст не был на лице */
-            object-position: 62% center;
-            filter: none;
+            object-position: 68% center;  /* сдвигаем девушку правее */
+            /* слегка сглаживаем контраст */
+            filter: brightness(1.02) contrast(1.01);
           }
 
+          /* Лёгкая тень у левого края + еле заметная виньетка по краям,
+             чтобы не было резких переходов и белых «засветов» */
           .hero-overlay{
             position:absolute;
-            inset:0;
+            inset:-2vh -2vw; /* небольшой «заход» за края */
             z-index:1;
-            /* overlay отключён (прозрачный) — только фото */
-            background: transparent;
+            background:
+              radial-gradient(140% 100% at 0% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.03) 40%, rgba(0,0,0,0.00) 70%),
+              radial-gradient(120% 100% at 100% 50%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.00) 65%);
             pointer-events: none;
           }
 
-          /* Чуть подняли блок подзаголовка ближе к верхнему хедеру */
-          .hero-content{ padding-top: 104px !important; }
-
-          /* Подчёркнутый контраст подзаголовка — «объём» ч/б тенями */
-          .subhead-emboss{
-            color: #f7f7f7;
-            text-shadow:
-              0 1px 0 rgba(0,0,0,0.45),
-              0 2px 6px rgba(0,0,0,0.35),
-              0 0 1px rgba(255,255,255,0.35);
-          }
-
-          /* Результат: чёрный текст с белым свечением для читабельности на светлых участках */
-          .result-glow{
-            color:#000;
-            text-shadow:
-              0 0 12px rgba(255,255,255,0.85),
-              0 0 2px rgba(255,255,255,0.95),
-              0 1px 0 rgba(255,255,255,0.6);
-            font-weight: 700;
-            letter-spacing: .01em;
-          }
-
-          /* Мобайл: держим safe-area, слегка смещаем точку фокуса */
+          /* Отступ: заголовок не упирается в шапку; «Проверенная система…» поднята ближе */
+          .hero-content{ padding-top: 118px; }
           @media (max-width: 767px){
-            .hero-content{ padding-top: 112px !important; }
-            .hero-image{ object-position: 60% center; transform: scale(1.035); }
+            .hero-content{ padding-top: 108px !important; }
           }
 
-          /* Очень большие экраны — чуть больше оверфилл, чтобы 100% без краёв */
+          /* Лёгкая «объёмная» читаемость заголовка и подзаголовка на тёмном фоне */
+          .heading-shadow{
+            text-shadow:
+              0 1px 0 rgba(255,255,255,.35),
+              0 2px 8px rgba(0,0,0,.16);
+          }
+          .raised-readable{
+            color:#0f172a; /* slate-900 */
+            text-shadow:
+              0 1px 0 rgba(255,255,255,.65),
+              0 8px 24px rgba(0,0,0,.18);
+            margin-top: 10px; /* подняли ближе к h1 визуально */
+          }
+
+          /* «Результат» — премиальный синий + мягкое белое свечение */
+          .glow-soft{
+            text-shadow:
+              0 0 6px rgba(255,255,255,.35),
+              0 1px 0 rgba(255,255,255,.45);
+          }
+          .result-block{ margin-top: 14px; }
+
+          /* Большие десктопы — ещё чуть «дальше» и правее, чтобы сохранить качество и композицию */
+          @media (min-width:1280px){
+            .hero-image{
+              transform: translateX(-50%) scale(0.88);
+              object-position: 70% center;
+            }
+          }
           @media (min-width:1536px){
-            .hero-image{ transform: scale(1.04); object-position: 61% center; }
+            .hero-image{
+              transform: translateX(-50%) scale(0.86);
+              object-position: 71% center;
+            }
           }
-
-          .result-block{ margin-top: 16px; }
         `}</style>
       </section>
 
@@ -540,15 +552,19 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы (с конфетти как было) */}
+      {/* 05 - Бонусы (компактнее + премиальное нежное конфетти) */}
       <section id="bonuses" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-purple-50/40 via-pink-50/20 to-white overflow-hidden">
         <SectionMarker n="05" />
+
+        {/* Конфетти-слой (деликатно) */}
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 confetti-layer">
-          {Array.from({ length: 30 }).map((_, i) => <span key={i} className={`confetti c${i}`} />)}
+          {Array.from({ length: 36 }).map((_, i) => (
+            <span key={i} className={`confetti c${i}`} />
+          ))}
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
-          <div className="text-center mb-6 sm:mb-8 fade-in-view">
+          <div className="text-center mb-6 sm:mb-7 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
@@ -579,18 +595,29 @@ export default function App() {
         </div>
 
         <style>{`
+          /* конфетти — мягкие «ленты» с небольшой дугой, чтобы выглядело премиально */
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
           .confetti{
-            position:absolute; top:-10vh; width:6px; height:10px; border-radius:2px; opacity:.85; animation: confetti-fall linear forwards;
+            position:absolute; top:-12vh;
+            width:6px; height:12px;
+            border-radius:3px;
+            opacity:.9;
+            animation: confetti-fall linear forwards;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,.08));
           }
-          @keyframes confetti-fall{ 0%{ transform: translateY(-10vh) rotate(0deg); } 100%{ transform: translateY(110vh) rotate(360deg); } }
-          ${Array.from({length:30}).map((_,i)=>{
+          @keyframes confetti-fall{
+            0%{ transform: translateY(-12vh) translateX(0) rotate(0deg); }
+            50%{ transform: translateY(55vh) translateX(-3vw) rotate(180deg); }
+            100%{ transform: translateY(110vh) translateX(0) rotate(360deg); }
+          }
+          ${Array.from({length:36}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
-            const dur = (Math.random()*4 + 6).toFixed(2);
-            const delay = (Math.random()*1.5).toFixed(2);
-            const colors = ['#c7d2fe','#e9d5ff','#fbcfe8','#bfdbfe','#ddd6fe','#fecdd3'];
+            const dur = (Math.random()*4 + 7).toFixed(2);
+            const delay = (Math.random()*1.2).toFixed(2);
+            const wobble = (Math.random()*6-3).toFixed(1);
+            const colors = ['#dbeafe','#e9d5ff','#fde7f3','#c7d2fe','#f5d0fe','#e0e7ff'];
             const color = colors[i % colors.length];
-            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; }`
+            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; transform: translateX(${wobble}vw); }`
           }).join('\n')}
         `}</style>
       </section>
@@ -817,7 +844,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
+      <footer className="py-8 sm:py-10 bg-white border-top border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
