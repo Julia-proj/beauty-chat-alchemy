@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";  
+import React, { useState, useEffect } from "react";   
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -760,7 +760,7 @@ export default function App() {
                 </a>
 
                 <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center offer-bullets">
-                  Пожизненный доступ • Обновления включены • Без скрытых платежей
+                  Пожизненный доступ • Обновления включены • <span className="nobr">Без&nbsp;скрытых&nbsp;платежей</span>
                 </div>
 
                 <div className="text-left mb-6">
@@ -801,6 +801,7 @@ export default function App() {
             overflow: visible;
             text-overflow: clip;
           }
+          .nobr{ white-space: nowrap; }
         `}</style>
       </section>
 
@@ -818,7 +819,6 @@ export default function App() {
               { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное - следовать алгоритму." },
               { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
               { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
-              { q: "Где посмотреть видео-отзывы?", a: `Тут два коротких рилса: ${INSTAGRAM_REELS[3]} и ${INSTAGRAM_REELS[4]}` },
             ].map((f, i) => (
               <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
                 <button
