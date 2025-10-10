@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -241,7 +241,7 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-3 sm:mb-4 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 sm:mb-7 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="text-blue-600">
@@ -249,21 +249,20 @@ export default function App() {
               </span>
             </h1>
 
-            {/* Подзаголовок придвинут ближе к H1 */}
-            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg mt-1">
+            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
           {/* Нижняя часть - блок результата и кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ — светлая полупрозрачная «вуаль» без границ */}
-            <div className="max-w-md result-card">
-              <p className="text-pretty leading-[1.5] result-text" style={{ fontSize: 'clamp(15px, 1.85vw, 19.5px)' }}>
-                <span className="font-bold uppercase text-blue-600" style={{ letterSpacing: '0.04em' }}>
+            {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
+            <div className="max-w-md result-block">
+              <p className="text-pretty leading-[1.45] result-text" style={{ fontSize: 'clamp(15px, 1.85vw, 19.5px)' }}>
+                <span className="font-bold uppercase text-blue-600" style={{ fontStyle: 'normal', letterSpacing: '0.04em' }}>
                   РЕЗУЛЬТАТ:
                 </span>{" "}
-                <span className="result-body">закрытые возражения, увеличенный средний чек, экономия времени</span>
+                <span className="text-white font-semibold" style={{ letterSpacing: '0.01em' }}>закрытые возражения, увеличенный средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -328,56 +327,53 @@ export default function App() {
             .hero-content{ padding-top: 106px !important; }
           }
 
-          /* --- RESULT soft-glass --- */
-          .result-card{
-            padding: 12px 14px;
-            border-radius: 14px;
-            background:
-              radial-gradient(120% 140% at 10% 0%, rgba(255,255,255,.28) 0%, rgba(255,255,255,.16) 40%, rgba(255,255,255,.08) 70%, rgba(255,255,255,0) 100%),
-              linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.14));
-            backdrop-filter: blur(8px) saturate(1.02);
-            -webkit-backdrop-filter: blur(8px) saturate(1.02);
+          /* Блок результата */
+          .result-block{
+            margin-top: 28px;
           }
-          .result-text{ margin: 0; }
-          .result-body{
-            color: #0f172a; /* slate-900 — читабельно на светлой вуали */
-            font-weight: 600;
-            letter-spacing: .01em;
-            text-shadow: 0 1px 2px rgba(255,255,255,.35); /* мягкая подсветка, без «дешёвого» свечения */
+          .result-text{
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
           }
-
-          /* MOBILE ≤767px: фокус справа + «призмовая» вуаль, чуть короче по высоте */
+          @media (max-width: 767px){
+            .result-block{
+              padding-left: 8px;
+            }
+          }
+          
+          /* --- MOBILE ≤767px: фокус справа + "призмовая" полупрозрачная вуаль --- */
           @media (max-width: 767px){
             .hero-image{
               object-position: 68% 35%;
               filter: brightness(1.06) saturate(1.03);
-              transform: scale(1.06);
+              transform: scale(1.08);
             }
             .hero-overlay{
               background:
-                radial-gradient(ellipse 120% 85% at 15% 8%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.10) 45%, rgba(255,255,255,0) 72%),
-                linear-gradient(135deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.08) 40%, rgba(255,255,255,0) 75%);
-              backdrop-filter: brightness(1.05) saturate(1.02);
+                radial-gradient(ellipse 120% 85% at 15% 8%, rgba(255,255,255,.14) 0%, rgba(255,255,255,.07) 45%, rgba(255,255,255,0) 72%),
+                linear-gradient(135deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.06) 40%, rgba(255,255,255,0) 75%);
+              backdrop-filter: brightness(1.04) saturate(1.02);
+              mix-blend-mode: normal;
             }
-            .result-card{ padding: 12px 12px; }
           }
           
           /* Планшет */
           @media (min-width:768px) and (max-width:1023px){
-            .hero-image{ object-position: 66% center; }
+            .hero-image{
+              object-position: 66% center;
+            }
           }
           
-          /* Десктоп: отдаляем фото, смещаем слегка влево — больше «стены» слева */
+          /* Десктоп: отдаляем фото, больше «стены» слева */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 54% center; /* сдвиг чуть влево */
+              object-position: 56% center;
               transform: scale(0.91);
               transform-origin: center right;
               filter: brightness(1.14) contrast(1.01) saturate(1.02);
             }
             .hero-overlay{
               background:
-                linear-gradient(90deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,.12) 34%, rgba(255,255,255,0) 68%);
+                linear-gradient(90deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.11) 35%, rgba(255,255,255,0) 68%);
               backdrop-filter: brightness(1.06);
             }
           }
@@ -385,7 +381,7 @@ export default function App() {
           /* Крупные десктопы: ещё немного дальше */
           @media (min-width:1280px){
             .hero-image{
-              object-position: 56% center;
+              object-position: 58% center;
               transform: scale(0.89);
             }
           }
@@ -569,7 +565,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               <span className="text-blue-600">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-ww-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность - 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -745,7 +741,6 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* Лейблы в одну строку без прокрутки */}
                 <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center" style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
