@@ -52,7 +52,7 @@ function SectionMarker({ n }: { n: string }) {
         .section-marker {
           position: absolute;
           left: 1rem;
-          top: .5rem; /* чуть выше, чтобы не прилипало к заголовку */
+          top: .5rem;
           display: flex;
           align-items: center;
           gap: 10px;
@@ -234,11 +234,11 @@ export default function App() {
           decoding="async"
         />
         
-        {/* Белый overlay 8% */}
+        {/* Белый overlay (осветление без brightness) */}
         <div className="hero-overlay"></div>
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
+        <div className="hero-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
@@ -255,22 +255,18 @@ export default function App() {
           </div>
 
           {/* Нижняя часть - блок результата и кнопка */}
-          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* Блок РЕЗУЛЬТАТ - без белой рамки */}
-            <div className="max-w-md">
-              <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
-                <span className="font-bold uppercase tracking-wide text-blue-600 block mb-3" style={{ fontStyle: 'italic' }}>
-                  РЕЗУЛЬТАТ:
-                </span>
-                <span className="block bg-white rounded-lg p-4 text-gray-800">
-                  закрытые возражения, увеличенный средний чек,<br />
-                  экономия времени
-                </span>
-              </p>
-            </div>
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            {/* «РЕЗУЛЬТАТ» — без рамки/заливки, в две строки, «РЕЗУЛЬТАТ:» синий */}
+            <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed text-gray-900 mb-6">
+              <span className="font-bold uppercase tracking-wide text-blue-600" style={{ fontStyle: 'italic' }}>
+                РЕЗУЛЬТАТ:
+              </span>{" "}
+              закрытые возражения, увеличенный средний чек,<br className="sm:block" />
+              экономия времени
+            </p>
 
-            {/* Кнопка Купить */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            {/* Кнопка Купить (отступ 24–32px от текста) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-2">
               <a
                 href={STRIPE_URL}
                 target="_blank"
@@ -314,26 +310,27 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            filter: brightness(1.08) contrast(1.02);
+            /* убрали brightness — осветляем только overlay */
           }
           
           .hero-overlay{
             position:absolute;
             inset:0;
             z-index:1;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.10); /* ~10% по умолчанию */
             pointer-events: none;
           }
           
-          /* Мобила: фокус на лице справа, немного ниже центра + осветление */
+          /* Мобила: фокус на лице справа, чуть ниже центра + overlay ~12% */
           @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
-              filter: brightness(1.28) contrast(1.02);
             }
             .hero-overlay{
               background: rgba(255, 255, 255, 0.12);
             }
+            /* H1 чуть ниже, чтобы не упирался в верх */
+            .hero-content{ padding-top: 100px; } /* +12–16px к твоим значениям */
           }
           
           /* Планшет */
@@ -343,11 +340,12 @@ export default function App() {
             }
           }
           
-          /* Десктоп: лицо отдалено, видна левая стена */
+          /* Десктоп: лицо немного "отдалить", больше левой стены */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 52% center;
+              object-position: 58% center;
             }
+            .hero-content{ padding-top: 88px; }
           }
         `}</style>
       </section>
@@ -542,7 +540,7 @@ export default function App() {
             ].map((b, i) => (
               <div key={i} className="card-premium rounded-3xl p-4 sm:p-6 text-center bg-white shadow-md border border-purple-100/50 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
                 <div className="mb-4">
-                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-36 sm:w-32 sm:h-44 mx-auto object-cover rounded-xl shadow-md" loading="lazy" />
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-36 sm:w-32 sm:h-44 mx:auto object-cover rounded-xl shadow-md" loading="lazy" />
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{b.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed mb-3.5">{b.desc}</p>
@@ -574,7 +572,7 @@ export default function App() {
               "Повысишь средний чек через правильные предложения.",
               "Станешь увереннее - на всё есть готовый ответ.",
             ].map((t, i) => (
-              <div key={i} className="flex items-start gap-3.5 bg-white/85 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-teal-100/60 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
+              <div key={i} className="flex items-start gap-3.5 bg:white/85 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-teal-100/60 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
                 <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                   <svg className="w-3.5 h-3.5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                 </div>
@@ -675,7 +673,7 @@ export default function App() {
 
                 <div className="flex items-center justify-center gap-3.5 mb-4">
                   <span className="text-gray-400 line-through text-2xl sm:text-3xl font-bold">127€</span>
-                  <span className="text-5xl sm:text-6xl font-extrabold text-white">19€</span>
+                  <span className="text-5xl sm:text-6xl font-extrabолд text-white">19€</span>
                 </div>
 
                 <div className="mb-5">
@@ -744,7 +742,7 @@ export default function App() {
       <section id="faq" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+          <h2 className="text-balance text-3л sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
             Частые вопросы
           </h2>
 
