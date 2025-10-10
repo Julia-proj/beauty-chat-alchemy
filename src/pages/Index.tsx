@@ -234,7 +234,7 @@ export default function App() {
       <section className="relative w-[100vw] h-[100svh] overflow-hidden" style={{ isolation: 'isolate' }}>
         {/* Фото */}
         <img
-          src="/images/IMG_6603.jpeg"
+          src="/images/IMG_6646.jpeg"
           alt="Beauty professional"
           className="hero-image"
           loading="eager"
