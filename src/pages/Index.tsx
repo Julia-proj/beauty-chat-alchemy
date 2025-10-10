@@ -223,139 +223,80 @@ export default function App() {
         </div>
       </header>
 
-{/* HERO */}
-<section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#f7f7f9] to-white" style={{ minHeight: '88svh' }}>
-  {/* Фото */}
-  <img
-    src="/images/IMG_6537.jpeg"
-    alt="Beauty professional"
-    className="hero-image"
-    loading="eager"
-    decoding="async"
-  />
+      {/* HERO */}
+      <section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#faf5f0] to-white" style={{ minHeight: '100svh' }}>
+        {/* Фото - фоновое на весь экран */}
+        <img
+          src="/images/IMG_6537.jpeg"
+          alt="Beauty professional"
+          className="hero-image"
+          loading="eager"
+          decoding="async"
+        />
 
-  {/* Многослойная «вуаль»: тёмная виньетка + мягкое осветление слева */}
-  <div className="hero-overlay"></div>
+        {/* Белый overlay */}
+        <div className="hero-overlay"></div>
 
-  {/* Контент */}
-  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '88svh', paddingTop: '92px', paddingBottom: '36px' }}>
-    {/* Титул + подзаголовок */}
-    <div className="max-w-xl lg:max-w-2xl fade-in-view">
-      <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-3 text-gray-900">
-        Скрипты, которые<br />
-        превращают<br />
-        <span className="text-blue-600">сообщения в деньги</span>
-      </h1>
+        {/* Контент */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
+          {/* Верхняя часть - заголовок и подзаголовок */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 sm:mb-7 text-gray-900">
+              Скрипты, которые<br />
+              превращают<br />
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                сообщения в деньги
+              </span>
+            </h1>
 
-      {/* КОРОТКИЙ И ПЛОТНЫЙ подзаголовок — ближе к h1 */}
-      <p className="text-pretty text-[15.5px] sm:text-lg lg:text-xl font-medium leading-[1.5] text-gray-800/95 max-w-lg">
-        Готовые диалоги: от первого сообщения до записи, апсейла и закрытия возражений.
-        Практично. Чётко. Без «воды». Результат — больше записей и выше средний чек.
-      </p>
-    </div>
+            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg">
+              Проверенная система общения с клиентами для бьюти-мастеров
+            </p>
+          </div>
 
-    {/* «РЕЗУЛЬТАТ» + CTA */}
-    <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-      {/* Воздушное подчёркивание только под словом РЕЗУЛЬТАТ */}
-      <p className="result-line text-pretty text-[15px] sm:text-[16.5px] leading-[1.5] text-gray-800/95">
-        <span className="result-label">РЕЗУЛЬТАТ</span>: закрытые возражения, увеличенный средний чек, экономия времени
-      </p>
+          {/* Нижняя часть - блок результата и кнопка */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
+            {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
+            <div className="max-w-md result-block">
+              <p className="text-pretty leading-[1.45]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
+                <span className="font-bold uppercase bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" style={{ fontStyle: 'italic', letterSpacing: '0.03em' }}>
+                  РЕЗУЛЬТАТ:
+                </span>{" "}
+                <span className="text-gray-700">закрытые возражения, увеличенный средний чек, экономия времени</span>
+              </p>
+            </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-        <a
-          href={STRIPE_URL}
-          target="_blank"
-          rel="noopener"
-          className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
-          aria-label="Купить скрипты за 19 евро"
-        >
-          <span className="relative z-10">Купить</span>
-          <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </a>
+            {/* Кнопка Купить */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+              <a
+                href={STRIPE_URL}
+                target="_blank"
+                rel="noopener"
+                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
+                aria-label="Купить скрипты за 19 евро"
+              >
+                <span className="relative z-10">Купить</span>
+                <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </a>
+              <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
+                <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
+                <span className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
+              </div>
+            </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
-          <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
-          <span className="px-2.5 py-1.5 bg-blue-600 text-white rounded-lg font-medium">Google Pay</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
+                <span>🔒</span> Безопасная оплата
+              </span>
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
+                <span>✓</span> Stripe
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
-        <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
-          <span>🔒</span> Безопасная оплата
-        </span>
-        <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
-          <span>✓</span> Stripe
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <style>{`
-    /* Базовые утилиты */
-    :global(.text-balance){ text-wrap: balance; }
-    :global(.text-pretty){ text-wrap: pretty; }
-
-    /* Фото: смещаем модель вправо и "отдаляем" лёгким scale */
-    .hero-image{
-      position:absolute; inset:0; z-index:0;
-      width:100%; height:100%; object-fit:cover; max-width:none;
-      transform: scale(.94);
-      transform-origin: center right;
-      object-position: 62% center; /* девушка уходит в бок, остаётся пространство слева под текст */
-      filter: saturate(1.02) contrast(1.02);
-    }
-
-    /* Стильная затемнённая виньетка + светлая вуаль слева */
-    .hero-overlay{
-      position:absolute; inset:0; z-index:1; pointer-events:none;
-      background:
-        radial-gradient(140% 120% at 0% 8%, rgba(255,255,255,.22) 0%, rgba(255,255,255,.10) 42%, rgba(255,255,255,0) 70%),
-        linear-gradient(90deg, rgba(12,18,28,.42) 0%, rgba(12,18,28,.28) 28%, rgba(12,18,28,.16) 55%, rgba(12,18,28,0) 85%);
-      backdrop-filter: saturate(1.02) brightness(1.02);
-    }
-
-    /* Компактность на мобиле: меньше рост, мягче вуаль */
-    @media (max-width: 767px){
-      .hero-content{ padding-top: 88px !important; }
-      .hero-image{
-        transform: scale(.96);
-        object-position: 68% 46%;
-      }
-      .hero-overlay{
-        background:
-          radial-gradient(150% 120% at 0% 10%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.10) 44%, rgba(255,255,255,0) 70%),
-          linear-gradient(90deg, rgba(12,18,28,.36) 0%, rgba(12,18,28,.22) 32%, rgba(12,18,28,.10) 60%, rgba(12,18,28,0) 88%);
-      }
-    }
-
-    /* Большие экраны: ещё чуть дальше */
-    @media (min-width:1024px){
-      .hero-image{ transform: scale(.92); object-position: 60% center; }
-    }
-    @media (min-width:1280px){
-      .hero-image{ transform: scale(.90); object-position: 58% center; }
-    }
-
-    /* Воздушное подчёркивание для «РЕЗУЛЬТАТ» */
-    .result-line{ position:relative; }
-    .result-label{
-      position:relative;
-      display:inline-block;
-      font-weight:800;
-      letter-spacing:.06em;
-      color:#1d4ed8; /* премиальный синий */
-    }
-    .result-label::after{
-      content:'';
-      position:absolute; left:-.12em; right:-.08em; bottom:.1em;
-      height:.42em; border-radius:8px;
-      background: linear-gradient(90deg, rgba(255,255,255,.90), rgba(255,255,255,.55));
-      filter: blur(2px);
-      z-index:-1; /* светлая «дымка» под словом */
-    }
-  `}</style>
-</section>
+        <style>{`
           :global(html, body, #__next){ background:#faf5f0; overscroll-behavior-y: contain; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
