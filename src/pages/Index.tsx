@@ -328,14 +328,17 @@ export default function App() {
             .hero-content{ padding-top: 102px !important; }
           }
           
-          /* Мобила: фокус на лице + осветление сильнее белым overlay */
+          /* --- MOBILE ≤767px: фокус справа + "призмовая" полупрозрачная вуаль --- */
           @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
-              filter: brightness(1.28) contrast(1.02);
+              filter: brightness(1.18) contrast(1.02);
             }
             .hero-overlay{
-              background: rgba(255, 255, 255, 0.16);
+              background:
+                radial-gradient(120% 90% at 15% 8%, rgba(255,255,255,.28) 0%, rgba(255,255,255,.14) 42%, rgba(255,255,255,0) 70%),
+                linear-gradient(135deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.06) 45%, rgba(255,255,255,0) 80%);
+              mix-blend-mode: normal;
             }
           }
           
@@ -346,10 +349,20 @@ export default function App() {
             }
           }
           
-          /* Десктоп: лицо чуть дальше, больше левой стены */
+          /* Десктоп: отдаляем фото, больше «стены» слева */
           @media (min-width:1024px){
             .hero-image{
               object-position: 48% center;
+              transform: scale(0.96);
+              transform-origin: center right;
+            }
+          }
+
+          /* Крупные десктопы: ещё немного дальше */
+          @media (min-width:1280px){
+            .hero-image{
+              object-position: 46% center;
+              transform: scale(0.93);
             }
           }
         `}</style>
@@ -565,7 +578,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block">
-              Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teал-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
+              Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
             </h2>
             <div className="mx-auto mt-4 h-1.5 w-36 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-sm"></div>
           </div>
@@ -608,7 +621,7 @@ export default function App() {
                 <img
                   src={`/images/reviews/review${n}.png`}
                   alt={`Отзыв ${n}`}
-                  className="w-full h-36 см:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-36 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               </button>
@@ -747,7 +760,7 @@ export default function App() {
       <section id="faq" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 см:mb-9 fade-in-view">
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
             Частые вопросы
           </h2>
 
@@ -770,7 +783,7 @@ export default function App() {
                   </span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 lg:px-8 py-5 border-т border-gray-100 bg-gray-50/40">
+                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -781,7 +794,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-10 bg-white border-т border-gray-200 text-center">
+      <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
