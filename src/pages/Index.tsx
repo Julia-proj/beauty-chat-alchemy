@@ -233,14 +233,18 @@ export default function App() {
           loading="eager"
           decoding="async"
         />
+        
+        {/* Белый overlay 8% */}
+        <div className="hero-overlay"></div>
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '80px', paddingBottom: '40px' }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '72px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
-              Скрипты, которые превращают{" "}
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Скрипты, которые<br />
+              превращают<br />
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
@@ -251,15 +255,16 @@ export default function App() {
           </div>
 
           {/* Нижняя часть - блок результата и кнопка */}
-          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-5 sm:space-y-6">
-            {/* Блок РЕЗУЛЬТАТ в белой плашке */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 sm:p-6 shadow-lg border border-gray-100/50 max-w-md">
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
+            {/* Блок РЕЗУЛЬТАТ - без белой рамки */}
+            <div className="max-w-md">
               <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
-                <span className="font-bold uppercase tracking-wide text-blue-600 block mb-2" style={{ fontStyle: 'italic', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                <span className="font-bold uppercase tracking-wide text-white block mb-2" style={{ fontStyle: 'italic', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
                   РЕЗУЛЬТАТ:
                 </span>
-                <span className="text-gray-800">
-                  закрытые возражения, увеличенный средний чек, экономия времени
+                <span className="block bg-white rounded-lg p-4 text-gray-800">
+                  закрытые возражения, увеличенный средний чек,<br />
+                  экономия времени
                 </span>
               </p>
             </div>
@@ -309,7 +314,15 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            filter: brightness(1.08) contrast(1.02);
+            filter: brightness(1.18) contrast(1.02);
+          }
+          
+          .hero-overlay{
+            position:absolute;
+            inset:0;
+            z-index:1;
+            background: rgba(255, 255, 255, 0.08);
+            pointer-events: none;
           }
           
           /* Мобила: фокус на лице справа, немного ниже центра */
