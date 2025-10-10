@@ -238,7 +238,7 @@ export default function App() {
         <div className="hero-overlay"></div>
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '72px', paddingBottom: '40px' }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
@@ -259,7 +259,7 @@ export default function App() {
             {/* Блок РЕЗУЛЬТАТ - без белой рамки */}
             <div className="max-w-md">
               <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
-                <span className="font-bold uppercase tracking-wide text-white block mb-2" style={{ fontStyle: 'italic', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+                <span className="font-bold uppercase tracking-wide text-blue-600 block mb-3" style={{ fontStyle: 'italic' }}>
                   РЕЗУЛЬТАТ:
                 </span>
                 <span className="block bg-white rounded-lg p-4 text-gray-800">
@@ -314,7 +314,7 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            filter: brightness(1.18) contrast(1.02);
+            filter: brightness(1.08) contrast(1.02);
           }
           
           .hero-overlay{
@@ -325,10 +325,14 @@ export default function App() {
             pointer-events: none;
           }
           
-          /* Мобила: фокус на лице справа, немного ниже центра */
+          /* Мобила: фокус на лице справа, немного ниже центра + осветление */
           @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
+              filter: brightness(1.28) contrast(1.02);
+            }
+            .hero-overlay{
+              background: rgba(255, 255, 255, 0.12);
             }
           }
           
@@ -339,10 +343,10 @@ export default function App() {
             }
           }
           
-          /* Десктоп: лицо справа с видимой левой стеной */
+          /* Десктоп: лицо отдалено, видна левая стена */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 58% center;
+              object-position: 52% center;
             }
           }
         `}</style>
