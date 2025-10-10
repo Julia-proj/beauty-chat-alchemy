@@ -303,7 +303,7 @@ export default function App() {
             pointer-events:none;
           }
 
-          /* Десктоп-раскладка: фото справа ~55%, слева мягкий серый→белый */
+          /* Десктоп-раскладка: фото справа ~55%, слева мягкий серый→белый (сгладил переходы) */
           @media (min-width:1024px){
             .hero-wrap{ position:relative; }
             .hero-image{
@@ -314,7 +314,13 @@ export default function App() {
             .hero-split-gradient{
               position:absolute; inset:0; z-index:0;
               background:
-                linear-gradient(90deg, #f4f6f8 0%, #f8fafc 35%, rgba(248,250,252,0.6) 45%, rgba(255,255,255,0.0) 55%);
+                linear-gradient(90deg,
+                  #f4f6f8 0%,
+                  #f6f8fb 20%,
+                  #f8fafc 36%,
+                  rgba(248,250,252,0.75) 46%,
+                  rgba(255,255,255,0.35) 54%,
+                  rgba(255,255,255,0.00) 60%);
             }
             .hero-content{
               padding-top: 130px !important;
@@ -347,7 +353,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
               Сравните результаты до и после внедрения скриптов
             </p>
           </div>
@@ -407,12 +413,12 @@ export default function App() {
       {/* 02 - Почему */}
       <section id="why" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
         <SectionMarker n="02" />
-        <div className="max-w-6xl mx_auto px-4 sm:px-6 pt-4 sm:pt-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
               Каждая потерянная заявка - это упущенная прибыль
             </p>
           </div>
@@ -476,7 +482,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
+            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">Полный набор инструментов для увеличения продаж</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -493,14 +499,12 @@ export default function App() {
                   <img
                     src={item.img}
                     alt=""
-                    className={`w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300`}
+                    className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
                   />
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  {item.desc}
-                </p>
+                <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -511,8 +515,8 @@ export default function App() {
       <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти (поверх контента) */}
-        <div className="pointer-events-none absolute inset-0 opacity-0 confetti-layer">
+        {/* Конфетти */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-600 confetti-layer">
           {Array.from({ length: 18 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
           ))}
@@ -523,7 +527,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-900 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -550,18 +554,25 @@ export default function App() {
         </div>
 
         <style>{`
+          /* включаем слой при входе секции */
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
-          .confetti-layer{ z-index: 5; transition: opacity .6s ease; } /* <-- поверх контента */
+
+          /* по умолчанию анимация на паузе, чтобы не "отстреливала" до появления */
           .confetti{
             position:absolute; top:-8vh;
             width:5px; height:9px; border-radius:2px;
-            opacity:.9; animation: confetti-fall linear forwards;
+            opacity:.95; 
+            animation: confetti-fall linear forwards;
+            animation-play-state: paused;
             filter: drop-shadow(0 1px 1px rgba(0,0,0,.08));
           }
+          #bonuses.confetti-on .confetti{ animation-play-state: running; }
+
           @keyframes confetti-fall{
             0%{ transform: translateY(-8vh) rotate(0deg); }
             100%{ transform: translateY(105vh) rotate(360deg); }
           }
+
           ${Array.from({length:18}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
             const dur = (Math.random()*2.5 + 3.8).toFixed(2);
@@ -582,6 +593,7 @@ export default function App() {
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
               <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" style={{ width: '45%' }}></div>
             </h2>
+            <p className="text-base sm:text-lg text-black max-w-2xl mx-auto subhead"></p>
           </div>
 
           <div className="space-y-3">
@@ -629,15 +641,14 @@ export default function App() {
             ))}
           </div>
 
-          {/* Пять рилсов вместо трёх */}
           <div className="flex gap-3 sm:gap-4 justify-center items-center overflow-x-auto pb-2 reels-container">
-            {INSTAGRAM_REELS.map((url, idx) => (
+            {INSTAGRAM_REELS.slice(0, 5).map((url, idx) => (
               <div
                 key={url}
                 className={`${idx === 2 ? 'reel-card-featured' : 'reel-card-small'
                   } rounded-2xl overflow-hidden border-2 ${idx === 2 ? 'border-blue-400 shadow-xl' : 'border-gray-200'
                   } flex-shrink-0 hover:shadow-2xl hover:scale-105 transition-all duration-500 fade-in-view`}
-                style={{ animationDelay: `${idx * 0.08}s` }}
+                style={{ animationDelay: `${idx * 0.06}s` }}
               >
                 <InstaEmbed url={url} maxWidth={idx === 2 ? 280 : 220} />
               </div>
@@ -678,7 +689,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-black max-w-2xl mx-auto leading-relaxed subhead">
               Специальное предложение на этой неделе • Предложение действует ограниченное время
             </p>
           </div>
@@ -718,7 +729,7 @@ export default function App() {
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text_center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
+                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
                   aria-label="Купить полную систему со скидкой 85% - 19 евро"
                 >
                   <span className="relative z-10">Получить со скидкой 85%</span>
@@ -751,7 +762,7 @@ export default function App() {
 
                 <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
-                  <div className="px-2.5 py-1.5 bg_white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Mastercard</div>
                 </div>
@@ -817,7 +828,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile */}
+      {/* Sticky CTA - Mobile (текст изменён) */}
       {showStickyCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
