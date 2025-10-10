@@ -92,46 +92,6 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   );
 }
 
-function ScrollProgress() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (scrollPx / winHeightPx) * 100;
-      setScrollProgress(scrolled);
-    };
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    updateScrollProgress();
-    return () => window.removeEventListener('scroll', updateScrollProgress);
-  }, []);
-  return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
-      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
-    </div>
-  );
-}
-
-function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
-  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  let html = escapeHtml(text);
-  if (primaryHighlight) {
-    const ph = escapeHtml(primaryHighlight);
-    html = html.replace(
-      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${ph}</span>`
-    );
-  }
-  for (const phrase of extraPhrases) {
-    const p = escapeHtml(phrase);
-    html = html.replace(
-      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-      `<span class="text-blue-600 font-semibold">${p}</span>`
-    );
-  }
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
-}
-
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -140,9 +100,9 @@ export default function App() {
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const { h, m, s, finished } = useCountdown(12);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
-  const { h, m, s, finished } = useCountdown(12);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -174,7 +134,7 @@ export default function App() {
     setLightboxOpen(true);
   };
 
-  // наблюдатель появления секций (для fade-in и конфетти)
+  // появление секций + запуск конфетти
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
@@ -218,18 +178,23 @@ export default function App() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
+          {/* В шапке оставляем "Купить" как есть (Stripe) */}
           <a
-            href="#offer"
-            className="px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all hover:scale-105 transform hover:shadow-xl min-h-[44px] flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-            aria-label="Получить скрипты"
+            href={STRIPE_URL}
+            target="_blank"
+            rel="noopener"
+            className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 transform hover:shadow-xl min-h-[44px] flex items-center justify-center"
+            aria-label="Купить скрипты"
           >
-            Получить скрипты
+            Купить
           </a>
         </div>
       </header>
 
-      {/* HERO — десктоп: фото вправо, слева мягкая серая плашка под текст */}
+      {/* HERO — десктоп: фото вправо, слева мягкий серый градиент под заголовки */}
       <section className="relative w-[100vw] h-[100svh] overflow-hidden" style={{ isolation: 'isolate' }}>
+        {/* Левая подложка для десктопа */}
+        <div className="hero-leftShade" aria-hidden="true" />
         {/* Фото */}
         <img
           src="/images/IMG_6646.jpeg"
@@ -238,10 +203,6 @@ export default function App() {
           loading="eager"
           decoding="async"
         />
-
-        {/* Левая плашка для десктопа */}
-        <div className="hidden lg:block absolute inset-y-0 left-0 w-[46vw] z-[1] hero-left-panel" />
-
         {/* Лёгкая виньетка */}
         <div className="hero-vignette" />
 
@@ -249,14 +210,14 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold leading-[1.12] mb-3 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-[54px] xl:text-[60px] font-extrabold leading-[1.12] mb-3 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
-            <p className="text-pretty text-lg sm:text-xl lg:text-[22px] font-semibold leading-relaxed text-white lg:text-gray-800 lg:drop-none drop-volume max-w-xl">
+            <p className="text-pretty text-lg sm:text-xl lg:text-[22px] font-semibold leading-relaxed text-gray-900/90 lg:text-gray-800 drop-volume max-w-xl">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
@@ -264,7 +225,7 @@ export default function App() {
           {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-white lg:text-gray-900 lg:drop-none drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+              <p className="text-pretty leading-[1.45] text-gray-900/95 lg:text-gray-800 drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
                 <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
                   Результат:
                 </span>{" "}
@@ -272,12 +233,13 @@ export default function App() {
               </p>
             </div>
 
-            {/* Кнопка Получить скрипты */}
+            {/* Кнопка "Получить скрипты" — скролл к офферу */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href="#offer"
-                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                aria-label="Получить скрипты"
+                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden
+                           bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                aria-label="Получить скрипты — перейти к офферу"
               >
                 <span className="relative z-10">Получить скрипты</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -289,11 +251,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90 lg:text-gray-700">
-              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5 whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-800">
+              <span className="px-2.5 py-1.5 bg-black/5 backdrop-blur-sm rounded-lg border border-black/10 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-black/5 backdrop-blur-sm rounded-lg border border-black/10 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -301,49 +263,62 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#ffffff; margin:0; padding:0; scroll-behavior:smooth; }
+          :global(html){ scroll-behavior: smooth; }
+          :global(html, body, #__next){ background:#ffffff; margin:0; padding:0; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
           :root { --safe-edge: 0px; }
 
+          /* Левая мягкая подложка для десктопа под текст */
+          .hero-leftShade{
+            position:absolute; inset:0;
+            background: transparent;
+            z-index:1;
+          }
+          @media (min-width:1024px){
+            .hero-leftShade{
+              background: linear-gradient(90deg, rgba(243,244,246,0.92) 0%, rgba(245,246,248,0.86) 40%, rgba(248,249,251,0.0) 70%);
+            }
+          }
+
+          /* Фото — максимально «далёкое», сдвинуто вправо */
           .hero-image{
             position:absolute; 
-            left:0; top:0;
+            right:0; top:0;
             width:100vw; height:100%;
             object-fit: cover;
-            object-position: 85% center; /* сильнее вправо, чтобы слева было место под текст */
+            object-position: 85% center; /* сильный сдвиг вправо */
             z-index:0;
             will-change: transform;
             background:#000;
+            transform: scale(1.0); /* без увеличения, чтобы картинка выглядела дальше */
           }
 
-          /* десктоп-плашка слева — лёгкий серый градиент */
-          .hero-left-panel{
-            background: linear-gradient(90deg, rgba(243,244,246,0.95) 0%, rgba(243,244,246,0.8) 55%, rgba(243,244,246,0.0) 100%);
-          }
-
+          /* Мягкая виньетка */
           .hero-vignette{
-            position:absolute; inset:0; z-index:1;
+            position:absolute; inset:0; z-index:2;
             background:
-              radial-gradient(120% 90% at 60% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.00) 80%),
+              radial-gradient(120% 90% at 65% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.00) 80%),
               linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.00) 40%);
             pointer-events:none;
           }
 
-          @media (max-width: 1023px){
+          /* Контент */
+          @media (max-width: 767px){
             .hero-content{ padding-top: 120px !important; }
           }
-          @media (min-width:1024px){
-            .hero-content{ padding-top: 120px; }
+          @media (min-width:1280px){
+            .hero-content{ padding-top: 130px; }
           }
 
+          /* Премиальный «объём» */
           .drop-volume{
             text-shadow:
               0 1px 0 rgba(255,255,255,0.25),
               0 0.5px 0 rgba(0,0,0,0.35),
-              0 2px 6px rgba(0,0,0,0.28);
+              0 2px 6px rgba(0,0,0,0.18);
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
           }
@@ -451,7 +426,7 @@ export default function App() {
       <section id="for" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
+          <h2 className="text-balance text-3л sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
             Кому подходят <span className="text-emerald-600">скрипты</span>
           </h2>
 
@@ -519,13 +494,13 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы — компакт + современное конфетти */}
+      {/* 05 - Бонусы — конфетти плавное, бесконечное (не исчезает быстро) */}
       <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти — пастель, разная форма/скорость */}
+        {/* Конфетти — малые пастельные частицы, плавный бесконечный поток */}
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 confetti-layer">
-          {Array.from({ length: 28 }).map((_, i) => (
+          {Array.from({ length: 24 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
           ))}
         </div>
@@ -566,25 +541,22 @@ export default function App() {
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
           .confetti{
             position:absolute; top:-8vh;
-            width:6px; height:10px; border-radius:2px;
-            opacity:.95; animation: confetti-fall linear forwards;
-            transform: rotate(0deg);
+            width:5px; height:9px; border-radius:2px;
+            opacity:.9; animation: confetti-fall linear infinite;
             filter: drop-shadow(0 1px 1px rgba(0,0,0,.08));
           }
           @keyframes confetti-fall{
             0%{ transform: translateY(-8vh) rotate(0deg); }
             100%{ transform: translateY(105vh) rotate(360deg); }
           }
-          ${Array.from({length:28}).map((_,i)=>{
+          ${Array.from({length:24}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
-            const dur = (Math.random()*3 + 4.0).toFixed(2);
-            const delay = (Math.random()*0.9).toFixed(2);
-            const palette = ['#c7d2fe','#e9d5ff','#fce7f3','#bfdbfe','#ddd6fe','#fecdd3','#fde68a','#bbf7d0'];
-            const color = palette[i % palette.length];
-            const shape = i % 3; // 0 rect, 1 pill, 2 dot
-            const br = shape===0 ? '2px' : (shape===1 ? '999px' : '999px');
-            const size = shape===2 ? '7px; height:7px' : '6px; height:10px';
-            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; border-radius:${br}; width:${size.split(';')[0].trim()}; ${size.split(';')[1].trim() ? size.split(';')[1].trim()+';' : ''} }`
+            const dur = (Math.random()*6 + 6).toFixed(2); // 6–12s для плавности
+            const delay = (Math.random()*4).toFixed(2);   // 0–4s
+            const colors = ['#c7d2fe','#e9d5ff','#fce7f3','#bfdbfe','#ddd6fe','#fecdd3'];
+            const color = colors[i % colors.length];
+            const drift = (Math.random()*40 - 20).toFixed(1); // горизонтальный дрейф
+            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; transform: translateX(${drift}px); }`
           }).join('\n')}
         `}</style>
       </section>
@@ -738,8 +710,9 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                {/* было nowrap/ellipsis — убрал, чтобы текст НЕ обрезался на правом краю */}
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center">
+                {/* ВАЖНО: разрешаем переносы, чтобы ничего не исчезало справа */}
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center"
+                     style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}>
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
 
@@ -791,7 +764,7 @@ export default function App() {
             ].map((f, i) => (
               <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
                 <button
-                  onClick={() => toggleFaq(i)}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
                   aria-label={`Вопрос: ${f.q}`}
                 >
@@ -819,16 +792,16 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile (тёмная плашка, текст «Скрипты →») */}
+      {/* Sticky CTA - Mobile (нижняя тёмная плашка) */}
       {showStickyCTA && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-900 to-slate-800 text-white border-t border-gray-800 p-3.5 z-50 lg:hidden shadow-2xl">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
             href="#offer"
-            className="w-full text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block transition-all flex items-center justify-between min-h-[52px] shadow-lg"
-            aria-label="Перейти к офферу"
+            className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
+            aria-label="Скрипты — перейти к офферу"
           >
-            <span>Скрипты</span>
-            <span className="text-xl">→</span>
+            <span>Скрипты →</span>
+            <span className="text-xl" aria-hidden> </span>
           </a>
         </div>
       )}
@@ -856,4 +829,25 @@ export default function App() {
       `}</style>
     </div>
   );
+}
+
+/* Вспомогательный компонент был выше */
+function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
+  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let html = escapeHtml(text);
+  if (primaryHighlight) {
+    const ph = escapeHtml(primaryHighlight);
+    html = html.replace(
+      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${ph}</span>`
+    );
+  }
+  for (const phrase of extraPhrases) {
+    const p = escapeHtml(phrase);
+    html = html.replace(
+      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${p}</span>`
+    );
+  }
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
