@@ -48,7 +48,7 @@ function SectionMarker({ n }: { n: string }) {
     <div className="section-marker" aria-hidden="true">
       <span className="marker-number">{n}</span>
       <span className="marker-line" />
-      <style jsx>{`
+      <style>{`
         .section-marker {
           position: absolute;
           left: 1rem;
@@ -224,8 +224,8 @@ export default function App() {
       </header>
 
       {/* HERO */}
-      <section className="relative w-full min-h-screen flex items-center justify-start overflow-hidden pt-24 sm:pt-28 lg:pt-20 bg-[#f7f4f1]">
-        {/* Фото — на весь экран на мобиле, слегка подсвечено */}
+      <section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#faf5f0] to-white" style={{ minHeight: '100svh' }}>
+        {/* Фото - фоновое на весь экран */}
         <img
           src="/images/IMG_6537.jpeg"
           alt="Beauty professional"
@@ -234,35 +234,38 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Лёгкий оверлей */}
-        <div className="hero-overlay pointer-events-none" />
-
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="max-w-xl lg:max-w-2xl fade-in-view hero-content">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-3 sm:mb-5 text-gray-900">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '80px', paddingBottom: '40px' }}>
+          {/* Верхняя часть - заголовок и подзаголовок */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
               Скрипты, которые превращают{" "}
               <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
 
-            <div className="result-subtitle mb-3 sm:mb-5">
-              <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800">
-                Проверенная система общения с клиентами для бьюти-мастеров
+            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg">
+              Проверенная система общения с клиентами для бьюти-мастеров
+            </p>
+          </div>
+
+          {/* Нижняя часть - блок результата и кнопка */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-5 sm:space-y-6">
+            {/* Блок РЕЗУЛЬТАТ в белой плашке */}
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 sm:p-6 shadow-lg border border-gray-100/50 max-w-md">
+              <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
+                <span className="font-bold uppercase tracking-wide text-blue-600 block mb-2" style={{ fontStyle: 'italic', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                  РЕЗУЛЬТАТ:
+                </span>
+                <span className="text-gray-800">
+                  закрытые возражения, увеличенный средний чек, экономия времени
+                </span>
               </p>
             </div>
 
-            {/* «Результат…» опускаем заметно ниже на мобиле, чтобы не закрывать лицо */}
-            <p className="result-paragraph text-pretty text-sm sm:text-base lg:text-lg text-gray-800 mb-5 sm:mb-8 leading-relaxed">
-              <span className="font-semibold uppercase tracking-wide text-blue-600">
-                РЕЗУЛЬТАТ:
-              </span>{" "}
-              закрытые возражения, увеличенный средний чек, экономия времени
-            </p>
-
-            {/* CTA */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 mt-1">
+            {/* Кнопка Купить */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href={STRIPE_URL}
                 target="_blank"
@@ -291,74 +294,43 @@ export default function App() {
           </div>
         </div>
 
-        <style jsx>{`
-          :global(html, body, #__next){ background:#f7f4f1; overscroll-behavior-y: contain; }
+        <style>{`
+          :global(html, body, #__next){ background:#faf5f0; overscroll-behavior-y: contain; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
 
           .hero-image{
-            position:absolute; z-index:0;
+            position:absolute; 
+            inset:0;
+            z-index:0;
+            width: 100%; 
+            height: 100%;
             max-width:none;
-            filter: brightness(1.06) contrast(1.02); /* лёгкая «подсветка» */
+            object-fit: cover;
+            filter: brightness(1.08) contrast(1.02);
           }
-          /* Мобила: фото — полноэкранный фон, без белой пустоты сверху */
+          
+          /* Мобила: фокус на лице справа, немного ниже центра */
           @media (max-width: 767px){
             .hero-image{
-              top:0; left:0; right:0; bottom:0;
-              width: 100%; height: 100vh;
-              object-fit: cover; object-position: center 28%;
+              object-position: 62% 42%;
             }
-            .hero-content{ padding-top: 8vh; }           /* заголовки ближе к верху */
-            .result-paragraph{ margin-top: 18vh; }       /* «Результат…» значительно ниже */
           }
+          
           /* Планшет */
           @media (min-width:768px) and (max-width:1023px){
             .hero-image{
-              top:50%; right:0;
-              transform: translateY(-50%);
-              height: 85vh; width: auto;
-              object-fit: contain; object-position: center right;
+              object-position: 68% center;
             }
           }
-          /* Десктоп */
+          
+          /* Десктоп: лицо справа с видимой левой стеной */
           @media (min-width:1024px){
             .hero-image{
-              top:50%; right:5%;
-              transform: translateY(-50%);
-              height: 90vh; max-height:90vh; width:auto;
-              object-fit: contain; object-position: 75% center;
+              object-position: 58% center;
             }
-          }
-
-          .hero-overlay{
-            position:absolute; inset:0; z-index:1;
-            background: linear-gradient(to right,
-              rgba(255,255,255,0.98) 0%,
-              rgba(247,244,241,0.88) 28%,
-              rgba(247,244,241,0.45) 55%,
-              transparent 100%
-            );
-          }
-          @media (max-width:767px){
-            .hero-overlay{
-              background: linear-gradient(to bottom,
-                rgba(247,244,241,0.6) 0%,
-                rgba(247,244,241,0.5) 24%,
-                rgba(247,244,241,0.45) 46%,
-                rgba(247,244,241,0.55) 70%,
-                rgba(247,244,241,0.75) 100%
-              );
-            }
-          }
-
-          .result-subtitle{ position:relative; padding-top:12px; margin-top:8px; }
-          .result-subtitle::before{
-            content:''; position:absolute; top:0; left:0;
-            width:64px; height:2.5px;
-            background: linear-gradient(90deg, rgba(59,130,246,.65) 0%, transparent 100%);
-            border-radius:2px;
           }
         `}</style>
       </section>
@@ -638,7 +610,7 @@ export default function App() {
           </div>
         </div>
 
-        <style jsx>{`
+        <style>{`
           .reels-container { max-width: 100%; scroll-snap-type: x mandatory; }
           .reels-container > * { scroll-snap-align: center; }
 
@@ -812,7 +784,7 @@ export default function App() {
         </div>
       )}
 
-      <style jsx global>{`
+      <style>{`
         .section-bg-1{
           background: linear-gradient(180deg, #fafbfc 0%, #f2f5f8 100%);
         }
