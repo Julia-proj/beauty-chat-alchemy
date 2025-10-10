@@ -52,7 +52,7 @@ function SectionMarker({ n }: { n: string }) {
         .section-marker {
           position: absolute;
           left: 1rem;
-          top: .5rem;
+          top: .5rem; /* чуть выше, чтобы не прилипало к заголовку */
           display: flex;
           align-items: center;
           gap: 10px;
@@ -234,11 +234,11 @@ export default function App() {
           decoding="async"
         />
         
-        {/* Лёгкий overlay */}
+        {/* Белый overlay */}
         <div className="hero-overlay"></div>
 
         {/* Контент */}
-        <div className="hero-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '88px', paddingBottom: '40px' }}>
           {/* Верхняя часть - заголовок и подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-4 sm:mb-5 text-gray-900">
@@ -256,14 +256,14 @@ export default function App() {
 
           {/* Нижняя часть - блок результата и кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ — без рамок/плашек, единый блок, 2 строки */}
+            {/* РЕЗУЛЬТАТ: объединён в 2 строки, без рамки и без белой заливки */}
             <div className="max-w-md">
-              <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed text-gray-900">
+              <p className="text-pretty text-sm sm:text-base lg:text-lg leading-relaxed">
                 <span className="font-bold uppercase tracking-wide text-blue-600" style={{ fontStyle: 'italic' }}>
                   РЕЗУЛЬТАТ:
                 </span>{" "}
-                закрытые возражения, увеличенный средний чек,<br className="sm:hidden" />
-                <span className="sm:inline"> экономия времени</span>
+                закрытые возражения, увеличенный<br className="sm:hidden" />
+                <span className="sm:whitespace-normal">средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -323,19 +323,19 @@ export default function App() {
             pointer-events: none;
           }
 
-          /* +16px к верхнему отступу на мобиле, чтобы H1 не упирался */
+          /* Чуть опустить контент на мобиле (верхний заголовок не упирается в шапку) */
           @media (max-width: 767px){
-            .hero-content{ padding-top: 104px !important; }
+            .hero-content{ padding-top: 102px !important; }
           }
           
-          /* Мобила: фокус на лице справа, ещё светлее */
+          /* Мобила: фокус на лице + осветление сильнее белым overlay */
           @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
-              filter: brightness(1.36) contrast(1.02);
+              filter: brightness(1.28) contrast(1.02);
             }
             .hero-overlay{
-              background: rgba(255, 255, 255, 0.12);
+              background: rgba(255, 255, 255, 0.16);
             }
           }
           
@@ -346,7 +346,7 @@ export default function App() {
             }
           }
           
-          /* Десктоп: лицо чуть «отдалить», больше левой стены */
+          /* Десктоп: лицо чуть дальше, больше левой стены */
           @media (min-width:1024px){
             .hero-image{
               object-position: 48% center;
@@ -565,7 +565,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
           <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block">
-              Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
+              Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teал-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
             </h2>
             <div className="mx-auto mt-4 h-1.5 w-36 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-sm"></div>
           </div>
@@ -608,7 +608,7 @@ export default function App() {
                 <img
                   src={`/images/reviews/review${n}.png`}
                   alt={`Отзыв ${n}`}
-                  className="w-full h-36 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-36 см:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               </button>
@@ -731,7 +731,7 @@ export default function App() {
                   </ul>
                 </div>
 
-                <div className="flex items中心 justify-center gap-2 text-xs flex-wrap">
+                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
                   <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
                   <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
@@ -747,7 +747,7 @@ export default function App() {
       <section id="faq" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 см:mb-9 fade-in-view">
             Частые вопросы
           </h2>
 
@@ -770,7 +770,7 @@ export default function App() {
                   </span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
+                  <div className="px-6 lg:px-8 py-5 border-т border-gray-100 bg-gray-50/40">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -781,7 +781,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
+      <footer className="py-8 sm:py-10 bg-white border-т border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
