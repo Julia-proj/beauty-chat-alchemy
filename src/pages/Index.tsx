@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -93,6 +93,46 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   );
 }
 
+function ScrollProgress() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useEffect(() => {
+    const updateScrollProgress = () => {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (scrollPx / winHeightPx) * 100;
+      setScrollProgress(scrolled);
+    };
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+    return () => window.removeEventListener('scroll', updateScrollProgress);
+  }, []);
+  return (
+    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
+      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
+    </div>
+  );
+}
+
+function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
+  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let html = escapeHtml(text);
+  if (primaryHighlight) {
+    const ph = escapeHtml(primaryHighlight);
+    html = html.replace(
+      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${ph}</span>`
+    );
+  }
+  for (const phrase of extraPhrases) {
+    const p = escapeHtml(phrase);
+    html = html.replace(
+      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${p}</span>`
+    );
+  }
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -135,30 +175,32 @@ export default function App() {
     setLightboxOpen(true);
   };
 
+  // наблюдатель появления секций (для fade-in и конфетти)
   useEffect(() => {
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("is-visible"); }),
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          if ((e.target as HTMLElement).id === "bonuses") {
+            (e.target as HTMLElement).classList.add("confetti-on");
+          }
+        }
+      }),
       { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
     );
-    document.querySelectorAll<HTMLElement>(".fade-in-view").forEach((el) => io.observe(el));
-
-    // лёгкая анимация конфетти запускается при монтировании секции бонусов
-    const bonus = document.querySelector<HTMLElement>('#bonuses');
-    const confetti = document.querySelector<HTMLElement>('.confetti-wrap');
-    if (bonus && confetti) {
-      const ob = new IntersectionObserver((ents) => {
-        ents.forEach(en => {
-          if (en.isIntersecting) confetti.classList.add('confetti-on');
-        });
-      }, { threshold: 0.4 });
-      ob.observe(bonus);
-    }
-
+    document.querySelectorAll<HTMLElement>(".fade-in-view, #bonuses").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
+    <div className="min-h-screen bg-[#f2f4f7] overflow-x-hidden no-awkward-breaks">
+      <ReviewLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        imageSrc={lightboxImage}
+        reviewNumber={lightboxReviewNumber}
+      />
+
       {/* viewers badge desktop */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
         <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300">
@@ -189,11 +231,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO */}
-      <section
-        className="relative w-full flex items-center justify-start overflow-hidden hero-bg"
-        style={{ minHeight: '100svh' }}
-      >
+      {/* HERO — серый фон, фото отдалено и сдвинуто вправо, отступы правлены */}
+      <section className="relative w-full flex items-center justify-start overflow-hidden bg-[#f2f4f7]" style={{ minHeight: '100svh' }}>
         {/* Фото */}
         <img
           src="/images/IMG_6603.jpeg"
@@ -203,37 +242,35 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Серая вуаль + мягкая правая маска для плавного перехода */}
-        <div className="hero-overlay"></div>
+        {/* Тонкая затемняющая вуаль для выравнивания краёв (без белых пятен) */}
+        <div className="hero-overlay" />
 
         {/* Контент */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '112px', paddingBottom: '44px' }}>
-          {/* Верхняя часть */}
+          {/* Верх: заголовок + подзаголовок (поднял ближе, без сильной щели) */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-6 sm:mb-7 text-white drop-shadow-[0_1px_14px_rgba(0,0,0,.25)]">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
-              <span className="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
 
-            <p className="text-pretty text-[17px] sm:text-lg lg:text-xl font-semibold leading-relaxed text-white/95 max-w-lg -mt-1">
+            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-800 max-w-lg">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
-          {/* Нижняя часть */}
+          {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* Результат */}
+            {/* РЕЗУЛЬТАТ — с прописной, крупнее, весь синий, без капса */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-white/95 result-line">
-                <span className="font-bold text-white not-italic tracking-wide" style={{ fontSize: 'clamp(16px,2.2vw,22px)' }}>
+              <p className="text-pretty leading-[1.45] text-blue-600" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+                <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
                   Результат:
                 </span>{" "}
-                <span className="text-white/95" style={{ fontSize: 'clamp(14px,1.7vw,18px)' }}>
-                  закрытые возражения, увеличенный средний чек, экономия времени
-                </span>
+                закрытые возражения, увеличенный средний чек, экономия времени
               </p>
             </div>
 
@@ -256,11 +293,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90">
-              <span className="px-2.5 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5 whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-700">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -268,16 +305,11 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#f3f4f6; overscroll-behavior-y: contain; }
+          :global(html, body, #__next){ background:#f2f4f7; overscroll-behavior-y: contain; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
-
-          /* Серый фон + плавный переход справа от фото */
-          .hero-bg{
-            background: #f3f4f6;
-          }
 
           .hero-image{
             position:absolute; 
@@ -287,58 +319,53 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            /* Отдаляем (меньше зума), чтобы качество не «сыпалось» */
-            transform: scale(0.9);
+            /* отдаляем фото для лучшего качества и сдвигаем правее лицо */
+            transform: scale(0.86);
             transform-origin: center right;
-            filter: saturate(1.02) contrast(1.01);
+            object-position: 64% center;
+            filter: brightness(1.02) contrast(1.01);
           }
           
-          /* мягкий правый градиент к серому и лёгкое затемнение сверху для читаемости */
           .hero-overlay{
             position:absolute;
             inset:0;
             z-index:1;
-            pointer-events: none;
+            /* мягкая тёмная вуаль для выравнивания краёв без белых зон */
             background:
-              linear-gradient(90deg, rgba(243,244,246,1) 0%, rgba(243,244,246,0.85) 14%, rgba(243,244,246,0.35) 30%, rgba(243,244,246,0) 52%),
-              linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.10) 16%, rgba(0,0,0,0.06) 32%, rgba(0,0,0,0.00) 56%);
-            mix-blend-mode: normal;
+              radial-gradient(120% 90% at 5% 50%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 55%, rgba(0,0,0,0.00) 80%),
+              linear-gradient(0deg, rgba(0,0,0,0.02), rgba(0,0,0,0.02));
+            pointer-events: none;
           }
 
-          /* Контент: больше верхний раствор, чтобы заголовок не упирался */
+          /* Чуть больше отступ сверху, чтобы заголовок не упирался в шапку */
           @media (max-width: 767px){
-            .hero-content{ padding-top: 106px !important; }
+            .hero-content{ padding-top: 110px !important; }
           }
 
-          .result-block{ margin-top: 10px; }
-          .result-line{ text-shadow: 0 1px 10px rgba(0,0,0,.25); }
-
-          /* Позиционирование модели: смещаем вправо и ещё дальше на десктопе */
-          @media (min-width:1024px){
+          /* Десктопные уточнения: ещё немного "отдаляем" на очень больших экранах */
+          @media (min-width:1280px){
             .hero-image{
-              object-position: 70% center; /* правее */
-              transform: scale(0.88);      /* ещё дальше */
+              transform: scale(0.82);
+              object-position: 66% center;
             }
           }
-          @media (min-width:1280px){
-            .hero-image{ object-position: 74% center; transform: scale(0.86); }
-          }
           @media (min-width:1536px){
-            .hero-image{ object-position: 76% center; transform: scale(0.84); }
+            .hero-image{
+              transform: scale(0.80);
+              object-position: 67% center;
+            }
           }
 
-          /* Мобайл: не накрываем лицо текстом — смещаем фокус ещё правее */
-          @media (max-width: 767px){
-            .hero-image{ object-position: 68% 42%; transform: scale(0.92); }
-          }
+          /* Блок результата — ближе к кнопке и крупнее */
+          .result-block{ margin-top: 18px; }
         `}</style>
       </section>
 
       {/* 01 - Сравнение */}
       <section id="comparison" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
         <SectionMarker n="01" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4">
-          <div className="text-center mb-6 sm:mb-8 fade-in-view">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+          <div className="text-center mb-6 sm:mb-9 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
@@ -494,8 +521,7 @@ export default function App() {
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {/* оставляю без HighlightedDesc, чтобы не увеличивать DOM */}
-                  {item.desc}
+                  <HighlightedDesc text={item.desc} primaryHighlight={item.highlight} extraPhrases={["без давления", "каждой ниши"]} />
                 </p>
               </div>
             ))}
@@ -503,17 +529,23 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы (компакт + конфетти) */}
-      <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/40 via-pink-50/25 to-white overflow-hidden">
+      {/* 05 - Бонусы (компактнее + премиальная конфетти-анимация) */}
+      <section id="bonuses" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-purple-50/40 via-pink-50/20 to-white overflow-hidden">
         <SectionMarker n="05" />
-        <div className="confetti-wrap pointer-events-none absolute inset-0 z-0"></div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4 relative z-10">
-          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+        {/* Конфетти-слой (минималистичный) */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 confetti-layer">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <span key={i} className={`confetti c${i}`} />
+          ))}
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
+          <div className="text-center mb-6 sm:mb-8 fade-in-view">
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -524,12 +556,12 @@ export default function App() {
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="card-premium rounded-2xl p-4 sm:p-5 text-center bg-white shadow-md border border-purple-100/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-400 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+              <div key={i} className="card-premium rounded-2xl p-4 sm:p-5 text-center bg-white border border-purple-100/60 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
                 <div className="mb-3">
-                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-xl shadow" loading="lazy" />
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-lg shadow" loading="lazy" />
                 </div>
                 <h3 className="text-pretty text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-2">{b.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-2.5">{b.desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed mb-3">{b.desc}</p>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-[14.5px] font-bold text-gray-400 line-through">{b.old}</span>
                   <span className="text-base font-bold text-green-600">0€</span>
@@ -540,32 +572,28 @@ export default function App() {
         </div>
 
         <style>{`
-          /* Премиальная деликатная конфетти-анимация */
-          .confetti-wrap{ opacity:0; transition: opacity .6s ease; }
-          .confetti-wrap.confetti-on{ opacity:1; }
-          .confetti-wrap::before,
-          .confetti-wrap::after{
-            content:"";
-            position:absolute; inset:0;
-            background:
-              radial-gradient(2px 2px at 10% 20%, rgba(168,85,247,.35) 50%, transparent 51%),
-              radial-gradient(2px 2px at 25% 65%, rgba(99,102,241,.35) 50%, transparent 51%),
-              radial-gradient(2px 2px at 50% 30%, rgba(236,72,153,.35) 50%, transparent 51%),
-              radial-gradient(2px 2px at 70% 80%, rgba(59,130,246,.35) 50%, transparent 51%),
-              radial-gradient(2px 2px at 85% 40%, rgba(244,114,182,.35) 50%, transparent 51%);
-            animation: confetti-fall 6s linear infinite;
-            pointer-events:none;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
-          }
-          .confetti-wrap::after{
-            animation-duration: 8s;
-            filter: blur(.2px) saturate(1.1);
-            opacity:.8;
+          /* конфетти — минимальные «блики» премиального вида */
+          #bonuses.confetti-on .confetti-layer{ opacity:1; }
+          .confetti{
+            position:absolute; top:-10vh;
+            width:6px; height:10px; 
+            border-radius:2px;
+            opacity:.85;
+            animation: confetti-fall linear forwards;
           }
           @keyframes confetti-fall{
-            0%{ transform: translateY(-8%); }
-            100%{ transform: translateY(8%); }
+            0%{ transform: translateY(-10vh) rotate(0deg); }
+            100%{ transform: translateY(110vh) rotate(360deg); }
           }
+          /* разносим частицы по ширине, оттенки — мягкие фиолетово-розовые/синие */
+          ${Array.from({length:30}).map((_,i)=>{
+            const left = Math.floor(Math.random()*100);
+            const dur = (Math.random()*4 + 6).toFixed(2);
+            const delay = (Math.random()*1.5).toFixed(2);
+            const colors = ['#c7d2fe','#e9d5ff','#fbcfe8','#bfdbfe','#ddd6fe','#fecdd3'];
+            const color = colors[i % colors.length];
+            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; }`
+          }).join('\n')}
         `}</style>
       </section>
 
@@ -668,7 +696,89 @@ export default function App() {
       {/* 08 - Оффер */}
       <section id="offer" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
-        <OfferBlock finished={finished} h={h} m={m} s={s} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+          <div className="text-center mb-6 sm:mb-9 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
+              Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
+            </h2>
+            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
+              Специальное предложение на этой неделе • Предложение действует ограниченное время
+            </p>
+          </div>
+
+          <div className="max-w-lg mx-auto">
+            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] fade-in-view">
+              <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl -translate-y-16 translate-x-16" />
+              <div className="absolute bottom-0 left-0 w-28 h-28 bg-purple-500/10 rounded-full blur-3xl translate-y-12 -translate-x-12" />
+
+              <div className="relative z-10 text-center">
+                <div className="text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
+
+                <div className="flex items-center justify-center gap-3.5 mb-4">
+                  <span className="text-gray-400 line-through text-2xl sm:text-3xl font-bold">127€</span>
+                  <span className="text-5xl sm:text-6xl font-extrabold text-white">19€</span>
+                </div>
+
+                <div className="mb-5">
+                  <div className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+                    <span className="text-white text-xl">⏰</span>
+                    {!finished ? (
+                      <>
+                        <span className="text-white text-sm font-medium">До конца:</span>
+                        <span className="font-bold tabular-nums text-white text-base">
+                          {String(h).padStart(2, "0")}:{String(m).padStart(2, "0")}:{String(s).padStart(2, "0")}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-semibold text-white text-sm">Время истекло</span>
+                    )}
+                  </div>
+                </div>
+
+                <a
+                  href={STRIPE_URL}
+                  target="_blank"
+                  rel="noopener"
+                  className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
+                  aria-label="Купить полную систему со скидкой 85% - 19 евро"
+                >
+                  <span className="relative z-10">Получить со скидкой 85%</span>
+                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </a>
+
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center" style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
+                  Пожизненный доступ • Обновления включены • Без скрытых платежей
+                </div>
+
+                <div className="text-left mb-6">
+                  <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
+                  <ul className="space-y-2.5 text-sm text-gray-200">
+                    {[
+                      "Готовые диалоги для всех ситуаций",
+                      "Шаблоны под конкретную услугу",
+                      "Бонус: гайд по работе с базой (27€)",
+                      "Бонус: 30+ источников клиентов (32€)",
+                      "Бонус: продажи на консультации (20€)",
+                      "Пожизненный доступ и обновления",
+                    ].map((t, i) => (
+                      <li key={i} className="flex gap-2.5 items-start">
+                        <span className="w-5 h-5 mt-0.5 text-green-400 flex-shrink-0 font-bold">✓</span>
+                        <span className="leading-relaxed">{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
+                  <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
+                  <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Mastercard</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 09 - FAQ */}
@@ -679,7 +789,32 @@ export default function App() {
             Частые вопросы
           </h2>
 
-          <Faq />
+          <div className="space-y-3.5">
+            {[
+              { q: "Сработает в моей нише?", a: "Да. База универсальная и блоки под ногти/брови/ресницы/волосы/косметологию/перманент." },
+              { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное - следовать алгоритму." },
+              { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
+              { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
+            ].map((f, i) => (
+              <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
+                <button
+                  onClick={() => toggleFaq(i)}
+                  className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
+                  aria-label={`Вопрос: ${f.q}`}
+                >
+                  <span className="font-bold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
+                  <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-all flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                  </span>
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
+                    <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -728,131 +863,6 @@ export default function App() {
         .fade-in-view{ opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
         .fade-in-view.is-visible{ opacity:1; transform: translateY(0); }
       `}</style>
-    </div>
-  );
-}
-
-/* Выделил оффер и FAQ в мелкие компоненты (без удаления логики), чтобы улучшить читаемость */
-function OfferBlock({ finished, h, m, s }: { finished: boolean; h: number; m: number; s: number }) {
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-      <div className="text-center mb-6 sm:mb-9 fade-in-view">
-        <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
-          Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
-        </h2>
-        <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
-          Специальное предложение на этой неделе • Предложение действует ограниченное время
-        </p>
-      </div>
-
-      <div className="max-w-lg mx-auto">
-        <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] fade-in-view">
-          <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl -translate-y-16 translate-x-16" />
-          <div className="absolute bottom-0 left-0 w-28 h-28 bg-purple-500/10 rounded-full blur-3xl translate-y-12 -translate-x-12" />
-
-          <div className="relative z-10 text-center">
-            <div className="text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
-
-            <div className="flex items-center justify-center gap-3.5 mb-4">
-              <span className="text-gray-400 line-through text-2xl sm:text-3xl font-bold">127€</span>
-              <span className="text-5xl sm:text-6xl font-extrabold text-white">19€</span>
-            </div>
-
-            <div className="mb-5">
-              <div className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
-                <span className="text-white text-xl">⏰</span>
-                {!finished ? (
-                  <>
-                    <span className="text-white text-sm font-medium">До конца:</span>
-                    <span className="font-bold tabular-nums text-white text-base">
-                      {String(h).padStart(2, "0")}:{String(m).padStart(2, "0")}:{String(s).padStart(2, "0")}
-                    </span>
-                  </>
-                ) : (
-                  <span className="font-semibold text-white text-sm">Время истекло</span>
-                )}
-              </div>
-            </div>
-
-            <a
-              href={STRIPE_URL}
-              target="_blank"
-              rel="noopener"
-              className="block w-full text-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-5 px-6 hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl mb-4 min-h-[56px] relative overflow-hidden group text-base sm:text-lg"
-              aria-label="Купить полную систему со скидкой 85% - 19 евро"
-            >
-              <span className="relative z-10">Получить со скидкой 85%</span>
-              <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-            </a>
-
-            <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center" style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
-              Пожизненный доступ • Обновления включены • Без скрытых платежей
-            </div>
-
-            <div className="text-left mb-6">
-              <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
-              <ul className="space-y-2.5 text-sm text-gray-200">
-                {[
-                  "Готовые диалоги для всех ситуаций",
-                  "Шаблоны под конкретную услугу",
-                  "Бонус: гайд по работе с базой (27€)",
-                  "Бонус: 30+ источников клиентов (32€)",
-                  "Бонус: продажи на консультации (20€)",
-                  "Пожизненный доступ и обновления",
-                ].map((t, i) => (
-                  <li key={i} className="flex gap-2.5 items-start">
-                    <span className="w-5 h-5 mt-0.5 text-green-400 flex-shrink-0 font-bold">✓</span>
-                    <span className="leading-relaxed">{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
-              <div className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium whitespace-nowrap">Apple Pay</div>
-              <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Google Pay</div>
-              <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Visa</div>
-              <div className="px-2.5 py-1.5 bg-white/20 text-white rounded-lg font-medium whitespace-nowrap">Mastercard</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Faq() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
-
-  return (
-    <div>
-      <div className="space-y-3.5">
-        {[
-          { q: "Сработает в моей нише?", a: "Да. База универсальная и блоки под ногти/брови/ресницы/волосы/косметологию/перманент." },
-          { q: "Не будет ли звучать «по-скриптовому»?", a: "Нет. Формулировки живые, адаптируешь под свой тон. Главное — следовать алгоритму." },
-          { q: "Зачем это админам?", a: "Единый стандарт повышает конверсию, скорость и управляемость. Новички включаются быстрее." },
-          { q: "Когда будут результаты?", a: "Часто в первые 24 часа: готовые фразы экономят время и быстрее ведут к записи." },
-        ].map((f, i) => (
-          <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
-            <button
-              onClick={() => toggleFaq(i)}
-              className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
-              aria-label={`Вопрос: ${f.q}`}
-            >
-              <span className="font-bold text-base lg:text-lg text-gray-900 pr-4 group-hover:text-blue-600 transition-colors">{f.q}</span>
-              <span className={`w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-all flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-              </span>
-            </button>
-            {openFaq === i && (
-              <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
-                <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
