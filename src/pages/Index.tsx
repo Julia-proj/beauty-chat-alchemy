@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect, useRef } from "react"; 
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -93,6 +93,142 @@ function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }: { isOpen: b
   );
 }
 
+function ScrollProgress() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useEffect(() => {
+    const updateScrollProgress = () => {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (scrollPx / winHeightPx) * 100;
+      setScrollProgress(scrolled);
+    };
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+    return () => window.removeEventListener('scroll', updateScrollProgress);
+  }, []);
+  return (
+    <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
+      <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
+    </div>
+  );
+}
+
+function HighlightedDesc({ text, primaryHighlight, extraPhrases = [] }: { text: string; primaryHighlight?: string; extraPhrases?: string[] }) {
+  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let html = escapeHtml(text);
+  if (primaryHighlight) {
+    const ph = escapeHtml(primaryHighlight);
+    html = html.replace(
+      new RegExp(ph.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${ph}</span>`
+    );
+  }
+  for (const phrase of extraPhrases) {
+    const p = escapeHtml(phrase);
+    html = html.replace(
+      new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      `<span class="text-blue-600 font-semibold">${p}</span>`
+    );
+  }
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+/** Премиальная конфетти-анимация для блока бонусов */
+function useConfettiOnce(ref: React.RefObject<HTMLElement>) {
+  useEffect(() => {
+    if (!ref.current) return;
+    const section = ref.current;
+    const canvas = document.createElement('canvas');
+    canvas.className = 'confetti-canvas';
+    canvas.style.position = 'absolute';
+    canvas.style.inset = '0';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '1';
+    section.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let w = canvas.width = section.clientWidth;
+    let h = canvas.height = section.clientHeight;
+    const onResize = () => {
+      w = canvas.width = section.clientWidth;
+      h = canvas.height = section.clientHeight;
+    };
+    window.addEventListener('resize', onResize);
+
+    let raf = 0;
+    let started = false;
+    let particles: {x:number;y:number;vx:number;vy:number;sz:number;rot:number;vr:number;color:string;life:number}[] = [];
+
+    const palette = [
+      'rgba(59,130,246,0.85)',   // blue-500
+      'rgba(139,92,246,0.85)',   // violet-500
+      'rgba(236,72,153,0.85)',   // pink-500
+      'rgba(99,102,241,0.85)',   // indigo-500
+      'rgba(16,185,129,0.85)'    // emerald-500
+    ];
+
+    const createParticles = (count=80) => {
+      particles = Array.from({length: count}).map(()=>({
+        x: Math.random()*w,
+        y: -20 - Math.random()*h*0.2,
+        vx: (Math.random()-0.5)*0.6,
+        vy: 1.2 + Math.random()*1.6,
+        sz: 4 + Math.random()*6,
+        rot: Math.random()*Math.PI,
+        vr: (Math.random()-0.5)*0.15,
+        color: palette[(Math.random()*palette.length)|0],
+        life: 1
+      }));
+    };
+
+    const draw = (t:number) => {
+      if (!ctx) return;
+      ctx.clearRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.vy += 0.015; // лёгкая гравитация
+        p.life -= 0.003; // плавное затухание
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, p.life);
+        // «конфетти» как тонкие прямоугольники
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.sz/2, -p.sz/6, p.sz, p.sz/3);
+        ctx.restore();
+      });
+      particles = particles.filter(p => p.y < h+30 && p.life > 0);
+      if (particles.length > 0) raf = requestAnimationFrame(draw);
+    };
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if (e.isIntersecting && !started) {
+          started = true;
+          createParticles(90);
+          raf = requestAnimationFrame(draw);
+          // останавливаем через ~2.5 сек, чтобы было «премиально»
+          setTimeout(()=>{ particles.forEach(p=>p.life = Math.min(p.life, 0.4)); }, 1600);
+          setTimeout(()=>{ cancelAnimationFrame(raf); ctx.clearRect(0,0,w,h); }, 2600);
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.25 });
+    io.observe(section);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      canvas.remove();
+    };
+  }, [ref]);
+}
+
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -101,6 +237,9 @@ export default function App() {
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  const bonusesRef = useRef<HTMLElement>(null);
+  useConfettiOnce(bonusesRef);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
@@ -146,6 +285,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden no-awkward-breaks">
+      <ReviewLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        imageSrc={lightboxImage}
+        reviewNumber={lightboxReviewNumber}
+      />
+
       {/* viewers badge desktop */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
         <div className="flex items-center gap-2.5 text-sm text-gray-700 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300">
@@ -177,7 +323,7 @@ export default function App() {
       </header>
 
       {/* HERO */}
-      <section className="relative w-full flex items-center justify-start overflow-hidden hero-wrap" style={{ minHeight: '100svh' }}>
+      <section className="relative w-full flex items-center justify-start overflow-hidden bg-gradient-to-b from-[#faf5f0] to-white" style={{ minHeight: '100svh' }}>
         {/* Фото */}
         <img
           src="/images/IMG_6603.jpeg"
@@ -187,16 +333,16 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Вуаль + плавное затухание к белому (десктоп) */}
-        <div className="hero-overlay"></div>
-        <div className="hero-fade"></div>
+        {/* Белый мягкий градиент к правому краю для «сшивки» с фоном */}
+        <div className="hero-edge-fade" aria-hidden="true"></div>
+        {/* Общий лёгкий overlay */}
+        <div className="hero-overlay" aria-hidden="true"></div>
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content"
-             style={{ minHeight: '100svh', paddingTop: '116px', paddingBottom: '40px' }}>
-          {/* Верх: заголовки */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '108px', paddingBottom: '40px' }}>
+          {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-4 sm:mb-5 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -204,20 +350,19 @@ export default function App() {
               </span>
             </h1>
 
-            <p className="text-pretty text-base sm:text-lg lg:text-[20px] font-semibold leading-relaxed text-gray-800 max-w-lg">
+            <p className="text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-800 max-w-lg -mt-0.5">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
-          {/* Низ: результат + CTA */}
+          {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-white drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
-                <span className="font-extrabold uppercase text-blue-500" style={{ fontStyle: 'italic', letterSpacing: '0.03em' }}>
-                  РЕЗУЛЬТАТ:
+              <p className="text-pretty leading-[1.45]" style={{ fontSize: 'clamp(14px, 1.7vw, 18px)' }}>
+                <span className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" style={{ letterSpacing: '0.02em' }}>
+                  Результат:
                 </span>{" "}
-                закрытые возражения, увеличенный средний чек, экономия времени
+                <span className="text-gray-700">закрытые возражения, увеличенный средний чек, экономия времени</span>
               </p>
             </div>
 
@@ -240,7 +385,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-700">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
               <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
@@ -252,15 +397,11 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#fff; overscroll-behavior-y: contain; }
+          :global(html, body, #__next){ background:#faf5f0; overscroll-behavior-y: contain; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
-
-          .hero-wrap{
-            background: linear-gradient(180deg, #faf5f0 0%, #ffffff 100%);
-          }
 
           .hero-image{
             position:absolute; 
@@ -270,63 +411,74 @@ export default function App() {
             height: 100%;
             max-width:none;
             object-fit: cover;
-            image-rendering: auto;
-            filter: brightness(1.02) contrast(0.98) saturate(1.02);
+            filter: brightness(1.04) contrast(1.02);
           }
           
-          /* тонкая белая вуаль по краям, чтобы смягчить */
+          /* общий лёгкий слой для мягкости */
           .hero-overlay{
             position:absolute;
             inset:0;
             z-index:1;
-            background:
-              radial-gradient(80% 80% at 0% 50%, rgba(255,255,255,.22), transparent 55%) ,
-              radial-gradient(80% 80% at 100% 50%, rgba(255,255,255,.18), transparent 55%);
+            background: radial-gradient(120% 90% at 20% 15%, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 60%);
             pointer-events: none;
-            mix-blend-mode: lighten;
           }
 
-          /* плавный переход снизу в белый фон (desktop) */
-          .hero-fade{
+          /* правый мягкий fade в белое, чтобы не было резкого перехода */
+          .hero-edge-fade{
             position:absolute;
-            left:0; right:0; bottom:0; height:22vh;
-            z-index:1;
-            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(250,250,252,.6) 55%, #ffffff 100%);
+            top:0; right:0; bottom:0; width:min(28vw, 520px);
+            z-index:2;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 55%, rgba(255,255,255,.9) 90%, #ffffff 100%);
             pointer-events:none;
           }
 
-          /* Контент — больше воздуха сверху на desktop */
-          .hero-content{ padding-top: 116px !important; }
+          /* Позиционирование контента так, чтобы текст не «влезал» на голову модели */
+          .hero-content { 
+            /* добавил чуть больше паддинг сверху (чтобы H1 не упирался в потолок) */
+            padding-top: 112px !important;
+          }
+
+          /* MOBILE ≤767px */
           @media (max-width: 767px){
             .hero-content{ padding-top: 106px !important; }
-          }
-
-          /* Блок результата — лёгкий отступ, как просила */
-          .result-block{ margin-top: 24px; }
-
-          /* Фокус и дистанция фото */
-          @media (max-width: 767px){
             .hero-image{
               object-position: 62% 42%;
-              filter: brightness(1.05) saturate(1.05);
+              filter: brightness(1.08) saturate(1.05);
+            }
+            .hero-edge-fade{
+              width: 40vw;
+              background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 70%, #fff 100%);
             }
           }
+          
+          /* TABLET */
           @media (min-width:768px) and (max-width:1023px){
             .hero-image{ object-position: 66% center; }
           }
+          
+          /* DESKTOP: смещаем правее и «отдаляем» */
           @media (min-width:1024px){
             .hero-image{
-              object-position: 48% center;
-              transform: scale(0.90);
+              object-position: 58% center;    /* правее */
+              transform: scale(0.90);         /* дальше */
               transform-origin: center right;
             }
           }
+
+          /* XL: ещё немного отдаляем */
           @media (min-width:1280px){
             .hero-image{
-              object-position: 46% center;
+              object-position: 60% center;
               transform: scale(0.88);
             }
           }
+
+          /* Заголовок ближе к подзаголовку */
+          h1 + p { margin-top: 0.3rem !important; }
+
+          /* Блок результата */
+          .result-block{ margin-top: 22px; }
+          @media (max-width: 767px){ .result-block{ padding-left: 8px; } }
         `}</style>
       </section>
 
@@ -490,8 +642,7 @@ export default function App() {
                 </div>
                 <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {/* лёгкий хайлайт ключевых фраз */}
-                  {item.desc.replace(item.highlight, `«${item.highlight}»`)}
+                  <HighlightedDesc text={item.desc} primaryHighlight={item.highlight} extraPhrases={["без давления", "каждой ниши"]} />
                 </p>
               </div>
             ))}
@@ -499,8 +650,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы (компакт + праздничная анимация) */}
-      <section id="bonuses" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden confetti-wrap">
+      {/* 05 - Бонусы */}
+      <section id="bonuses" ref={bonusesRef} className="relative py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
@@ -508,7 +659,7 @@ export default function App() {
             <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
@@ -519,11 +670,11 @@ export default function App() {
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="card-premium rounded-2xl p-4 text-center bg-white shadow-sm border border-purple-100/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 fade-in-view compact-bonus" style={{ animationDelay: `${i * 0.06}s` }}>
-                <div className="mb-3">
-                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-lg shadow" loading="lazy" />
+              <div key={i} className="card-premium rounded-2xl p-4 sm:p-5 text-center bg-white shadow-md border border-purple-100/50 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div className="mb-3.5">
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-xl shadow-md" loading="lazy" />
                 </div>
-                <h3 className="text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-1.5">{b.title}</h3>
+                <h3 className="text-pretty text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-2">{b.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed mb-3">{b.desc}</p>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-[14.5px] font-bold text-gray-400 line-through">{b.old}</span>
@@ -535,40 +686,7 @@ export default function App() {
         </div>
 
         <style>{`
-          /* компактнее карточки бонусов */
-          .compact-bonus{ padding: 14px; }
-          .compact-bonus img{ border-radius: 12px; }
-          
-          /* конфетти — очень деликатно */
-          .confetti-wrap::before,
-          .confetti-wrap::after{
-            content:"";
-            position:absolute; inset:0; pointer-events:none;
-            background:
-              radial-gradient(2px 2px at 10% 15%, rgba(99,102,241,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 22% 38%, rgba(236,72,153,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 35% 12%, rgba(16,185,129,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 58% 28%, rgba(59,130,246,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 72% 8%, rgba(168,85,247,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 84% 22%, rgba(234,88,12,.35) 60%, transparent 61%),
-              radial-gradient(2px 2px at 92% 18%, rgba(14,165,233,.35) 60%, transparent 61%);
-            animation: confettiFloat 12s linear infinite;
-            opacity:.55;
-            mask-image: linear-gradient(180deg, transparent 0%, black 20%, black 80%, transparent 100%);
-          }
-          .confetti-wrap::after{
-            animation-duration: 16s;
-            transform: translateY(-10%);
-            opacity:.45;
-          }
-          @keyframes confettiFloat{
-            0%{ transform: translateY(-8%); }
-            50%{ transform: translateY(4%); }
-            100%{ transform: translateY(-8%); }
-          }
-          @media (prefers-reduced-motion: reduce){
-            .confetti-wrap::before,.confetti-wrap::after{ animation: none; opacity:.25; }
-          }
+          #bonuses .confetti-canvas { filter: saturate(1) blur(0px); opacity: 0.9; }
         `}</style>
       </section>
 
@@ -588,10 +706,10 @@ export default function App() {
               "Перестанешь терять заявки из-за слабых ответов.",
               "Начнёшь закрывать больше записей уже с первого дня.",
               "Повысишь средний чек через правильные предложения.",
-              "Станешь увереннее — на всё есть готовый ответ.",
+              "Станешь увереннее - на всё есть готовый ответ.",
             ].map((t, i) => (
               <div key={i} className="flex items-start gap-3.5 bg-white/85 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-teal-100/60 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
-                <div className="w-6 h-6 bg-teал-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                   <svg className="w-3.5 h-3.5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <span className="text-[15.5px] sm:text-base font-medium text-gray-800 leading-relaxed">{t}</span>
@@ -773,7 +891,7 @@ export default function App() {
             ].map((f, i) => (
               <div key={i} className="border-2 border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-500 hover:-translate-y-1 fade-in-view" style={{ animationDelay: `${i * 0.05}s` }}>
                 <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  onClick={() => toggleFaq(i)}
                   className="w-full px-6 lg:px-8 py-5 text-left hover:bg-gray-50/60 flex justify-between items-center transition-colors min-h-[52px] group"
                   aria-label={`Вопрос: ${f.q}`}
                 >
@@ -783,7 +901,7 @@ export default function App() {
                   </span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 lg:px-8 py-5 border-top border-gray-100 bg-gray-50/40">
+                  <div className="px-6 lg:px-8 py-5 border-t border-gray-100 bg-gray-50/40">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
