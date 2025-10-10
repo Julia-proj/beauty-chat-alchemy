@@ -231,9 +231,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — фото закрывает экран без белых полей */}
-      <section className="relative w-full overflow-hidden" style={{ minHeight: '100svh' }}>
-        {/* Фоновое фото на весь экран с «переливом» за края (чтобы не появлялись белые поля слева/справа) */}
+      {/* HERO — только фото, без белых полей, сдвиг вправо, контент выше */}
+      <section className="relative w-full flex items-center justify-start overflow-hidden" style={{ minHeight: '100svh' }}>
+        {/* Фото: «овершут» по ширине для гарантии отсутствия белой кромки */}
         <img
           src="/images/IMG_6603.jpeg"
           alt="Beauty professional"
@@ -242,13 +242,14 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Мягкая вуаль + слева лёгкая тень, чтобы не было «обрыва» */}
+        {/* Тонкая тёмная вуаль (без «белого»), даёт глубину и читабельность */}
         <div className="hero-overlay" />
 
         {/* Контент */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '112px', paddingBottom: '44px' }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ minHeight: '100svh', paddingTop: '104px', paddingBottom: '44px' }}>
+          {/* Верх: заголовок + подзаголовок (чуть выше и крупнее) */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-4 text-gray-900 heading-shadow">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -256,24 +257,19 @@ export default function App() {
               </span>
             </h1>
 
-            {/* «Проверенная система…» — поднята выше + объём (ч/б), чтобы не терялась на тёмном участке фото */}
-            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-gray-900 max-w-lg raised-readable">
+            {/* Подзаголовок с мягким белым свечением, чтобы не терялся на тёмном */}
+            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-[#0a0a0a] max-w-lg subtle-glow">
               Проверенная система общения с клиентами для бьюти-мастеров
+            </p>
+
+            {/* Сразу под ним — «Результат» вторым заголовком, премиально-синий с белым свечением */}
+            <p className="mt-3 text-pretty font-extrabold leading-tight text-blue-600 premium-glow" style={{ fontSize: 'clamp(18px, 2.1vw, 26px)' }}>
+              Результат: закрытые возражения, увеличенный средний чек, экономия времени
             </p>
           </div>
 
-          {/* Низ: Результат + кнопка */}
-          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ — премиально-синий с мягким белым свечением */}
-            <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-blue-600 glow-soft" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
-                <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
-                  Результат:
-                </span>{" "}
-                закрытые возражения, увеличенный средний чек, экономия времени
-              </p>
-            </div>
-
+          {/* Низ: Кнопка + бейджи */}
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-5 sm:space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
                 href={STRIPE_URL}
@@ -292,11 +288,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-800">
-              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5 whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90">
+              <span className="px-2.5 py-1.5 bg-black/50 backdrop-blur-sm rounded-lg border border-white/10 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200/60 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-black/50 backdrop-blur-sm rounded-lg border border-white/10 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -304,82 +300,61 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#ffffff; overscroll-behavior-y: contain; }
-          :global(body){ -webkit-overflow-scrolling: touch; }
+          :global(html, body, #__next){ background:#ffffff; margin:0; padding:0; }
+          :global(body){ -webkit-overflow-scrolling: touch; overflow-x:hidden; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
-          :global(*){ box-sizing:border-box; }
 
-          /* ГЛАВНОЕ: фото перекрывает экран без белых полос.
-             Делаем «заливку за края»: ширина > 100vw и лёгкое смещение. */
+          /* Гарантируем покрытие фото без белых полей: overscan по ширине + фиксируем позицию */
           .hero-image{
-            position:absolute;
+            position:absolute; 
             top:0; left:50%;
             z-index:0;
-            width: 112vw;                 /* чуть шире вьюпорта */
-            height: 112vh;                /* и по высоте тоже с запасом */
-            max-width:none;
-            transform: translateX(-50%) scale(0.90); /* отдаляем, чтобы качество не «ломалось» */
-            transform-origin: center right;
+            width: 104vw;         /* овершут по ширине */
+            height: 100%;
+            transform: translateX(-50%); /* центрируем без смещения края */
             object-fit: cover;
-            object-position: 68% center;  /* сдвигаем девушку правее */
-            /* слегка сглаживаем контраст */
-            filter: brightness(1.02) contrast(1.01);
+            object-position: 66% center; /* сдвиг вправо, лицо правее центра */
+            will-change: transform;
+            backface-visibility: hidden;
           }
 
-          /* Лёгкая тень у левого края + еле заметная виньетка по краям,
-             чтобы не было резких переходов и белых «засветов» */
+          /* Мягкая тёмная вуаль: без белых шумов, добавляет глубину */
           .hero-overlay{
             position:absolute;
-            inset:-2vh -2vw; /* небольшой «заход» за края */
+            inset:0;
             z-index:1;
             background:
-              radial-gradient(140% 100% at 0% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.03) 40%, rgba(0,0,0,0.00) 70%),
-              radial-gradient(120% 100% at 100% 50%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.00) 65%);
+              radial-gradient(120% 90% at 8% 50%, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.10) 55%, rgba(0,0,0,0.06) 75%, rgba(0,0,0,0.02) 100%),
+              linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
             pointer-events: none;
           }
 
-          /* Отступ: заголовок не упирается в шапку; «Проверенная система…» поднята ближе */
-          .hero-content{ padding-top: 118px; }
+          /* Текстовые свечения — минимальные, премиальные */
+          .subtle-glow{
+            text-shadow:
+              0 0 8px rgba(255,255,255,0.45),
+              0 1px 2px rgba(0,0,0,0.15);
+          }
+          .premium-glow{
+            text-shadow:
+              0 0 10px rgba(255,255,255,0.55),
+              0 1px 2px rgba(0,0,0,0.18);
+          }
+
+          /* Смещаем safe-area на мобиле, чтобы заголовок не упирался в шапку */
           @media (max-width: 767px){
-            .hero-content{ padding-top: 108px !important; }
+            .hero-content{ padding-top: 112px !important; }
+            .hero-image{ width:108vw; object-position: 64% center; }
           }
 
-          /* Лёгкая «объёмная» читаемость заголовка и подзаголовка на тёмном фоне */
-          .heading-shadow{
-            text-shadow:
-              0 1px 0 rgba(255,255,255,.35),
-              0 2px 8px rgba(0,0,0,.16);
-          }
-          .raised-readable{
-            color:#0f172a; /* slate-900 */
-            text-shadow:
-              0 1px 0 rgba(255,255,255,.65),
-              0 8px 24px rgba(0,0,0,.18);
-            margin-top: 10px; /* подняли ближе к h1 визуально */
-          }
-
-          /* «Результат» — премиальный синий + мягкое белое свечение */
-          .glow-soft{
-            text-shadow:
-              0 0 6px rgba(255,255,255,.35),
-              0 1px 0 rgba(255,255,255,.45);
-          }
-          .result-block{ margin-top: 14px; }
-
-          /* Большие десктопы — ещё чуть «дальше» и правее, чтобы сохранить качество и композицию */
+          /* Крупные экраны: сохраняем «овершут» и композицию */
           @media (min-width:1280px){
-            .hero-image{
-              transform: translateX(-50%) scale(0.88);
-              object-position: 70% center;
-            }
+            .hero-image{ width: 103vw; object-position: 68% center; }
           }
           @media (min-width:1536px){
-            .hero-image{
-              transform: translateX(-50%) scale(0.86);
-              object-position: 71% center;
-            }
+            .hero-image{ width: 102vw; object-position: 69% center; }
           }
         `}</style>
       </section>
@@ -552,42 +527,43 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы (компактнее + премиальное нежное конфетти) */}
-      <section id="bonuses" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-purple-50/40 via-pink-50/20 to-white overflow-hidden">
+      {/* 05 - Бонусы (ещё компактнее + нежная премиальная конфетти-анимация) */}
+      <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/35 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти-слой (деликатно) */}
+        {/* Конфетти-слой (нежные частицы, меньше и короче анимация) */}
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 confetti-layer">
-          {Array.from({ length: 36 }).map((_, i) => (
+          {Array.from({ length: 24 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
           ))}
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 relative">
-          <div className="text-center mb-6 sm:mb-7 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2.5">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4 relative">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+          {/* компактная сетка */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="card-premium rounded-2xl p-4 sm:p-5 text-center bg-white border border-purple-100/60 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
-                <div className="mb-3">
-                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-lg shadow" loading="lazy" />
+              <div key={i} className="card-premium rounded-2xl p-3.5 sm:p-4 text-center bg-white border border-purple-100/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-400 fade-in-view" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div className="mb-2.5">
+                  <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-24 sm:h-32 mx-auto object-cover rounded-lg shadow" loading="lazy" />
                 </div>
-                <h3 className="text-pretty text-[15px] sm:text-[15.5px] font-bold text-gray-900 mb-2">{b.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{b.desc}</p>
+                <h3 className="text-pretty text-[14.5px] sm:text-[15px] font-bold text-gray-900 mb-1.5">{b.title}</h3>
+                <p className="text-[13.5px] sm:text-sm text-gray-600 leading-relaxed mb-2">{b.desc}</p>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-[14.5px] font-bold text-gray-400 line-through">{b.old}</span>
-                  <span className="text-base font-bold text-green-600">0€</span>
+                  <span className="text-[14px] font-bold text-gray-400 line-through">{b.old}</span>
+                  <span className="text-[15px] font-bold text-green-600">0€</span>
                 </div>
               </div>
             ))}
@@ -595,29 +571,26 @@ export default function App() {
         </div>
 
         <style>{`
-          /* конфетти — мягкие «ленты» с небольшой дугой, чтобы выглядело премиально */
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
           .confetti{
-            position:absolute; top:-12vh;
-            width:6px; height:12px;
-            border-radius:3px;
+            position:absolute; top:-8vh;
+            width:5px; height:9px; 
+            border-radius:2px;
             opacity:.9;
             animation: confetti-fall linear forwards;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,.08));
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.06));
           }
           @keyframes confetti-fall{
-            0%{ transform: translateY(-12vh) translateX(0) rotate(0deg); }
-            50%{ transform: translateY(55vh) translateX(-3vw) rotate(180deg); }
-            100%{ transform: translateY(110vh) translateX(0) rotate(360deg); }
+            0%{ transform: translateY(-8vh) rotate(0deg); }
+            100%{ transform: translateY(104vh) rotate(360deg); }
           }
-          ${Array.from({length:36}).map((_,i)=>{
+          ${Array.from({length:24}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
-            const dur = (Math.random()*4 + 7).toFixed(2);
+            const dur = (Math.random()*3 + 5).toFixed(2);
             const delay = (Math.random()*1.2).toFixed(2);
-            const wobble = (Math.random()*6-3).toFixed(1);
-            const colors = ['#dbeafe','#e9d5ff','#fde7f3','#c7d2fe','#f5d0fe','#e0e7ff'];
+            const colors = ['#c7d2fe','#e9d5ff','#fbcfe8','#bfdbfe','#ddd6fe','#fecdd3'];
             const color = colors[i % colors.length];
-            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; transform: translateX(${wobble}vw); }`
+            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; }`
           }).join('\n')}
         `}</style>
       </section>
@@ -844,7 +817,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-10 bg-white border-top border-gray-200 text-center">
+      <footer className="py-8 sm:py-10 bg-white border-t border-gray-200 text-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5">Beauty Scripts</div>
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Все права защищены</p>
