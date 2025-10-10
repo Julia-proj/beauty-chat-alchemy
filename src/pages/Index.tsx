@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
@@ -219,18 +219,16 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Beauty Scripts</div>
           <a
-            href={STRIPE_URL}
-            target="_blank"
-            rel="noopener"
-            className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gray-900 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-800 transition-all hover:scale-105 transform hover:shadow-xl min-h-[44px] flex items-center justify-center"
-            aria-label="Купить скрипты"
+            href="#offer"
+            className="px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all hover:scale-105 transform hover:shadow-xl min-h-[44px] flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+            aria-label="Получить скрипты"
           >
-            Купить
+            Получить скрипты
           </a>
         </div>
       </header>
 
-      {/* HERO — фото полностью покрывает экран, без белых краёв, текст с объёмом */}
+      {/* HERO — десктоп: фото вправо, слева мягкая серая плашка под текст */}
       <section className="relative w-[100vw] h-[100svh] overflow-hidden" style={{ isolation: 'isolate' }}>
         {/* Фото */}
         <img
@@ -241,32 +239,32 @@ export default function App() {
           decoding="async"
         />
 
-        {/* Лёгкая виньетка для краёв (без видимого градиента/серого фона) */}
+        {/* Левая плашка для десктопа */}
+        <div className="hidden lg:block absolute inset-y-0 left-0 w-[46vw] z-[1] hero-left-panel" />
+
+        {/* Лёгкая виньетка */}
         <div className="hero-vignette" />
 
         {/* Контент */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold leading-[1.12] mb-3 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
-
-            {/* Поднято чуть выше, с премиальным "объёмом" */}
-            <p className="text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed text-white drop-volume max-w-xl">
+            <p className="text-pretty text-lg sm:text-xl lg:text-[22px] font-semibold leading-relaxed text-white lg:text-gray-800 lg:drop-none drop-volume max-w-xl">
               Проверенная система общения с клиентами для бьюти-мастеров
             </p>
           </div>
 
           {/* Низ: Результат + кнопка */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
-            {/* РЕЗУЛЬТАТ — белый, с тем же объёмом */}
             <div className="max-w-md result-block">
-              <p className="text-pretty leading-[1.45] text-white drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
+              <p className="text-pretty leading-[1.45] text-white lg:text-gray-900 lg:drop-none drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
                 <span className="font-extrabold" style={{ letterSpacing: '0.01em' }}>
                   Результат:
                 </span>{" "}
@@ -274,18 +272,16 @@ export default function App() {
               </p>
             </div>
 
-            {/* Кнопка Купить */}
+            {/* Кнопка Получить скрипты */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <a
-                href={STRIPE_URL}
-                target="_blank"
-                rel="noopener"
-                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-bold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden"
-                aria-label="Купить скрипты за 19 евро"
+                href="#offer"
+                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 lg:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all hover:-translate-y-0.5 hover:shadow-2xl min-h-[52px] relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                aria-label="Получить скрипты"
               >
-                <span className="relative z-10">Купить</span>
+                <span className="relative z-10">Получить скрипты</span>
                 <span className="relative z-10 inline-block transition-transform group-hover:translate-x-1">→</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-white"></div>
               </a>
               <div className="hidden sm:flex items-center gap-2 text-xs whitespace-nowrap">
                 <span className="px-2.5 py-1.5 bg-black text-white rounded-lg font-medium">Apple Pay</span>
@@ -293,11 +289,11 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90">
-              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5 whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-white/90 lg:text-gray-700">
+              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5 whitespace-nowrap">
                 <span>🔒</span> Безопасная оплата
               </span>
-              <span className="px-2.5 py-1.5 bg-black/40 backdrop-blur-sm rounded-lg border border-white/20 flex items-center gap-1.5">
+              <span className="px-2.5 py-1.5 bg-black/40 lg:bg-gray-100 backdrop-blur-sm rounded-lg border border-white/20 lg:border-gray-200 flex items-center gap-1.5">
                 <span>✓</span> Stripe
               </span>
             </div>
@@ -305,44 +301,44 @@ export default function App() {
         </div>
 
         <style>{`
-          :global(html, body, #__next){ background:#ffffff; margin:0; padding:0; }
+          :global(html, body, #__next){ background:#ffffff; margin:0; padding:0; scroll-behavior:smooth; }
           :global(body){ -webkit-overflow-scrolling: touch; }
           :global(.no-awkward-breaks){ word-break: keep-all; hyphens: manual; }
           :global(.text-balance){ text-wrap: balance; }
           :global(.text-pretty){ text-wrap: pretty; }
           :root { --safe-edge: 0px; }
 
-          /* Фото ровно по вьюпорту, без масштабирования <1, чтобы не оголялись края */
           .hero-image{
             position:absolute; 
             left:0; top:0;
             width:100vw; height:100%;
             object-fit: cover;
-            object-position: 68% center; /* сдвиг модели вправо */
+            object-position: 85% center; /* сильнее вправо, чтобы слева было место под текст */
             z-index:0;
-            /* без transform:scale(<1), чтобы не было белых полос */
             will-change: transform;
-            background:#000; /* страховка под прозрачными пикселями */
+            background:#000;
           }
 
-          /* Мягкая виньетка, чтобы края не выбивали, без заметных «серых пятен» */
+          /* десктоп-плашка слева — лёгкий серый градиент */
+          .hero-left-panel{
+            background: linear-gradient(90deg, rgba(243,244,246,0.95) 0%, rgba(243,244,246,0.8) 55%, rgba(243,244,246,0.0) 100%);
+          }
+
           .hero-vignette{
             position:absolute; inset:0; z-index:1;
             background:
-              radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.00) 80%),
+              radial-gradient(120% 90% at 60% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.00) 80%),
               linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.00) 40%);
             pointer-events:none;
           }
 
-          /* Контент — подальше от верхней шапки и без налезания на глаза модели */
-          @media (max-width: 767px){
+          @media (max-width: 1023px){
             .hero-content{ padding-top: 120px !important; }
           }
-          @media (min-width:1280px){
-            .hero-content{ padding-top: 130px; }
+          @media (min-width:1024px){
+            .hero-content{ padding-top: 120px; }
           }
 
-          /* Премиальный «объём» текста — тонкий, без дешёвого свечения */
           .drop-volume{
             text-shadow:
               0 1px 0 rgba(255,255,255,0.25),
@@ -351,8 +347,6 @@ export default function App() {
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
           }
-
-          /* Блок результата — ближе к кнопке */
           .result-block{ margin-top: 14px; }
         `}</style>
       </section>
@@ -525,13 +519,13 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 - Бонусы — компакт + нежное конфетти */}
+      {/* 05 - Бонусы — компакт + современное конфетти */}
       <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* Конфетти — меньше частиц, короче анимация, пастель */}
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-600 confetti-layer">
-          {Array.from({ length: 18 }).map((_, i) => (
+        {/* Конфетти — пастель, разная форма/скорость */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 confetti-layer">
+          {Array.from({ length: 28 }).map((_, i) => (
             <span key={i} className={`confetti c${i}`} />
           ))}
         </div>
@@ -572,21 +566,25 @@ export default function App() {
           #bonuses.confetti-on .confetti-layer{ opacity:1; }
           .confetti{
             position:absolute; top:-8vh;
-            width:5px; height:9px; border-radius:2px;
-            opacity:.9; animation: confetti-fall linear forwards;
+            width:6px; height:10px; border-radius:2px;
+            opacity:.95; animation: confetti-fall linear forwards;
+            transform: rotate(0deg);
             filter: drop-shadow(0 1px 1px rgba(0,0,0,.08));
           }
           @keyframes confetti-fall{
             0%{ transform: translateY(-8vh) rotate(0deg); }
             100%{ transform: translateY(105vh) rotate(360deg); }
           }
-          ${Array.from({length:18}).map((_,i)=>{
+          ${Array.from({length:28}).map((_,i)=>{
             const left = Math.floor(Math.random()*100);
-            const dur = (Math.random()*2.5 + 3.8).toFixed(2);
-            const delay = (Math.random()*0.8).toFixed(2);
-            const colors = ['#c7d2fe','#e9d5ff','#fce7f3','#bfdbfe','#ddd6fe','#fecdd3'];
-            const color = colors[i % colors.length];
-            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; }`
+            const dur = (Math.random()*3 + 4.0).toFixed(2);
+            const delay = (Math.random()*0.9).toFixed(2);
+            const palette = ['#c7d2fe','#e9d5ff','#fce7f3','#bfdbfe','#ddd6fe','#fecdd3','#fde68a','#bbf7d0'];
+            const color = palette[i % palette.length];
+            const shape = i % 3; // 0 rect, 1 pill, 2 dot
+            const br = shape===0 ? '2px' : (shape===1 ? '999px' : '999px');
+            const size = shape===2 ? '7px; height:7px' : '6px; height:10px';
+            return `.confetti.c${i}{ left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; border-radius:${br}; width:${size.split(';')[0].trim()}; ${size.split(';')[1].trim() ? size.split(';')[1].trim()+';' : ''} }`
           }).join('\n')}
         `}</style>
       </section>
@@ -740,7 +738,8 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center" style={{ fontSize: 'clamp(11px, 2vw, 13.5px)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
+                {/* было nowrap/ellipsis — убрал, чтобы текст НЕ обрезался на правом краю */}
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center">
                   Пожизненный доступ • Обновления включены • Без скрытых платежей
                 </div>
 
@@ -820,17 +819,15 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile */}
+      {/* Sticky CTA - Mobile (тёмная плашка, текст «Скрипты →») */}
       {showStickyCTA && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-900 to-slate-800 text-white border-t border-gray-800 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
-            href={STRIPE_URL}
-            target="_blank"
-            rel="noopener"
-            className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
-            aria-label="Купить скрипты за 19 евро"
+            href="#offer"
+            className="w-full text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block transition-all flex items-center justify-between min-h-[52px] shadow-lg"
+            aria-label="Перейти к офферу"
           >
-            <span>Скрипты - 19€</span>
+            <span>Скрипты</span>
             <span className="text-xl">→</span>
           </a>
         </div>
