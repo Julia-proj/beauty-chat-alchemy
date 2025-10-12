@@ -228,6 +228,11 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
+            {/* Компактная минималистичная плашка */}
+            <div className="compact-note">
+              <p className="compact-note-text">Устала отвечать клиентам и не получать броней?</p>
+            </div>
+
             <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
@@ -235,12 +240,6 @@ export default function App() {
                 сообщения в деньги
               </span>
             </h1>
-
-            {/* Компактная glass-плашка */}
-            <div className="glass-note mb-6">
-              <p className="note-bold">Устала отвечать клиентам и не получать броней?</p>
-              <p className="note-regular">Эти Beauty Scripts превращают переписки в реальные записи и деньги 💬💸</p>
-            </div>
 
             {/* подзаголовок: белый на мобайле, ЧЁРНЫЙ на десктопе */}
             <p className="hero-sub text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed drop-volume max-w-xl">
@@ -363,66 +362,47 @@ export default function App() {
 
           .result-block{ margin-top: 14px; }
 
-          /* Компактная glass-плашка с glassmorphism */
-          .glass-note {
+          /* Компактная минималистичная плашка */
+          .compact-note {
             position: relative;
-            max-width: 320px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 12px;
-            padding: 11px 12px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+            max-width: 270px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 9px 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            margin-bottom: 16px;
             opacity: 0;
-            transform: translateY(12px);
-            animation: glass-note-fade-in 0.6s ease-out 0.7s forwards;
+            animation: compact-note-fade-in 0.5s ease-out 0.6s forwards;
           }
 
-          /* Мобильный: снизу-справа, не перекрывает лицо */
+          /* Мобильный: справа, ближе к верху */
           @media (max-width: 767px) {
-            .glass-note {
+            .compact-note {
               margin-left: auto;
               margin-right: 0;
             }
           }
 
-          /* Десктоп: слева у края контента */
+          /* Десктоп: слева */
           @media (min-width: 1024px) {
-            .glass-note {
+            .compact-note {
               margin-left: 0;
             }
           }
 
-          @keyframes glass-note-fade-in {
+          @keyframes compact-note-fade-in {
             to {
               opacity: 1;
-              transform: translateY(0);
             }
           }
 
-          .note-bold {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Manrope', sans-serif;
+          .compact-note-text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Manrope', 'Segoe UI', sans-serif;
             font-size: 14px;
             font-weight: 600;
             line-height: 1.4;
-            color: #1c1c1e;
-            margin: 0 0 4px 0;
-          }
-
-          .note-regular {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Manrope', sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.4;
-            color: #1c1c1e;
+            color: #111;
             margin: 0;
-          }
-
-          @media (min-width: 640px) {
-            .note-bold,
-            .note-regular {
-              font-size: 15px;
-            }
           }
         `}</style>
       </section>
