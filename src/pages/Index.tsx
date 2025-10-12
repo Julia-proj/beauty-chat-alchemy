@@ -236,10 +236,10 @@ export default function App() {
               </span>
             </h1>
 
-            {/* iPhone Notes плашка */}
-            <div className="iphone-note mx-auto mb-6">
-              <p className="note-first-line">Устала отвечать клиентам и не получать броней?</p>
-              <p className="note-second-line">Эти скрипты превращают переписки в реальные записи и деньги 💬💸</p>
+            {/* Компактная glass-плашка */}
+            <div className="glass-note mb-6">
+              <p className="note-bold">Устала отвечать клиентам и не получать броней?</p>
+              <p className="note-regular">Эти Beauty Scripts превращают переписки в реальные записи и деньги 💬💸</p>
             </div>
 
             {/* подзаголовок: белый на мобайле, ЧЁРНЫЙ на десктопе */}
@@ -363,47 +363,65 @@ export default function App() {
 
           .result-block{ margin-top: 14px; }
 
-          /* iPhone Notes плашка */
-          .iphone-note {
-            max-width: 420px;
-            background: #FAF8F5;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+          /* Компактная glass-плашка с glassmorphism */
+          .glass-note {
+            position: relative;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 11px 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
             opacity: 0;
-            transform: translateY(15px);
-            animation: iphone-note-fade-in 0.6s ease-out 0.8s forwards;
+            transform: translateY(12px);
+            animation: glass-note-fade-in 0.6s ease-out 0.7s forwards;
           }
 
-          @keyframes iphone-note-fade-in {
+          /* Мобильный: снизу-справа, не перекрывает лицо */
+          @media (max-width: 767px) {
+            .glass-note {
+              margin-left: auto;
+              margin-right: 0;
+            }
+          }
+
+          /* Десктоп: слева у края контента */
+          @media (min-width: 1024px) {
+            .glass-note {
+              margin-left: 0;
+            }
+          }
+
+          @keyframes glass-note-fade-in {
             to {
               opacity: 1;
               transform: translateY(0);
             }
           }
 
-          .note-first-line {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
-            font-size: 15px;
+          .note-bold {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Manrope', sans-serif;
+            font-size: 14px;
             font-weight: 600;
-            line-height: 1.5;
+            line-height: 1.4;
             color: #1c1c1e;
-            margin: 0 0 6px 0;
+            margin: 0 0 4px 0;
           }
 
-          .note-second-line {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
-            font-size: 15px;
+          .note-regular {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Manrope', sans-serif;
+            font-size: 14px;
             font-weight: 400;
-            line-height: 1.5;
+            line-height: 1.4;
             color: #1c1c1e;
             margin: 0;
           }
 
           @media (min-width: 640px) {
-            .note-first-line,
-            .note-second-line {
-              font-size: 16px;
+            .note-bold,
+            .note-regular {
+              font-size: 15px;
             }
           }
         `}</style>
