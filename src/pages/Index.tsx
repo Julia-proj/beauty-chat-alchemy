@@ -225,18 +225,18 @@ export default function App() {
 
         <div className="hero-vignette" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '100px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
             {/* Компактная минималистичная плашка */}
-            <div className="compact-note">
+            <div className="compact-note" style={{ marginBottom: '14px' }}>
               <p className="compact-note-text">Устала отвечать клиентам и не получать броней?</p>
             </div>
 
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 sm:mb-4 text-gray-900">
+            <h1 className="hero-h1 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-3 sm:mb-3.5 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="hero-accent">
                 сообщения в деньги
               </span>
             </h1>
@@ -248,7 +248,7 @@ export default function App() {
           </div>
 
           {/* Низ: Результат + кнопка */}
-          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-6 sm:space-y-7">
+          <div className="max-w-xl lg:max-w-2xl fade-in-view space-y-5 sm:space-y-5">
             <div className="max-w-md result-block">
               {/* результат: белый на мобайле, ЧЁРНЫЙ на десктопе */}
               <p className="result-text text-pretty leading-[1.45] drop-volume" style={{ fontSize: 'clamp(16px, 1.9vw, 22px)' }}>
@@ -348,7 +348,22 @@ export default function App() {
           }
 
           @media (max-width: 767px){
-            .hero-content{ padding-top: 120px !important; }
+            .hero-content{ padding-top: 100px !important; }
+          }
+
+          /* Усиленный контраст заголовка */
+          .hero-h1 {
+            font-weight: 800;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+          }
+
+          /* Яркий акцент на ключевых словах */
+          .hero-accent {
+            background: linear-gradient(135deg, #7B61FF 0%, #4F46E5 50%, #2563EB 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
           }
 
           .drop-volume{
@@ -370,7 +385,6 @@ export default function App() {
             border-radius: 10px;
             padding: 9px 10px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-            margin-bottom: 16px;
             opacity: 0;
             animation: compact-note-fade-in 0.5s ease-out 0.6s forwards;
           }
