@@ -228,13 +228,20 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '118px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-3 text-gray-900">
+            <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 сообщения в деньги
               </span>
             </h1>
+
+            {/* iPhone Notes плашка */}
+            <div className="iphone-note mx-auto mb-6">
+              <p className="note-first-line">Устала отвечать клиентам и не получать броней?</p>
+              <p className="note-second-line">Эти скрипты превращают переписки в реальные записи и деньги 💬💸</p>
+            </div>
+
             {/* подзаголовок: белый на мобайле, ЧЁРНЫЙ на десктопе */}
             <p className="hero-sub text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed drop-volume max-w-xl">
               Проверенная система общения с клиентами для бьюти-мастеров
@@ -355,6 +362,50 @@ export default function App() {
           }
 
           .result-block{ margin-top: 14px; }
+
+          /* iPhone Notes плашка */
+          .iphone-note {
+            max-width: 420px;
+            background: #FAF8F5;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            transform: translateY(15px);
+            animation: iphone-note-fade-in 0.6s ease-out 0.8s forwards;
+          }
+
+          @keyframes iphone-note-fade-in {
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .note-first-line {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #1c1c1e;
+            margin: 0 0 6px 0;
+          }
+
+          .note-second-line {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #1c1c1e;
+            margin: 0;
+          }
+
+          @media (min-width: 640px) {
+            .note-first-line,
+            .note-second-line {
+              font-size: 16px;
+            }
+          }
         `}</style>
       </section>
 
