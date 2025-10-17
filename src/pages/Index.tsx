@@ -454,7 +454,7 @@ export default function App() {
             {/* Изображение Xmind */}
             <div className="fade-in-view order-2 lg:order-1">
               <img 
-                src="/images/xmind.png" 
+                src="/images/xmindpic.jpeg" 
                 alt="Пример структуры скриптов в Xmind" 
                 className="w-full h-auto rounded-2xl shadow-xl border border-gray-200"
                 loading="lazy"
