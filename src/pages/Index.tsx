@@ -421,17 +421,76 @@ export default function App() {
         `}</style>
       </section>
 
+      {/* Новый блок: Описание/Суть */}
+      <section id="about" className="relative py-8 sm:py-12 lg:py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="fade-in-view">
+            <div className="prose prose-lg max-w-none text-gray-700 space-y-5" style={{ lineHeight: '1.65', maxWidth: '68ch' }}>
+              <p className="text-base sm:text-lg leading-relaxed">
+                <strong className="text-gray-900">Скрипты — это не просто шаблон, это система продаж в сообщениях.</strong> Скрипты — это готовые последовательности фраз и действий, которые помогают мастеру уверенно вести диалог с клиентом на каждом этапе: от первого сообщения до записи. Они превращают хаотичное общение в систему, позволяя продавать профессионально, без давления и потери заявок.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                <strong className="text-gray-900">Скрипты экономят твое время, убирают стресс и дают уверенность.</strong> Ты перестаёшь «угадывать», что сказать, и начинаешь говорить так, чтобы клиент сам хотел прийти. С ними ты продаёшь не из позиции нужды, а из позиции эксперта.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Поэтому я собрала готовую базу скриптов — под разные ниши, ситуации и типы клиентов. Это не теория, а фразы, которые реально работают в бьюти-бизнесе.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Если ты хочешь <strong className="text-gray-900">перестать сливать заявки</strong> и начать <strong className="text-gray-900">продавать осознанно</strong> — переходи на сайт и забери свои скрипты прямо сейчас, и как бонус получи в подарок <strong className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">3 гайда 🎁</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Новый блок: Что внутри */}
+      <section id="whats-inside" className="relative py-8 sm:py-12 lg:py-16 section-bg-1">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-8 sm:mb-12 fade-in-view">
+            Что <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">внутри</span>
+          </h2>
+
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Изображение Xmind */}
+            <div className="fade-in-view order-2 lg:order-1">
+              <img 
+                src="/images/xmind.png" 
+                alt="Пример структуры скриптов в Xmind" 
+                className="w-full h-auto rounded-2xl shadow-xl border border-gray-200"
+                loading="lazy"
+              />
+            </div>
+
+            {/* Список с галочками */}
+            <div className="fade-in-view order-1 lg:order-2">
+              <ul className="space-y-4">
+                {[
+                  { number: '1️⃣', text: 'Более 500 готовых сообщений' },
+                  { number: '2️⃣', text: '5 основных ниш (PMU, кератин, массаж, косметология, маникюр)' },
+                  { number: '3️⃣', text: 'Универсальные скрипты для любых направлений' },
+                  { number: '4️⃣', text: 'Удобный формат Xmind + доступ к Google Drive' },
+                  { number: '5️⃣', text: 'Можно перевести и использовать на любом языке' },
+                  { number: '6️⃣', text: 'Бонусы и гайды после покупки' },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3.5 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                    <span className="text-2xl flex-shrink-0">{item.number}</span>
+                    <span className="text-base sm:text-lg font-medium text-gray-800 leading-relaxed pt-0.5">{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 01 - Сравнение */}
-      <section id="comparison" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
+      <section id="comparison" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="01" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Сравните результаты до и после внедрения скриптов
-            </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
@@ -487,16 +546,13 @@ export default function App() {
       </section>
 
       {/* 02 - Почему */}
-      <section id="why" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
+      <section id="why" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="02" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Каждая потерянная заявка - это упущенная прибыль
-            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
@@ -518,10 +574,10 @@ export default function App() {
       </section>
 
       {/* 03 - Кому подходят */}
-      <section id="for" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
+      <section id="for" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="03" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-7 sm:mb-10 fade-in-view">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Кому подходят <span className="text-emerald-600">скрипты</span>
           </h2>
 
@@ -550,37 +606,34 @@ export default function App() {
         </div>
       </section>
 
-      {/* 04 - Что входит */}
-      <section id="whats-included" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
+      {/* 04 - Форматы и доступ */}
+      <section id="formats" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="04" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-              Что входит в <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">систему скриптов</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              Форматы и <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">доступ</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Полный набор инструментов для увеличения продаж</p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
             {[
-              { img: "/images/xmind.png",   title: "Готовые диалоги",     desc: "Контакты до оплаты: приветствия, презентация ценности, запись. Всё пошагово.",                highlight: "презентация ценности" },
-              { img: "/images/target.png",  title: "Закрытие возражений", desc: "«Дорого», «Подумаю», «У другого дешевле». Мягкие ответы без давления.",                      highlight: "Мягкие ответы без давления" },
-              { img: "/images/salons.png",  title: "Под каждую услугу",   desc: "Маникюр, брови, ресницы, косметология, массаж. Учтена специфика каждой ниши.",                highlight: "Учтена специфика каждой ниши" },
-              { img: "/images/bucle.png",   title: "Возврат клиентов",    desc: "Сценарии повторных записей и реактивации «спящей» базы без рекламы.",                         highlight: "реактивации «спящей» базы без рекламы" },
-              { img: "/images/phone.png",   title: "Гайд по внедрению",   desc: "Старт за один день: пошаговый план и стандарты для команды.",                                 highlight: "Старт за один день" },
-              { img: "/images/rocket.png",  title: "Итог",                desc: "Больше записей, выше средний чек, меньше времени в переписке.",                              highlight: "выше средний чек" },
+              { img: "/images/xmind.png",   title: "Формат Xmind",        desc: "Интерактивная карта мышления — удобная навигация по всем скриптам.",                highlight: "удобная навигация" },
+              { img: "/images/target.png",  title: "Google Drive доступ", desc: "Мгновенный доступ после покупки, работает на всех устройствах.",                      highlight: "на всех устройствах" },
+              { img: "/images/phone.png",   title: "Пожизненная лицензия",desc: "Оплачиваешь один раз — пользуешься всегда. Все обновления бесплатно.",                highlight: "все обновления бесплатно" },
+              { img: "/images/rocket.png",  title: "Регулярные обновления",desc: "База постоянно пополняется новыми скриптами и сценариями.",                         highlight: "постоянно пополняется" },
             ].map((item, k) => (
-              <div key={k} className="card-premium rounded-3xl border border-gray-100 p-4 sm:p-6 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
-                <div className="mb-3 inline-flex items-center justify-center">
+              <div key={k} className="card-premium rounded-2xl border border-gray-100 p-3.5 sm:p-5 bg-white hover:shadow-xl transition-all duration-400 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
+                <div className="mb-2.5 inline-flex items-center justify-center">
                   <img
                     src={item.img}
                     alt=""
-                    className={`w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300`}
                     loading="lazy"
                   />
                 </div>
-                <h3 className="text-pretty text-[15.5px] sm:text-base font-bold text-gray-900 mb-2.5">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <h3 className="text-pretty text-[14.5px] sm:text-[15px] font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
                   <Emph text={item.desc} hit={item.highlight} />
                 </p>
               </div>
@@ -601,7 +654,7 @@ export default function App() {
       </section>
 
       {/* 05 - Бонусы — конфетти */}
-      <section id="bonuses" className="relative py-6 sm:py-9 lg:py-12 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
+      <section id="bonuses" className="relative py-5 sm:py-8 lg:py-10 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         {/* Конфетти (стартуют ТОЛЬКО при confetti-on) */}
@@ -612,12 +665,12 @@ export default function App() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 relative">
-          <div className="text-center mb-5 sm:mb-7 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-4 sm:mb-6 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1.5">
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+              Суммарная ценность — 79€. Сегодня идут бесплатно
             </p>
           </div>
 
@@ -671,13 +724,12 @@ export default function App() {
       </section>
 
       {/* 06 - Что изменится сразу */}
-      <section id="immediate" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
+      <section id="immediate" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="06" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 inline-block relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 inline-block relative">
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
-              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-0.35em] h-[1.5px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" style={{ width: '45%' }}></div>
             </h2>
           </div>
 
@@ -700,10 +752,10 @@ export default function App() {
       </section>
 
       {/* 07 - Отзывы + рилсы */}
-      <section id="reviews" className="relative py-6 sm:py-10 lg:py-14 section-bg-2">
+      <section id="reviews" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="07" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Отзывы клиентов
           </h2>
 
@@ -768,15 +820,15 @@ export default function App() {
       </section>
 
       {/* 08 - Оффер */}
-      <section id="offer" className="relative py-6 sm:py-10 lg:py-14 bg-gradient-to-b from-white to-gray-50">
+      <section id="offer" className="relative py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <div className="text-center mb-6 sm:mb-9 fade-in-view">
-            <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-2">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              Специальное предложение на этой неделе • Предложение действует ограниченное время
+            <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto leading-relaxed">
+              Специальное предложение • Ограниченное время
             </p>
           </div>
 
@@ -868,11 +920,11 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 09 - FAQ (+ ссылки на 2 видео-отзыва) */}
-      <section id="faq" className="relative py-6 sm:py-10 lg:py-14 section-bg-1">
+      {/* 09 - FAQ */}
+      <section id="faq" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="09" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-6 sm:mb-9 fade-in-view">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Частые вопросы
           </h2>
 
