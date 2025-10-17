@@ -135,27 +135,6 @@ export default function App() {
       const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrolled = (scrollPx / winHeightPx) * 100;
       setScrollProgress(scrolled);
-      
-      // Скрываем CTA у offer секции и футера
-      const offerSection = document.getElementById('offer');
-      const footer = document.querySelector('footer');
-      const stickyCTA = document.getElementById('sticky-cta-mobile');
-      
-      if (offerSection && footer && stickyCTA) {
-        const offerRect = offerSection.getBoundingClientRect();
-        const footerRect = footer.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        // Скрываем если секция offer видна на экране или футер виден
-        const shouldHide = (offerRect.top < windowHeight && offerRect.bottom > 0) || footerRect.top < windowHeight;
-        
-        if (shouldHide) {
-          stickyCTA.style.transform = 'translateY(100%)';
-        } else if (scrolled > 30) {
-          stickyCTA.style.transform = 'translateY(0)';
-        }
-      }
-      
       setShowStickyCTA(scrolled > 30);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -249,7 +228,12 @@ export default function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full h-full flex flex-col justify-between hero-content" style={{ paddingTop: '100px', paddingBottom: '44px' }}>
           {/* Верх: заголовок + подзаголовок */}
           <div className="max-w-xl lg:max-w-2xl fade-in-view">
-            <h1 className="hero-h1 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-4 sm:mb-5 text-gray-900">
+            {/* Компактная минималистичная плашка */}
+            <div className="compact-note" style={{ marginBottom: '14px' }}>
+              <p className="compact-note-text">Устала отвечать клиентам и не получать броней?</p>
+            </div>
+
+            <h1 className="hero-h1 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-3 sm:mb-3.5 text-gray-900">
               Скрипты, которые<br />
               превращают<br />
               <span className="hero-accent">
@@ -257,21 +241,10 @@ export default function App() {
               </span>
             </h1>
 
-            {/* Продающий подзаголовок */}
-            <div className="hero-subtitle-box max-w-xl space-y-3 mb-1">
-              <p className="hero-sub text-pretty text-base sm:text-lg lg:text-xl font-semibold leading-relaxed drop-volume">
-                <strong>Beauty Scripts</strong> — это не просто шаблоны.
-              </p>
-              <p className="hero-sub text-pretty text-base sm:text-lg lg:text-xl font-medium leading-relaxed drop-volume">
-                Это готовая система, которая превращает переписки в реальные продажи.
-              </p>
-              <p className="hero-sub text-pretty text-base sm:text-lg lg:text-xl font-medium leading-relaxed drop-volume">
-                Работает в любой нише — адаптируй под себя и начни зарабатывать больше уже с первых сообщений.
-              </p>
-              <p className="hero-bonus text-pretty text-base sm:text-lg font-bold drop-volume">
-                <span className="bonus-accent">+3 гайда в подарок</span> для быстрого старта 💬
-              </p>
-            </div>
+            {/* подзаголовок: белый на мобайле, ЧЁРНЫЙ на десктопе */}
+            <p className="hero-sub text-pretty text-lg sm:text-xl lg:text-2xl font-semibold leading-relaxed drop-volume max-w-xl">
+              Проверенная система общения с клиентами для бьюти-мастеров
+            </p>
           </div>
 
           {/* Низ: Результат + кнопка */}
@@ -340,21 +313,13 @@ export default function App() {
           .hero-vignette{
             position:absolute; inset:0; z-index:1;
             background:
-              radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.08) 55%, rgba(0,0,0,0.02) 80%),
-              linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.00) 100%);
+              radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0.00) 80%),
+              linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.00) 40%);
             pointer-events:none;
           }
 
           /* Подзаголовки: белые по умолчанию */
-          .hero-sub, .result-text, .hero-bonus { color:#ffffff; }
-          
-          .bonus-accent {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-          }
+          .hero-sub, .result-text { color:#ffffff; }
 
           /* Десктоп — мягкое разделение и чёрные тексты */
           @media (min-width:1024px){
@@ -376,16 +341,9 @@ export default function App() {
             .hero-content{ padding-top:130px !important; max-width:1200px; }
 
             /* важное: на светлом фоне делаем текст чёрным и без объёмной тени */
-            .hero-sub, .result-text, .hero-bonus{
+            .hero-sub, .result-text{
               color:#111 !important;
               text-shadow:none !important;
-            }
-            
-            .bonus-accent {
-              background: linear-gradient(135deg, #7B61FF 0%, #4F46E5 100%);
-              background-clip: text;
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
             }
           }
 
@@ -526,12 +484,12 @@ export default function App() {
       </section>
 
       {/* 01 - Сравнение */}
-      <section id="comparison" className="relative py-4 sm:py-6 lg:py-8 section-bg-2">
+      <section id="comparison" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
-              Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа</span>
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              Как изменится ваша <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">работа с клиентами</span>
             </h2>
           </div>
 
@@ -588,11 +546,11 @@ export default function App() {
       </section>
 
       {/* 02 - Почему */}
-      <section id="why" className="relative py-4 sm:py-6 lg:py-8 section-bg-1">
+      <section id="why" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               Почему это <span className="text-rose-600">важно</span>
             </h2>
           </div>
@@ -616,10 +574,10 @@ export default function App() {
       </section>
 
       {/* 03 - Кому подходят */}
-      <section id="for" className="relative py-4 sm:py-6 lg:py-8 section-bg-2">
+      <section id="for" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-4 sm:mb-5 fade-in-view">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Кому подходят <span className="text-emerald-600">скрипты</span>
           </h2>
 
@@ -649,21 +607,21 @@ export default function App() {
       </section>
 
       {/* 04 - Форматы и доступ */}
-      <section id="formats" className="relative py-4 sm:py-6 lg:py-8 section-bg-1">
+      <section id="formats" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               Форматы и <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">доступ</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
             {[
-              { img: "/images/xmind.png",   title: "Формат Xmind",        desc: "Интерактивная карта мышления — удобная навигация.",                highlight: "удобная навигация" },
-              { img: "/images/target.png",  title: "Google Drive", desc: "Мгновенный доступ после покупки, работает на всех устройствах.",                      highlight: "на всех устройствах" },
-              { img: "/images/phone.png",   title: "Пожизненный доступ",desc: "Оплачиваешь один раз — пользуешься всегда. Все обновления бесплатно.",                highlight: "все обновления бесплатно" },
-              { img: "/images/rocket.png",  title: "Регулярные обновления",desc: "База постоянно пополняется новыми скриптами.",                         highlight: "постоянно пополняется" },
+              { img: "/images/xmind.png",   title: "Формат Xmind",        desc: "Интерактивная карта мышления — удобная навигация по всем скриптам.",                highlight: "удобная навигация" },
+              { img: "/images/target.png",  title: "Google Drive доступ", desc: "Мгновенный доступ после покупки, работает на всех устройствах.",                      highlight: "на всех устройствах" },
+              { img: "/images/phone.png",   title: "Пожизненная лицензия",desc: "Оплачиваешь один раз — пользуешься всегда. Все обновления бесплатно.",                highlight: "все обновления бесплатно" },
+              { img: "/images/rocket.png",  title: "Регулярные обновления",desc: "База постоянно пополняется новыми скриптами и сценариями.",                         highlight: "постоянно пополняется" },
             ].map((item, k) => (
               <div key={k} className="card-premium rounded-2xl border border-gray-100 p-3.5 sm:p-5 bg-white hover:shadow-xl transition-all duration-400 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
                 <div className="mb-2.5 inline-flex items-center justify-center">
@@ -696,7 +654,7 @@ export default function App() {
       </section>
 
       {/* 05 - Бонусы — конфетти */}
-      <section id="bonuses" className="relative py-4 sm:py-6 lg:py-8 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
+      <section id="bonuses" className="relative py-5 sm:py-8 lg:py-10 bg-gradient-to-b from-purple-50/30 via-pink-50/15 to-white overflow-hidden">
         <SectionMarker n="05" />
 
         {/* Конфетти (стартуют ТОЛЬКО при confetti-on) */}
@@ -707,12 +665,12 @@ export default function App() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 relative">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">3 гайда</span> в подарок
+          <div className="text-center mb-4 sm:mb-6 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1.5">
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Бонусы</span> при покупке
             </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              Суммарная ценность — 79€. Сегодня бесплатно
+            <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+              Суммарная ценность — 79€. Сегодня идут бесплатно
             </p>
           </div>
 
@@ -766,11 +724,11 @@ export default function App() {
       </section>
 
       {/* 06 - Что изменится сразу */}
-      <section id="immediate" className="relative py-4 sm:py-6 lg:py-8 section-bg-2">
+      <section id="immediate" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1 inline-block relative">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 inline-block relative">
               Что изменится <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">сразу</span>
             </h2>
           </div>
@@ -794,10 +752,10 @@ export default function App() {
       </section>
 
       {/* 07 - Отзывы + рилсы */}
-      <section id="reviews" className="relative py-4 sm:py-6 lg:py-8 section-bg-1">
+      <section id="reviews" className="relative py-5 sm:py-8 lg:py-10 section-bg-1">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-4 sm:mb-5 fade-in-view">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Отзывы клиентов
           </h2>
 
@@ -862,11 +820,11 @@ export default function App() {
       </section>
 
       {/* 08 - Оффер */}
-      <section id="offer" className="relative py-5 sm:py-8 lg:py-10 bg-gradient-to-b from-white to-gray-50">
+      <section id="offer" className="relative py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-white to-gray-50">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <div className="text-center mb-4 sm:mb-5 fade-in-view">
-            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-1">
+          <div className="text-center mb-5 sm:mb-7 fade-in-view">
+            <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-2">
               Полная система со скидкой <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">85%</span>
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto leading-relaxed">
@@ -916,7 +874,7 @@ export default function App() {
                   <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
 
-                <div className="text-xs sm:text-sm text-gray-300 mb-5 text-center offer-bullets">
+                <div className="text-xs sm:text-sm text-gray-300 mb-6 text-center offer-bullets">
                   Пожизненный доступ • Обновления включены • <span className="nobr">Без&nbsp;скрытых&nbsp;платежей</span>
                 </div>
 
@@ -963,10 +921,10 @@ export default function App() {
       </section>
 
       {/* 09 - FAQ */}
-      <section id="faq" className="relative py-4 sm:py-6 lg:py-8 section-bg-2">
+      <section id="faq" className="relative py-5 sm:py-8 lg:py-10 section-bg-2">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-4 sm:mb-5 fade-in-view">
+          <h2 className="text-balance text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-5 sm:mb-7 fade-in-view">
             Частые вопросы
           </h2>
 
@@ -1007,18 +965,15 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Sticky CTA - Mobile - скрывается у offer секции и футера */}
+      {/* Sticky CTA - Mobile */}
       {showStickyCTA && (
-        <div 
-          id="sticky-cta-mobile" 
-          className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl transition-transform duration-300"
-        >
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3.5 z-50 lg:hidden shadow-2xl">
           <a
             href="#offer"
             className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 px-5 rounded-2xl font-bold text-base text-center block hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-between min-h-[52px] shadow-lg"
-            aria-label="Получить скрипты"
+            aria-label="Перейти к офферу"
           >
-            <span>Получить скрипты →</span>
+            <span>Скрипты →</span>
             <span className="text-xl" aria-hidden> </span>
           </a>
         </div>
