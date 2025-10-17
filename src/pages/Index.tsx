@@ -620,7 +620,7 @@ export default function App() {
             {[
               { img: "/images/xmind.png",   title: "Формат Xmind",        desc: "Интерактивная карта мышления — удобная навигация по всем скриптам.",                highlight: "удобная навигация" },
               { img: "/images/target.png",  title: "Google Drive доступ", desc: "Мгновенный доступ после покупки, работает на всех устройствах.",                      highlight: "на всех устройствах" },
-              { img: "/images/phone.png",   title: "Пожизненый доступ",desc: "Оплачиваешь один раз — пользуешься всегда. Все обновления бесплатно.",                highlight: "все обновления бесплатно" },
+              { img: "/images/phone.png",   title: "Пожизненый доступ",desc: "Оплачиваешь один раз — пользуешься всегда. Все обновления бесплатно.",                highlight: "Все обновления бесплатно" },
               { img: "/images/rocket.png",  title: "Регулярные обновления",desc: "База постоянно пополняется новыми скриптами и сценариями.",                         highlight: "постоянно пополняется" },
             ].map((item, k) => (
               <div key={k} className="card-premium rounded-2xl border border-gray-100 p-3.5 sm:p-5 bg-white hover:shadow-xl transition-all duration-400 hover:-translate-y-1 group fade-in-view" style={{ animationDelay: `${k * 0.05}s` }}>
